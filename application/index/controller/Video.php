@@ -80,6 +80,60 @@ class Video extends Controller
         return Response::create($data, 'json')->code(200);
     }
 
+    public function detail()
+    {
+        try {
+            $video_id = Request::instance()->get('video_id');
+
+            $data = array('c' => 0, 'm' => '', 'd' => array());
+            
+            if(empty($video_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $record = Video_Model::get(['item_id' => $video_id]);
+
+            $info = array(
+                'video_id' => strval($record['group_id']),
+                'content' => $record['content'],
+                'online_time' => date('Y-m-d H:i:s', $record['online_time']),
+                'category_name' => $record['category_name'],
+                'url' => $this->timestamp_url($record['vurl']),
+                'cover_image' => $record['cover_image'],
+                'user_name' => $record['user_name'],
+                'user_avatar' => $record['user_avatar'],
+                'play_count' => $record['play_count'],
+                'digg_count' => 0,
+                'bury_count' => $record['bury_count'],
+                'share_count' => $record['share_count'],
+                'comment_count' => $record['comment_count'],
+                'comments' => array()
+            );
+            $top_comments = Db::table('comments')->where('group_id', $record['group_id'])
+                                                    ->limit(10)
+                                                    ->order('id', 'desc')
+                                                    ->select();
+            foreach ($top_comments as $val) {
+                $info['comments'][] = array(
+                    'comment_id' => $val['id'],
+                    'user_name' => $val['user_name'],
+                    'user_avatar' => $val['user_avatar'],
+                    'content' => $val['content'],
+                    'create_time' => $val['create_time'],
+                    'digg_count' => $val['digg_count'],
+                    'comment_count' => $val['comment_count']
+                );
+            }
+            $data['d'] = $info;
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        
+        return Response::create($data, 'json')->code(200);
+    }
+
     public function count()
     {
         try {
@@ -209,6 +263,10 @@ class Video extends Controller
                 'comment_count' =>0
             ]);
             $comment->save();
+
+            $video->comment_count += 1;
+            $video->save();
+
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];  
         }

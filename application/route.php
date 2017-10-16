@@ -16,6 +16,7 @@ Route::rule('__miss__', 'index/Error/index');
 
 Route::rule('api/doc/$','index/Index/doc');
 Route::rule('api/videos/$','index/Video/index');
+Route::rule('api/video/detail/$','index/Video/detail');
 Route::rule('api/video/count/$','index/Video/count');
 Route::rule('api/video/share/$','index/Video/share');
 Route::rule('api/video/comments/$','index/Video/comment');
