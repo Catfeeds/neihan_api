@@ -5,3 +5,4 @@ runtime
 application/database.php
 application/config.php
 application/extra
+public/static/code
