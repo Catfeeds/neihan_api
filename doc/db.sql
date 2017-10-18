@@ -29,6 +29,13 @@ CREATE TABLE IF NOT EXISTS `videos` (
     PRIMARY KEY (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '视频表';
 ALTER TABLE `videos` ADD UNIQUE (`video_id`);
+ALTER TABLE `videos` ADD COLUMN `c_play_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的播放次数';
+ALTER TABLE `videos` ADD COLUMN `c_play_end_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的播放完成次数';
+ALTER TABLE `videos` ADD COLUMN `c_bury_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的踩次数';
+ALTER TABLE `videos` ADD COLUMN `c_digg_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的点赞次数';
+ALTER TABLE `videos` ADD COLUMN `c_share_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的分享次数';
+ALTER TABLE `videos` ADD COLUMN `c_comment_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的评论次数';
+ALTER TABLE `videos` ADD COLUMN `c_display_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的展示次数';
 
 
 CREATE TABLE IF NOT EXISTS `comments` (
@@ -77,3 +84,20 @@ CREATE TABLE IF NOT EXISTS `users_shares_clicks` (
     `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     PRIMARY KEY (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '用户分享点击记录表';
+
+
+CREATE TABLE IF NOT EXISTS  `users_logs` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `video_id` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '视频ID',
+    `type` INT(11) NOT NULL DEFAULT '0' COMMENT '操作类型: 1展示、2播放、3播放完成、4分享、5评论、6点赞',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '用户行为记录表';
+
+CREATE INDEX user_type_video ON users_logs (user_id, type, video_id) USING BTREE;
+
+
+
+
