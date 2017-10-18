@@ -41,7 +41,7 @@ class Comment extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $user = User::get(['user_id' => $user_id]);
+            $user = User::get($user_id);
             if(empty($user)) {
                 $data['c'] = -1024;
                 $data['m'] = 'User Not Exists';

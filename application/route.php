@@ -22,4 +22,6 @@ Route::rule('api/video/share/$','index/Video/share');
 Route::rule('api/video/comments/$','index/Video/comment');
 Route::rule('api/comment/count/$','index/Comment/count');
 Route::rule('api/user/init/$','index/User/init');
+Route::rule('api/user/update/$','index/User/update');
+Route::rule('api/user/info/$','index/User/info');
 Route::rule('api/user/click/sharelink/$','index/User/click_share_link');

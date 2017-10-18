@@ -4,3 +4,4 @@ composer.lock
 runtime
 application/database.php
 application/config.php
+application/extra

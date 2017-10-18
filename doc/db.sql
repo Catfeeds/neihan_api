@@ -49,7 +49,8 @@ ALTER TABLE `comments` ADD COLUMN `update_time` BIGINT(20) DEFAULT '0';
 
 CREATE TABLE IF NOT EXISTS `users` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `user_id` VARCHAR(64) NOT NULL COMMENT '用户在微信的唯一ID',
+    `openid` VARCHAR(64) NOT NULL COMMENT '用户在微信的唯一ID',
+    `unionid` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户在开放平台的唯一标识符',
     `user_name` VARCHAR(128) NOT NULL COMMENT '用户在微信名称',
     `user_avatar` VARCHAR(512) NOT NULL COMMENT '用户在微信头像',
     `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',

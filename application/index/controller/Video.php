@@ -50,7 +50,7 @@ class Video extends Controller
                     'user_name' => $record['user_name'],
                     'user_avatar' => $record['user_avatar'],
                     'play_count' => $record['play_count'],
-                    'digg_count' => 0,
+                    'digg_count' => $record['digg_count'],
                     'bury_count' => $record['bury_count'],
                     'share_count' => $record['share_count'],
                     'comment_count' => $record['comment_count'],
@@ -149,7 +149,7 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $user = User::get(['user_id' => $user_id]);
+            $user = User::get($user_id);
             if(empty($user)) {
                 $data['c'] = -1024;
                 $data['m'] = 'User Not Exists';
@@ -191,7 +191,7 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $user = User::get(['user_id' => $user_id]);
+            $user = User::get($user_id);
             if(empty($user)) {
                 $data['c'] = -1024;
                 $data['m'] = 'User Not Exists';
@@ -237,7 +237,7 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $user = User::get(['user_id' => $user_id]);
+            $user = User::get($user_id);
             if(empty($user)) {
                 $data['c'] = -1024;
                 $data['m'] = 'User Not Exists';
