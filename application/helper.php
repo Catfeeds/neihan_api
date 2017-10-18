@@ -51,7 +51,8 @@ function curl_get($url, $timeout=60, $agent='', $cookie='')
   * @param string $encoding 数据编码
   * @return string
   */
-function xml_encode($data, $root='think', $item='item', $attr='', $id='id', $encoding='utf-8') {
+function xml_encode($data, $root='think', $item='item', $attr='', $id='id', $encoding='utf-8')
+{
     if(is_array($attr)){
         $_attr = array();
         foreach ($attr as $key => $value) {
@@ -75,7 +76,8 @@ function xml_encode($data, $root='think', $item='item', $attr='', $id='id', $enc
   * @param string $id   数字索引key转换为的属性名
   * @return string
   */
-function data_to_xml($data, $item='item', $id='id') {
+function data_to_xml($data, $item='item', $id='id')
+{
     $xml = $attr = '';
     foreach ($data as $key => $val) {
         if(is_numeric($key)){
@@ -90,7 +92,8 @@ function data_to_xml($data, $item='item', $id='id') {
     return $xml;
 }
 
-function xml_to_data($xml){
+function xml_to_data($xml)
+{
     $obj  = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
     $json = json_encode($obj);
     $data  = json_decode($json, true);

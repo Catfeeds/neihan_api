@@ -36,7 +36,7 @@ class User extends Controller
             }
 
             $wxconfig = Config::get('wxconfig');
-            $request_url = $wxconfig['api'].'&js_code='.$js_code;
+            $request_url = $wxconfig['login_api'].'&js_code='.$js_code;
             $resp = curl_get($request_url);
             if(empty($resp)) {
                 $data['c'] = -1024;

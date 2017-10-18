@@ -7,6 +7,7 @@ use think\Request;
 use think\Response;
 use think\Loader;
 use think\Db;
+use think\Config;
 
 use app\index\model\User;
 use app\index\model\UserShare;
@@ -182,6 +183,7 @@ class Video extends Controller
         try {
             $user_id = Request::instance()->post('user_id');
             $video_id = Request::instance()->post('video_id');
+            $page = Request::instance()->post('page');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -214,7 +216,26 @@ class Video extends Controller
             ]);
             $user_share->save();
 
-            $data['d'] = ['id' => $user_share->id];
+            $access_token = $this->_access_token();
+            if(!empty($access_token)) {
+                $wxconfig = Config::get('wxconfig');
+                $request_url = $wxconfig['code_api'].$access_token['access_token'];
+                $params = [
+                    'page' => $page,
+                    'scene' => 'uid='.$user_id.'&vid='.$video_id.'&sid='.$user_share->id
+                ];
+                $resp = curl_post($request_url, json_encode($params));
+                if(!empty($resp)) {
+                    $code_filename = strval(time()).'.jpeg';
+                    $codefile = './static/code/'.$code_filename;
+                    file_put_contents($codefile, $resp);
+                }
+            }
+
+            $data['d'] = ['id' => $user_share->id, 'code' => '/static/code/'.$code_filename];
+
+            $user_share->code = $data['d']['code'];
+            $user_share->save();
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];   
         }
@@ -277,5 +298,38 @@ class Video extends Controller
     public function timestamp_url($url)
     {
         return str_replace('timestamp', strval(time()).'.'.strval(rand(10, 60)), $url);
+    }
+
+    private function _access_token()
+    {
+        try {
+            $is_expired = true;
+
+            $access_token = [];
+            $access_token_file = './../application/extra/access_token.txt';
+            if(file_exists($access_token_file)) {
+                $access_token = json_decode(file_get_contents($access_token_file), true);
+            }
+            if(!empty($access_token)) {
+                if($access_token['expires_time'] - time() - 1000 > 0) {
+                    $is_expired = false;
+                }
+            }
+
+            if($is_expired) {
+                $wxconfig = Config::get('wxconfig');
+                $resp = curl_get($wxconfig['token_api']);
+                if(!empty($resp)) {
+                    $access_token = json_decode($resp, true);
+                    if(array_key_exists('expires_in', $access_token)) {
+                        $access_token['expires_time'] = intval($access_token['expires_in']) + time();
+                        file_put_contents($access_token_file, json_encode($access_token));
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $access_token = [];
+        }
+        return $access_token;
     }
 }

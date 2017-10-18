@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `users_shares` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `user_id` VARCHAR(64) NOT NULL COMMENT '用户在微信的唯一ID',
+    `user_id` VARCHAR(64) NOT NULL COMMENT '用户ID',
+    `code` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '小程序码的文件地址',
     `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     PRIMARY KEY (`id`) 
