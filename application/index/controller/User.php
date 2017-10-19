@@ -55,7 +55,7 @@ class User extends Controller
                 $user = new User_Model;
                 $user->data([
                     'openid'  => $ret['openid'],
-                    'unionid' => $ret['unionid']
+                    'unionid' => ''
                 ]);
                 $user->save();    
             }
