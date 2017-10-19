@@ -52,6 +52,7 @@ class User extends Controller
 
             $user = User_Model::get(['openid' => $ret['openid']]);
             if(empty($user)) {
+                $user = new User_Model;
                 $user->data([
                     'openid'  => $ret['openid'],
                     'unionid' => $ret['unionid']
