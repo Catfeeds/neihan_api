@@ -19,7 +19,7 @@ Route::rule('api/videos/$','index/Video/index');
 Route::rule('api/video/detail/$','index/Video/detail');
 Route::rule('api/video/count/$','index/Video/count');
 Route::rule('api/video/share/$','index/Video/share');
-Route::rule('api/video/comments/$','index/Video/comment');
+Route::rule('api/video/comment/$','index/Video/comment');
 Route::rule('api/comment/count/$','index/Comment/count');
 Route::rule('api/user/init/$','index/User/init');
 Route::rule('api/user/update/$','index/User/update');
