@@ -76,6 +76,10 @@ class User extends Controller
             $user_id = Request::instance()->post('user_id');
             $user_name = Request::instance()->post('user_name');
             $user_avatar = Request::instance()->post('user_avatar');
+            $gender = Request::instance()->post('gender');
+            $country = Request::instance()->post('country');
+            $province = Request::instance()->post('province');
+            $city = Request::instance()->post('city');
 
             if(empty($user_id)) {
                 $data['c'] = -1024;
@@ -92,6 +96,10 @@ class User extends Controller
 
             $user->user_name = $user_name;
             $user->user_avatar = $user_avatar;
+            $user->gender = $gender;
+            $user->country = $country;
+            $user->province = $province;
+            $user->city = $city;
             $user->save();
 
         } catch (Exception $e) {

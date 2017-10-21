@@ -70,6 +70,7 @@ class Video extends Controller
                     'is_digg' => 0,
                     'comments' => array()
                 );
+
                 $is_digg = Db::table('users_logs')
                                     ->where('user_id', $user_id)
                                     ->where('video_id', $info['video_id'])
@@ -94,6 +95,7 @@ class Video extends Controller
                         'comment_count' => $val['comment_count']
                     );
                 }
+
                 $data['d'][] = $info;
             }
 

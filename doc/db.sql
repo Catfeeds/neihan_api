@@ -60,6 +60,10 @@ CREATE TABLE IF NOT EXISTS `users` (
     `unionid` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户在开放平台的唯一标识符',
     `user_name` VARCHAR(128) NOT NULL COMMENT '用户在微信名称',
     `user_avatar` VARCHAR(512) NOT NULL COMMENT '用户在微信头像',
+    `gender`  VARCHAR(16) NOT NULL DEFAULT '' COMMENT '用户性别',
+    `country`  VARCHAR(32) NOT NULL DEFAULT '' COMMENT '所在国家',
+    `province`  VARCHAR(32) NOT NULL DEFAULT '' COMMENT '所在省份',
+    `city`  VARCHAR(32) NOT NULL DEFAULT '' COMMENT '所在城市',
     `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     PRIMARY KEY (`id`) 
