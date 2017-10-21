@@ -101,5 +101,15 @@ CREATE TABLE IF NOT EXISTS  `users_logs` (
 CREATE INDEX user_type_video ON users_logs (user_id, type, video_id) USING BTREE;
 
 
+CREATE TABLE IF NOT EXISTS  `users_formids` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `form_id` VARCHAR(64) NOT NULL DEFAULT '0' COMMENT '表单ID,用于消息推送',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '收集用户formid,用于消息推送';
+
+
 
 

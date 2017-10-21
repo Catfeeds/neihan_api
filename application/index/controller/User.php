@@ -12,6 +12,7 @@ use think\Config;
 use app\index\model\User as User_Model;
 use app\index\model\UserShare;
 use app\index\model\UserShareClick;
+use app\index\model\UserFormId;
 
 
 class User extends Controller
@@ -157,6 +158,39 @@ class User extends Controller
                     'video_id' => $video_id
                 ]);
                 $share_click->save();
+            }
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function formid()
+    {
+        try {
+            $user_id = Request::instance()->post('user_id');
+            $form_id = Request::instance()->post('form_id');
+
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            if(empty($user_id) || empty($form_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $user_formid = UserFormId::get([
+                'user_id' => $user_id,
+                'form_id' => $form_id
+            ]);
+            if(!$user_formid) {
+                $user_formid = new UserFormId;
+                $user_formid->data([
+                    'user_id'  => $user_id,
+                    'form_id' => $form_id
+                ]);
+                $user_formid->save();
             }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
