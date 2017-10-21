@@ -132,9 +132,9 @@ class User extends Controller
     public function click_share_link()
     {
         try {
-            $from_user_id = Request::instance()->get('from_user_id');
-            $user_id = Request::instance()->get('user_id');
-            $video_id = Request::instance()->get('video_id');
+            $from_user_id = Request::instance()->post('from_user_id');
+            $user_id = Request::instance()->post('user_id');
+            $video_id = Request::instance()->post('video_id');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
