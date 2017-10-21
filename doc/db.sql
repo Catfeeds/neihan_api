@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `users_shares` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` VARCHAR(64) NOT NULL COMMENT '用户ID',
+    `video_id` VARCHAR(63) NOT NULL DEFAULT '' COMMENT '视频ID',
     `code` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '小程序码的文件地址',
     `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
@@ -78,8 +79,9 @@ CREATE TABLE IF NOT EXISTS `users_shares` (
 
 CREATE TABLE IF NOT EXISTS `users_shares_clicks` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `share_id` VARCHAR(64) NOT NULL COMMENT 'users_shares表的主键',
+    `video_id` VARCHAR(63) NOT NULL DEFAULT '' COMMENT '视频ID',
     `user_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '点击分享链接的用户',
+    `from_user_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '生成分享链接的用户',
     `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
     PRIMARY KEY (`id`) 

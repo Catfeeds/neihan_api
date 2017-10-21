@@ -271,7 +271,8 @@ class Video extends Controller
 
             $user_share = new UserShare;
             $user_share->data([
-                'user_id'  => $user_id
+                'user_id'  => $user_id,
+                'video_id' => $video_id
             ]);
             $user_share->save();
 

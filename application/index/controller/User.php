@@ -132,24 +132,32 @@ class User extends Controller
     public function click_share_link()
     {
         try {
-            $share_id = Request::instance()->get('share_id');
+            $from_user_id = Request::instance()->get('from_user_id');
             $user_id = Request::instance()->get('user_id');
+            $video_id = Request::instance()->get('video_id');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
-            if(empty($share_id) || empty($user_id)) {
+            if(empty($from_user_id) || empty($user_id) || empty($video_id)) {
                 $data['c'] = -1024;
                 $data['m'] = 'Arg Missing';
                 return Response::create($data, 'json')->code(200);
             }
 
-            $share_click = new UserShareClick;
-            $share_click->data([
-                'share_id'  => $share_id,
-                'user_id' => $user_id
+            $share_click = UserShareClick::get([
+                'from_user_id' => $from_user_id,
+                'user_id' => $user_id,
+                'video_id' => $video_id
             ]);
-            $share_click->save();
-
+            if(!$share_click) {
+                $share_click = new UserShareClick;
+                $share_click->data([
+                    'from_user_id'  => $from_user_id,
+                    'user_id' => $user_id,
+                    'video_id' => $video_id
+                ]);
+                $share_click->save();
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
