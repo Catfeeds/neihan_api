@@ -129,7 +129,15 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);   
             }
 
-            $data['d'] = ['user_id' => $user->id, 'user_name' => $user->user_name, 'user_avatar' => $user->user_avatar];
+            $data['d'] = [
+                'user_id' => $user->id, 
+                'user_name' => $user->user_name, 
+                'user_avatar' => $user->user_avatar,
+                'gender' => $user->gender,
+                'country' => $user->country,
+                'province' => $user->province,
+                'city' => $user->city
+            ];
 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
