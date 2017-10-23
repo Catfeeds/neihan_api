@@ -8,6 +8,7 @@ use think\Response;
 use think\Loader;
 use think\Db;
 use think\Config;
+use think\Cache;
 
 use app\index\model\User;
 use app\index\model\UserShare;
@@ -37,6 +38,14 @@ class Video extends Controller
                 $data['m'] = 'Arg Missing';
                 return Response::create($data, 'json')->code(200);
             }
+
+            $query_md5 = md5(Request::instance()->url());
+            $cache_data = Cache::get($query_md5);
+            if(!empty($cache_data)) {
+                $data = json_decode($cache_data, true);
+                return Response::create($data, 'json')->code(200);
+            }
+
             
             $q = Db::table('videos')->where('top_comments', 1);
             if ($order == 'share') {
@@ -115,6 +124,9 @@ class Video extends Controller
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
         
+        $cache_data = json_encode($data);
+        Cache::set($query_md5, $cache_data, 120);
+
         return Response::create($data, 'json')->code(200);
     }
 

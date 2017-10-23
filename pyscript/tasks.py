@@ -33,27 +33,29 @@ def send_msg(u):
         return None
 
     params = {
-        "touser": u['openid'],
-        "template_id": "zBzP8szTBl601s14JiOEIfPeGuyKoPED5P0wbPrs_8s",
-        "miniprogram": {
-            "appid": WX_APPID,
-            "pagepath": "index"
-        },
+        "touser": u['openid'].encode('utf8'),
+        "template_id": "zz4lDorC3oe3UsrrObR76xV_n_qv6SxLkjBCdidG8pw",
+        "page": "",
+        "form_id": formid['form_id'].encode('utf8'),
         "data": {
-            "first": {
-                "value": "小道",
+            "keyword1": {
+                "value": "公司筹划的团建活动终于成行，地点就选在了京北的坝上草原。",
                 "color": "#173177"
             },
-            "keynote1": {
-                "value": "向日葵",
+            "keyword2": {
+                "value": "美女视频",
                 "color": "#173177"
             },
-            "keynote2": {
-                "value": "2017/9/26 21:24",
+            "keyword3": {
+                "value": "自媒体文章",
                 "color": "#173177"
             },
-            "keynote3": {
-                "value": "看好你哦",
+            "keyword4": {
+                "value": "2017-9-18",
+                "color": "#173177"
+            },
+            "keyword5": {
+                "value": "神一样的人才",
                 "color": "#173177"
             }
         }
@@ -63,7 +65,7 @@ def send_msg(u):
 
     access_token = wxtoken.get_token()
     api = WX_MSG_API + access_token['access_token']
-    resp = requests.post(api, params)
+    resp = requests.post(api, json.dumps(params, ensure_ascii=False))
     print resp
     print resp.content
     if resp and resp.status_code == 200:
@@ -106,7 +108,8 @@ def is_send_point(currtime=None):
 
 
 def should_send():
-    return True
+    if not MSG_SEND_SWITCH:
+        return False
     flag = False
     currtime = datetime.now()
     if is_send_point(currtime):
@@ -116,16 +119,17 @@ def should_send():
 
 
 def main():
-    while should_send():
-        users = get_users()
-        if users:
-            pools = Pool(WORKER_THREAD_NUM)
-            pools.map(send_msg, users)
+    while True:
+        if should_send():
+            users = get_users()
+            if users:
+                pools = Pool(WORKER_THREAD_NUM)
+                pools.map(send_msg, users)
+            else:
+                logging.info('没有用户，暂停消息推送')
         else:
-            logging.info('没有用户，暂停消息推送')
+            logging.info('还未到消息推送时间点或已发送过消息')
         sleep(60)
-    else:
-        logging.info('还未到消息推送时间点或已发送过消息')
 
 
 if __name__ == '__main__':
