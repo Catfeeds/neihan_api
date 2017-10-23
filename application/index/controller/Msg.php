@@ -8,8 +8,16 @@ class Msg extends Controller
 {
     public function index()
     {
-        $data = ['c' => 0, 'm' => '', 'd' => []];
-        return Response::create($data, 'json')->code(200);
+        $sign = Request::instance()->get('signature');
+        $msg_sign = Request::instance()->get('msg_signature');
+        $timestamp = Request::instance()->get('timestamp');
+        $nonce = Request::instance()->get('nonce');
+        $echostr = Request::instance()->get('echostr');
+        if (!empty($echostr)) {
+            return $echostr;
+        }
+
+        return 'success';
     }
 
 }
