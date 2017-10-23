@@ -3,6 +3,7 @@ namespace app\index\controller;
 
 use think\Controller;
 use think\Response;
+use think\Request;
 
 class Msg extends Controller
 {
