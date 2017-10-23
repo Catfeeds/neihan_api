@@ -5,7 +5,10 @@ import json
 from time import sleep, time
 from settings import *
 
-_filename = '../application/extra/access_token.txt'
+
+_current_pwd = os.path.dirname(os.path.realpath(__file__))
+
+_filename = _current_pwd + '/../application/extra/access_token.txt'
 
 
 def get_token():

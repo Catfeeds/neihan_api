@@ -48,6 +48,30 @@ class User(BaseModel):
         return ret
 
 
+class UserFormId(BaseModel):
+
+    __tablename__ = "users_formids"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    form_id = Column(VARCHAR(128))
+    is_used = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["user_id"] = self.user_id
+        ret["form_id"] = self.form_id
+        ret["is_used"] = self.is_used
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
 class Mgr(object):
 
     def __init__(self, engine):
@@ -67,3 +91,52 @@ class Mgr(object):
         finally:
             self.session.close()
         return ret
+
+    def get_user_formids(self):
+        try:
+            ret = []
+            q = self.session.query(UserFormId, User) \
+                .filter(UserFormId.user_id == User.id)
+            rows = q.all()
+            for row in rows:
+                user = row.User.conv_result()
+                user_formid = row.UserFormId.conv_result()
+                user_formid['openid'] = user['openid']
+                ret.append(user_formid)
+        except Exception as e:
+            logging.warning("get user formid error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def get_user_formid(self, user_id, is_used=0):
+        try:
+            ret = {}
+            available_time = int(time()) - 864000 * 6
+            q = self.session.query(UserFormId) \
+                .filter(UserFormId.user_id == int(user_id)) \
+                .filter(UserFormId.is_used == int(is_used)) \
+                .filter(UserFormId.create_time >= available_time) \
+                .order_by(UserFormId.create_time.asc())
+
+            rows = q.all()
+            for row in rows:
+                ret = row.conv_result()
+                break
+        except Exception as e:
+            logging.warning("get users error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def user_formid_used(self, formid):
+        try:
+            self.session.query(UserFormId) \
+                .filter(UserFormId.id == formid) \
+                .update({'is_used': 1, 'update_time': int(time())}, synchronize_session='fetch')
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("user formid used error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()

@@ -8,7 +8,7 @@ from time import sleep
 from datetime import datetime
 from settings import *
 from models import *
-from wxtoken import get_token
+import wxtoken
 
 
 _db_url = 'mysql+mysqldb://%s:%s@%s/%s?charset=utf8mb4' % \
@@ -19,51 +19,64 @@ _db_url = 'mysql+mysqldb://%s:%s@%s/%s?charset=utf8mb4' % \
 _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 
 
+_current_pwd = os.path.dirname(os.path.realpath(__file__))
+
+
 def get_users():
-    ret = _mgr.get_users()
-    return ret
+    return _mgr.get_users()
 
 
 def send_msg(u):
-    params = {
-      "touser": u['openid'],
-      "template_id": "XXXXXXXXXXXXXXXXX",
-      "page": "index",
-      "form_id": 'xXXXX',
-      "data": {
-          "keyword1": {
-              "value": "339208499",
-              "color": "#173177"
-          },
-          "keyword2": {
-              "value": "2015年01月05日 12:30",
-              "color": "#173177"
-          },
-          "keyword3": {
-              "value": "粤海喜来登酒店",
-              "color": "#173177"
-          },
-          "keyword4": {
-              "value": "广州市天河区天河路208号",
-              "color": "#173177"
-          }
-      },
-      "emphasis_keyword": "keyword1.DATA"
-    }
-    return None
+    formid = _mgr.get_user_formid(u['id'])
+    if not formid:
+        logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
+        return None
 
-    resp = requests.post(WX_MSG_API, params)
+    params = {
+        "touser": u['openid'],
+        "template_id": "zBzP8szTBl601s14JiOEIfPeGuyKoPED5P0wbPrs_8s",
+        "miniprogram": {
+            "appid": WX_APPID,
+            "pagepath": "index"
+        },
+        "data": {
+            "first": {
+                "value": "小道",
+                "color": "#173177"
+            },
+            "keynote1": {
+                "value": "向日葵",
+                "color": "#173177"
+            },
+            "keynote2": {
+                "value": "2017/9/26 21:24",
+                "color": "#173177"
+            },
+            "keynote3": {
+                "value": "看好你哦",
+                "color": "#173177"
+            }
+        }
+    }
+    print params
+    _mgr.user_formid_used(formid['id'])
+
+    access_token = wxtoken.get_token()
+    api = WX_MSG_API + access_token['access_token']
+    resp = requests.post(api, params)
+    print resp
+    print resp.content
     if resp and resp.status_code == 200:
         content = resp.json()
-        if content['errcode'] != 0:
-            logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['m']))
+        if content['errcode'] == 0:
+            logging.info('用户{}-{}的消息推送成功'.format(u['openid'], u['user_name'].encode('utf8')))
         else:
-            logging.info('用户{}的消息推送成功'.format(u['openid']))
+            logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['errmsg']))
 
 
 def is_sended(currtime=None):
     flag = True
-    filename = 'res/send_{}.txt'.format(currtime.strftime('%Y%m%d%H'))
+    filename = _current_pwd + '/res/send_{}.txt'.format(currtime.strftime('%Y%m%d%H'))
     if not os.path.isfile(filename):
         with open(filename, 'wb') as f:
             pass
@@ -93,6 +106,7 @@ def is_send_point(currtime=None):
 
 
 def should_send():
+    return True
     flag = False
     currtime = datetime.now()
     if is_send_point(currtime):

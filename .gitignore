@@ -6,3 +6,5 @@ application/database.php
 application/config.php
 application/extra
 public/static/code/*
+*.pyc
+pyscript/settings.py
