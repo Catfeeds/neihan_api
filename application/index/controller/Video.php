@@ -78,13 +78,14 @@ class Video extends Controller
                     'content' => $val['content'],
                     'create_time' => $val['create_time'],
                     'digg_count' => $val['digg_count'],
-                    'comment_count' => $val['comment_count']
+                    'comment_count' => $val['comment_count'],
+                    'is_digg' => 0
                 );;
             }
 
             # 查询是否点过赞
-            /*
             $diggs = [];
+            /*
             $records = Db::table('users_logs')
                 ->where('user_id', $user_id)
                 ->where('video_id', 'in', $vids)
@@ -95,17 +96,15 @@ class Video extends Controller
             foreach ($records as $record) {
                 $diggs[] = $record['video_id'];
             }
+            */
 
-            # 把评论数、是否点赞 装到响应的数组里
+            # 把评论数装到响应的数组里
             foreach ($data['d'] as $k => &$v) {
                 if(array_key_exists($v['video_id'], $hot_comments)) {
                     $v['comments'] = $hot_comments[$v['video_id']];
                 }
-                if(in_array($v['video_id'], $diggs)) {
-                    $v['is_digg'] = 1;
-                }
             }
-            */
+            
 
             # 更新视频展示数
             Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
@@ -171,10 +170,16 @@ class Video extends Controller
             }
 
             $top_comments = Db::table('comments')->where('group_id', $record['group_id'])
-                                                    ->limit(10)
+                                                    ->limit(5)
                                                     ->order('id', 'desc')
                                                     ->select();
             foreach ($top_comments as $val) {
+                $is_digg = Db::table('users_logs')
+                                    ->where('user_id', $user_id)
+                                    ->where('video_id', $val['id'])
+                                    ->where('type', 7)
+                                    ->count();
+                
                 $info['comments'][] = array(
                     'comment_id' => $val['id'],
                     'user_name' => $val['user_name'],
@@ -182,8 +187,10 @@ class Video extends Controller
                     'content' => $val['content'],
                     'create_time' => $val['create_time'],
                     'digg_count' => $val['digg_count'],
-                    'comment_count' => $val['comment_count']
+                    'comment_count' => $val['comment_count'],
+                    'is_digg' => $is_digg ? 1 : 0
                 );
+
             }
             $data['d'] = $info;
         } catch (Exception $e) {
