@@ -1,8 +1,10 @@
 # coding=utf8
 from gevent import monkey;monkey.patch_all()
 from gevent.pool import Pool
+from concurrent.futures import ThreadPoolExecutor
 import requests
 import traceback
+from tomorrow import threads
 
 
 total_success, total_fail = 0, 0
@@ -22,8 +24,8 @@ def get_page(api):
 
 
 def main():
-    api = 'http://wx.js101.wang/api/videos?p=1n=10&user_id=6'
-    pools = Pool(50)
+    api = 'https://wx.js101.wang/api/videos?p=1n=10&user_id=6'
+    pools = Pool(15)
     apis = [api for x in range(1000)]
     pools.map(get_page, apis)
     print 'Total Success {}, Total Fail {}'.format(total_success, total_fail)

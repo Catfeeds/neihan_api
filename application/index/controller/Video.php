@@ -39,26 +39,9 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $query_md5 = md5(Request::instance()->url());
-            $cache_data = Cache::get($query_md5);
-            if(!empty($cache_data)) {
-                $data = json_decode($cache_data, true);
-                return Response::create($data, 'json')->code(200);
-            }
 
-            
-            $q = Db::table('videos')->where('top_comments', 1);
-            if ($order == 'share') {
-                $q = $q->order('share_count', 'desc');
-            } elseif ($order == 'online') {
-                $q = $q->order('online_time', 'desc');
-            } else {
-                $q = $q->order('comment_count', 'desc');
-            }
-            $q = $q->limit($n)->page($p);
-            $records = $q->select();
-
-            $vids = [];
+            $sql = 'SELECT * FROM videos v WHERE category_id in (65, 109) AND top_comments = 1 AND group_id NOT IN ( SELECT video_id FROM users_logs WHERE user_id = :user_id  AND type = 1 ) ORDER BY comment_count DESC LIMIT  :p, :n';
+            $records = Db::query($sql, ['user_id' => $user_id, 'p' => $p, 'n' => $n]);
             foreach ($records as $key => $record) {
                 $vids[] = $record['group_id'];
 
@@ -79,54 +62,68 @@ class Video extends Controller
                     'is_digg' => 0,
                     'comments' => array()
                 );
-
-                $is_digg = Db::table('users_logs')
-                                    ->where('user_id', $user_id)
-                                    ->where('video_id', $info['video_id'])
-                                    ->where('type', 6)
-                                    ->count();
-                if($is_digg) {
-                    $info['is_digg'] = 1;
-                }
-
-                $top_comments = Db::table('comments')->where('group_id', $record['group_id'])
-                                                        ->limit(10)
-                                                        ->order('id', 'desc')
-                                                        ->select();
-                foreach ($top_comments as $val) {
-                    $info['comments'][] = array(
-                        'comment_id' => $val['id'],
-                        'user_name' => $val['user_name'],
-                        'user_avatar' => $val['user_avatar'],
-                        'content' => $val['content'],
-                        'create_time' => $val['create_time'],
-                        'digg_count' => $val['digg_count'],
-                        'comment_count' => $val['comment_count']
-                    );
-                }
-
                 $data['d'][] = $info;
             }
 
-            # 更新视频展示数
-            Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
-            if(!empty($user_id)) {
-                $display_logs = [];
-                foreach ($vids as $vid) {
-                    $display_logs[] = ['user_id' => $user_id, 'video_id' => $vid, 'type'=>1];
-                }
-                $use_log = new UserLog;
-                $use_log->saveAll($display_logs);
+            # 评论数
+            $hot_comments = [];
+            $records = Db::table('comments')->where('group_id', 'in', $vids)
+                                                    ->order('id', 'desc')
+                                                    ->select();
+            foreach($records as $k => $val) {
+                $hot_comments[$val['group_id']][] = array(
+                    'comment_id' => $val['id'],
+                    'user_name' => $val['user_name'],
+                    'user_avatar' => $val['user_avatar'],
+                    'content' => $val['content'],
+                    'create_time' => $val['create_time'],
+                    'digg_count' => $val['digg_count'],
+                    'comment_count' => $val['comment_count']
+                );;
             }
 
+            # 查询是否点过赞
+            /*
+            $diggs = [];
+            $records = Db::table('users_logs')
+                ->where('user_id', $user_id)
+                ->where('video_id', 'in', $vids)
+                ->where('type', '6')
+                ->field('video_id')
+                ->group('video_id')
+                ->select();
+            foreach ($records as $record) {
+                $diggs[] = $record['video_id'];
+            }
 
+            # 把评论数、是否点赞 装到响应的数组里
+            foreach ($data['d'] as $k => &$v) {
+                if(array_key_exists($v['video_id'], $hot_comments)) {
+                    $v['comments'] = $hot_comments[$v['video_id']];
+                }
+                if(in_array($v['video_id'], $diggs)) {
+                    $v['is_digg'] = 1;
+                }
+            }
+            */
+
+            # 更新视频展示数
+            Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
+            
+            if(!empty($user_id)) {
+                $curr_time = time();
+                $display_sql = "INSERT INTO `users_logs` (`user_id` , `video_id` , `type` , `create_time` , `update_time`) VALUES ";
+                $display_logs = [];
+                foreach ($vids as $vid) {
+                    $display_logs[] = "({$user_id} , {$vid} , 1 , {$curr_time} , {$curr_time})";
+                }
+                $display_sql = $display_sql . join(',', $display_logs);
+                Db::execute($display_sql);
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
         
-        $cache_data = json_encode($data);
-        Cache::set($query_md5, $cache_data, 120);
-
         return Response::create($data, 'json')->code(200);
     }
 

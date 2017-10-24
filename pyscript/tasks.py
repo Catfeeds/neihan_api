@@ -108,6 +108,7 @@ def is_send_point(currtime=None):
 
 
 def should_send():
+    return True
     if not MSG_SEND_SWITCH:
         return False
     flag = False

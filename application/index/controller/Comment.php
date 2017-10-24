@@ -7,10 +7,12 @@ use think\Request;
 use think\Response;
 use think\Loader;
 use think\Db;
+use think\Config;
 
 use app\index\model\User;
 use app\index\model\UserShare;
 use app\index\model\Video as Video_Model;
+use app\index\model\UserLog;
 use app\index\model\Comment as Comment_Model;
 
 class Comment extends Controller
@@ -49,15 +51,25 @@ class Comment extends Controller
             }
 
             $comment = Comment_Model::get(['id' => $comment_id]);
-            if(empty($video)) {
+            if(empty($comment)) {
                 $data['c'] = -1024;
-                $data['m'] = 'Video Not Exists';
+                $data['m'] = 'Comment Not Exists';
                 return Response::create($data, 'json')->code(200);   
             }
             if($type == 'digg') {
                 $comment->digg_count += 1;
             }
             $comment->save();
+
+            $com_config = Config::get('comconfig');
+            $user_log = New UserLog;
+            $user_log->data([
+                'user_id' => $user_id,
+                'video_id' => $comment_id,
+                'type' => 7
+            ]);
+            $user_log->save();
+
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
