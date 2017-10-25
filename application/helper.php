@@ -99,3 +99,8 @@ function xml_to_data($xml)
     $data  = json_decode($json, true);
     return $data;
 }
+
+function timestamp_url($url)
+{
+    return str_replace('timestamp', strval(time()).'.'.strval(rand(10, 60)), $url);
+}

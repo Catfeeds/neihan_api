@@ -36,6 +36,10 @@ ALTER TABLE `videos` ADD COLUMN `c_digg_count` INT(11) NOT NULL DEFAULT '0' COMM
 ALTER TABLE `videos` ADD COLUMN `c_share_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的分享次数';
 ALTER TABLE `videos` ADD COLUMN `c_comment_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的评论次数';
 ALTER TABLE `videos` ADD COLUMN `c_display_count` INT(11) NOT NULL DEFAULT '0' COMMENT '本记录的展示次数';
+ALTER TABLE `videos` ADD COLUMN `level` INT(11) NOT NULL DEFAULT '1' COMMENT '视频等级,用4位二进制表示,0001普通、0010热度推荐、0100精品推荐';
+ALTER TABLE `videos` ADD COLUMN `display_click_ratio` DECIMAL(8, 3) NOT NULL DEFAULT '0' COMMENT '展示点击率';
+ALTER TABLE `videos` ADD COLUMN `display_share_ratio` DECIMAL(8, 3) NOT NULL DEFAULT '0' COMMENT '展示转发率';
+ALTER TABLE `videos` ADD COLUMN `hot_ratio` DECIMAL(8, 3) NOT NULL DEFAULT '0' COMMENT '兴趣热度';
 
 
 CREATE TABLE IF NOT EXISTS `comments` (
