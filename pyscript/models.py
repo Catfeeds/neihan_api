@@ -211,7 +211,7 @@ class Mgr(object):
 
     def update_video_level(self):
         try:
-            sql = 'UPDATE videos SET level = level+2 WHERE hot_ratio >= 0.1 AND level NOT IN (2, 6)'
+            sql = 'UPDATE videos SET level = level+2 WHERE hot_ratio >= 0.1 AND level NOT IN (2, 6) and c_display_count >= 1000'
             self.session.execute(sql)
             self.session.commit()
         except Exception as e:
