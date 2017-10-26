@@ -14,6 +14,7 @@ use app\index\model\UserShare;
 use app\index\model\Video as Video_Model;
 use app\index\model\UserLog;
 use app\index\model\Comment as Comment_Model;
+use app\index\Model\VideoDisplayLog;
 
 class Comment extends Controller
 {

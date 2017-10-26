@@ -15,6 +15,7 @@ use app\index\model\UserShare;
 use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
 use app\index\model\Comment;
+use app\index\model\VideoDisplayLogs;
 
 class Video extends Controller
 {
@@ -59,10 +60,10 @@ class Video extends Controller
                 Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
             
                 $curr_time = time();
-                $display_sql = "INSERT INTO `users_logs` (`user_id` , `video_id` , `type` , `create_time` , `update_time`) VALUES ";
+                $display_sql = "INSERT INTO `videos_display_logs` (`user_id` , `video_id` , `create_time` , `update_time`) VALUES ";
                 $display_logs = [];
                 foreach ($vids as $vid) {
-                    $display_logs[] = "({$user_id} , {$vid} , 1 , {$curr_time} , {$curr_time})";
+                    $display_logs[] = "({$user_id} , {$vid} , {$curr_time} , {$curr_time})";
                 }
                 $display_sql = $display_sql . join(',', $display_logs);
                 Db::execute($display_sql);
@@ -234,6 +235,9 @@ class Video extends Controller
             }
 
             $video->c_share_count += 1;
+            if($video->level < 4 and $video->c_share_count >= 10) {
+                $video->level += 4;
+            }
             $video->save();
 
             $user_share = new UserShare;

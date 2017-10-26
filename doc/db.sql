@@ -119,5 +119,23 @@ CREATE TABLE IF NOT EXISTS  `users_formids` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '收集用户formid,用于消息推送';
 
 
+CREATE TABLE IF NOT EXISTS  `videos_display_logs` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `video_id` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '视频ID',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '视频展示记录表';
+
+
+CREATE TABLE IF NOT EXISTS  `settings` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `online` INT(11) NOT NULL COMMENT 'API是否上线',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT 'API配置表';
+
 
 

@@ -26,7 +26,7 @@ class Video extends Model
             $sql_where .= " AND c_display_count < 1000 ";
         }
 
-        $sql_where .= " AND group_id NOT IN (SELECT video_id FROM users_logs WHERE user_id = :user_id AND type = 1)";
+        $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
         $sql_order = " ORDER BY comment_count DESC ";
         $sql_limit = "LIMIT {$p}, {$n}";
 
