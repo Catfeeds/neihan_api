@@ -27,7 +27,7 @@ class Video extends Model
         }
 
         $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
-        $sql_order = " ORDER BY c_display_count DESC, comment_count DESC ";
+        $sql_order = " ORDER BY display_share_ratio DESC, comment_count DESC ";
         $sql_limit = " LIMIT ".(($p-1)*$n).", {$n}";
 
         $sql = $sql_select.$sql_where.$sql_order.$sql_limit;
