@@ -200,7 +200,7 @@ class Mgr(object):
 
     def update_video_hot_ratio(self):
         try:
-            sql = 'UPDATE videos SET hot_ratio = c_digg_count+c_comment_count*5/c_play_end_count WHERE c_play_end_count >= 1'
+            sql = 'UPDATE videos SET hot_ratio = (c_digg_count+c_comment_count*5)*1.0/c_play_end_count WHERE c_play_end_count >= 1'
             self.session.execute(sql)
             self.session.commit()
         except Exception as e:
