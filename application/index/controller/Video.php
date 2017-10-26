@@ -16,6 +16,7 @@ use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
 use app\index\model\Comment;
 use app\index\model\VideoDisplayLogs;
+use app\index\model\Setting;
 
 class Video extends Controller
 {
@@ -41,14 +42,21 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $video_model = new Video_Model;
-            $video_awsome = $video_model->get_videos($user_id, [4]);
-            $video_hot = $video_model->get_videos($user_id, [2]);
+            $settings = Setting::get(1);
+            if($settings['online'] == 0) {
+                $video_model = new Video_Model;
+                $video_awsome = $video_model->get_videos($user_id, [4]);
+                $video_hot = $video_model->get_videos($user_id, [2]);
 
-            $last_num = $n - count($video_awsome) - count($video_hot);
-            $video_normal = $video_model->get_videos($user_id, [0, 1], $last_num);
+                $last_num = $n - count($video_awsome) - count($video_hot);
+                $video_normal = $video_model->get_videos($user_id, [0, 1], $last_num);
 
-            $data['d'] = array_merge($video_awsome, $video_hot, $video_normal);
+                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal);
+            } else {
+                $video_model = new Video_Model;
+                $data['d'] = $video_model->get_videos_online($user_id, $p, $n);
+            }
+            
 
             $vids = [];
             foreach ($data['d'] as $val) {
@@ -181,6 +189,9 @@ class Video extends Controller
 
             if($type == 'digg') {
                 $video->c_digg_count += 1;
+                if($user_id == 10) {
+                    $video->online = 1;
+                }
             } elseif($type == 'bury') {
                 $video->c_bury_count += 1;
             } elseif($type == 'play') {

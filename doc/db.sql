@@ -40,6 +40,7 @@ ALTER TABLE `videos` ADD COLUMN `level` INT(11) NOT NULL DEFAULT '1' COMMENT '�
 ALTER TABLE `videos` ADD COLUMN `display_click_ratio` DECIMAL(8, 3) NOT NULL DEFAULT '0' COMMENT '展示点击率';
 ALTER TABLE `videos` ADD COLUMN `display_share_ratio` DECIMAL(8, 3) NOT NULL DEFAULT '0' COMMENT '展示转发率';
 ALTER TABLE `videos` ADD COLUMN `hot_ratio` DECIMAL(8, 3) NOT NULL DEFAULT '0' COMMENT '兴趣热度';
+ALTER TABLE `videos` ADD COLUMN `online` INT(11) NOT NULL DEFAULT '0' COMMENT '用于上线审核的视频';
 
 
 CREATE TABLE IF NOT EXISTS `comments` (
