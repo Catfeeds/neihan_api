@@ -99,6 +99,8 @@ class Video extends Controller
             }
 
             $record = Video_Model::get(['item_id' => $video_id]);
+            $record->c_display_count += 1;
+            $record->save();
 
             $info = array(
                 'video_id' => strval($record['group_id']),
