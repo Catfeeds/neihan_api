@@ -43,7 +43,7 @@ class Video extends Controller
             }
 
             $settings = Setting::get(1);
-            if($settings['online'] == 0) {
+            if($settings['online'] == 1) {
                 $video_model = new Video_Model;
                 $video_awsome = $video_model->get_videos($user_id, [4]);
                 $video_hot = $video_model->get_videos($user_id, [2]);
@@ -54,7 +54,7 @@ class Video extends Controller
                 $data['d'] = array_merge($video_awsome, $video_hot, $video_normal);
             } else {
                 $video_model = new Video_Model;
-                $data['d'] = $video_model->get_videos_online($user_id, $p, $n);
+                $data['d'] = $video_model->get_videos_waitting($user_id, $p, $n);
             }
             
 

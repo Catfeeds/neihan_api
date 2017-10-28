@@ -71,7 +71,7 @@ class Video extends Model
         return $ret;
     }
 
-    public function get_videos_online($user_id, $p, $n)
+    public function get_videos_waitting($user_id, $p, $n)
     {
         $ret = [];
 
