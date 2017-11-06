@@ -18,7 +18,7 @@ class Video extends Model
         $p = 1;
 
         $sql_select = "SELECT * FROM videos";
-        $sql_where = " WHERE category_id IN (65) AND top_comments = 1 ";
+        $sql_where = " WHERE category_id IN (65, 1111) AND top_comments = 1 ";
         if(!empty($level)) {
             $sql_where .= " AND level IN (".join(',', $level).")";
         }
