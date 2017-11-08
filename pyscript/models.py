@@ -2,7 +2,7 @@
 # encoding: utf-8
 # 共用表定义
 import time
-from random import randint
+from random import randrange
 from sqlalchemy import *
 from sqlalchemy import create_engine, Column, ForeignKey, String, Integer, Numeric, DateTime, Boolean, and_, or_, func
 from sqlalchemy.ext.declarative import declarative_base
@@ -76,6 +76,7 @@ class Video(BaseModel):
     __tablename__ = "videos"
     id = Column("id", Integer, primary_key=True)
 
+    group_id = Column(VARCHAR(64))
     content = Column(VARCHAR(1024))
 
     play_count = Column(Integer, default=0)
@@ -97,6 +98,7 @@ class Video(BaseModel):
     def conv_result(self):
         ret = {}
         ret["id"] = self.id
+        ret["group_id"] = self.group_id
         ret["content"] = self.content
 
         ret["play_count"] = int(self.play_count)
@@ -223,7 +225,7 @@ class Mgr(object):
             ret = {}
             rows = self.session.query(Video) \
                 .order_by(Video.display_click_ratio.desc()) \
-                .limit(1)
+                .offset(int(randrange(0, 100))).limit(1)
             for row in rows:
                 ret = row.conv_result()
                 break
