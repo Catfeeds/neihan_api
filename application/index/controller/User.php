@@ -94,12 +94,12 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);   
             }
 
-            $user->user_name = $user_name;
-            $user->user_avatar = $user_avatar;
-            $user->gender = $gender;
-            $user->country = $country;
-            $user->province = $province;
-            $user->city = $city;
+            $user->user_name = $user_name ? $user_name : '';
+            $user->user_avatar = $user_avatar ? $user_avatar : '';
+            $user->gender = $gender ? $gender : 0;
+            $user->country = $country ? $country : '';
+            $user->province = $province ? $province : '';
+            $user->city = $city ? $city : '';
             $user->save();
 
         } catch (Exception $e) {
