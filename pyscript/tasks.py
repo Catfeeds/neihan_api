@@ -26,7 +26,9 @@ def get_users():
     return _mgr.get_users()
 
 
-def send_msg(u):
+def send_msg(arg):
+    u = arg['u']
+    video = arg['video']
     formid = _mgr.get_user_formid(u['id'])
     if not formid:
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
@@ -34,40 +36,30 @@ def send_msg(u):
 
     params = {
         "touser": u['openid'].encode('utf8'),
-        "template_id": "zz4lDorC3oe3UsrrObR76xV_n_qv6SxLkjBCdidG8pw",
-        "page": "",
+        "template_id": "b3LcHY9sb99wk0ykkoJ85hhxZ0S1jX3lKgWaxtNVKds",
+        "page": "pages/index/index?video_id={}&from_user_id=10".format(video['group_id'].encode('utf8')),
         "form_id": formid['form_id'].encode('utf8'),
         "data": {
             "keyword1": {
-                "value": "公司筹划的团建活动终于成行，地点就选在了京北的坝上草原。",
+                "value": video['content'].encode('utf8'),
                 "color": "#173177"
             },
             "keyword2": {
-                "value": "美女视频",
+                "value": "美女&搞笑视频",
                 "color": "#173177"
             },
             "keyword3": {
-                "value": "自媒体文章",
-                "color": "#173177"
-            },
-            "keyword4": {
-                "value": "2017-9-18",
-                "color": "#173177"
-            },
-            "keyword5": {
-                "value": "神一样的人才",
+                "value": "众多精彩视频尽在极品内涵段子君",
                 "color": "#173177"
             }
         }
     }
-    print params
     _mgr.user_formid_used(formid['id'])
 
     access_token = wxtoken.get_token()
     api = WX_MSG_API + access_token['access_token']
     resp = requests.post(api, json.dumps(params, ensure_ascii=False))
     print resp
-    print resp.content
     if resp and resp.status_code == 200:
         content = resp.json()
         if content['errcode'] == 0:
@@ -124,8 +116,10 @@ def main():
         if should_send():
             users = get_users()
             if users:
+                video = _mgr.get_hot_video()
+                args = [{'u': user, 'video': video} for user in users]
                 pools = Pool(WORKER_THREAD_NUM)
-                pools.map(send_msg, users)
+                pools.map(send_msg, args)
             else:
                 logging.info('没有用户，暂停消息推送')
         else:
@@ -135,3 +129,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # video = _mgr.get_hot_video()
+    # print video

@@ -218,6 +218,21 @@ class Mgr(object):
             self.session.rollback()
             logging.warning("update video hot ratio error : %s" % e, exc_info=True)
 
+    def get_hot_video(self):
+        try:
+            ret = {}
+            rows = self.session.query(Video) \
+                .order_by(Video.display_click_ratio.desc()) \
+                .limit(1)
+            for row in rows:
+                ret = row.conv_result()
+                break
+        except Exception as e:
+            logging.warning("get hot video error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
     '''
     def count_showed_videos(self):
         try:
