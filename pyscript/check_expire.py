@@ -27,7 +27,7 @@ def check(video):
 
 
 def main():
-    for i in xrange(2):
+    for i in xrange(1000):
         params = {
             'category': [65, 1111],
             'is_expired': 0,
@@ -35,6 +35,8 @@ def main():
             'offset': i*1000
         }
         videos = _mgr.get_videos(params)
+        if len(videos) == 0:
+            break
         pools = Pool(100)
         pools.map(check, videos)
 
