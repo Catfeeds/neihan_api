@@ -18,7 +18,10 @@ _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 def check(video):
     logging.info('check video is expired: {}'.format(video.content.encode('utf8')))
     url = video.vurl
-    r = requests.head(url, allow_redirects=True)
+    r = requests.head(url, allow_redirects=True, timeout=10)
+    if r and r.status_code != 200:
+        print r
+        return None
     for h in r.history:
         if '22000000000000000000000000000000000' in h.headers['Location']:
             logging.info('this video is expired: {}'.format(video.content.encode('utf8')))
@@ -37,10 +40,9 @@ def main():
         videos = _mgr.get_videos(params)
         if len(videos) == 0:
             break
-        pools = Pool(100)
+        pools = Pool(5)
         pools.map(check, videos)
-
-        sleep(5)
+        sleep(10)
 
 
 if __name__ == '__main__':
