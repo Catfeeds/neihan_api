@@ -78,6 +78,7 @@ class Video(BaseModel):
 
     group_id = Column(VARCHAR(64))
     content = Column(VARCHAR(1024))
+    category_id = Column(Integer, default=0)
 
     play_count = Column(Integer, default=0)
     share_count = Column(Integer, default=0)
@@ -94,6 +95,9 @@ class Video(BaseModel):
     display_click_ratio = Column(Numeric, default=0)
     display_share_ratio = Column(Numeric, default=0)
     hot_ratio = Column(Numeric, default=0)
+
+    vurl = Column(VARCHAR(512))
+    is_expired = Column(Integer, default=0)
 
     def conv_result(self):
         ret = {}
@@ -116,6 +120,8 @@ class Video(BaseModel):
         ret["display_click_ratio"] = float(self.display_click_ratio)
         ret["display_share_ratio"] = float(self.display_share_ratio)
         ret["hot_ratio"] = float(self.hot_ratio)
+        ret["vurl"] = self.vurl
+        ret["is_expired"] = self.is_expired
 
         return ret
 
@@ -220,6 +226,16 @@ class Mgr(object):
             self.session.rollback()
             logging.warning("update video hot ratio error : %s" % e, exc_info=True)
 
+    def update_video_expired(self, video_id):
+        try:
+            self.session.query(Video) \
+                .filter(Video.id == video_id) \
+                .update({'is_expired': 1}, synchronize_session='fetch')
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("update video expired error : %s" % e, exc_info=True)
+
     def get_hot_video(self):
         try:
             ret = {}
@@ -231,6 +247,29 @@ class Mgr(object):
                 break
         except Exception as e:
             logging.warning("get hot video error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+
+        return ret
+
+    def get_videos(self, params={}):
+        try:
+            ret = []
+            q = self.session.query(Video.id, Video.vurl, Video.content)
+            if params.get('category', '') != '':
+                q = q.filter(Video.category_id.in_(params['category']))
+            if params.get('is_expired', '') != '':
+                q = q.filter(Video.is_expired == int(params['is_expired']))
+
+            if params.get('offset', '') != '':
+                q = q.offset(params['offset'])
+            if params.get('limit', '') != '':
+                q = q.limit(params['limit'])
+            rows = q.all()
+            if rows:
+                return rows
+        except Exception as e:
+            logging.warning("get all video error : %s" % e, exc_info=True)
         finally:
             self.session.close()
         return ret

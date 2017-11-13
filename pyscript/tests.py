@@ -1,36 +1,12 @@
 # coding=utf8
-from gevent import monkey;monkey.patch_all()
-from gevent.pool import Pool
-from concurrent.futures import ThreadPoolExecutor
 import requests
-import traceback
-from tomorrow import threads
 
+url = 'http://i.snssdk.com/neihan/video/playback/1510344201.46/?video_id=8ec7d4fcf1f94764aed20b281d937089&quality=origin&line=0&is_gif=0.mp4'
 
-total_success, total_fail = 0, 0
+url2 = 'http://ic.snssdk.com/neihan/video/playback/1510540850.21/?video_id=b3093b0198d64fb4b60f2fb0367118ab&quality=720p&line=1&is_gif=0&device_platform=android'
 
-
-def get_page(api):
-    global total_success
-    global total_fail
-    try:
-        resp = requests.get(api, timeout=10)
-        total_success += 1
-        print resp
-    except:
-        traceback.print_exc()
-        total_fail += 1
-        print 'timeout'
-
-
-def main():
-    api = 'https://wx.js101.wang/api/videos?p=1n=10&user_id=6'
-    pools = Pool(15)
-    apis = [api for x in range(1000)]
-    pools.map(get_page, apis)
-    print 'Total Success {}, Total Fail {}'.format(total_success, total_fail)
-    print 'Script Done'
-
-
-if __name__ == '__main__':
-    main()
+r = requests.head(url2, allow_redirects=True)
+for h in r.history:
+    if '22000000000000000000000000000000000' in h.headers['Location']:
+        print 'this video is expired'
+        break
