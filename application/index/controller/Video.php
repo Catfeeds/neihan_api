@@ -262,7 +262,7 @@ class Video extends Controller
             }
 
             $video->c_share_count += 1;
-            if($video->level < 4 and $video->c_display_count >= 1000 and $video->c_share_count >= 10) {
+            if($video->level < 4 and $video->c_display_count >= 100 and $video->c_share_count >= 10) {
                 $video->level += 4;
             }
             $video->save();
