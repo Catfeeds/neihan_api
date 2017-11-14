@@ -12,6 +12,7 @@ use think\Config;
 use app\index\model\User as User_Model;
 use app\index\model\UserShare;
 use app\index\model\UserShareClick;
+use app\index\model\UserFission;
 use app\index\model\UserFormId;
 
 
@@ -174,6 +175,21 @@ class User extends Controller
                     'video_id' => $video_id
                 ]);
                 $share_click->save();
+            }
+
+            # 记录用户裂变数据
+            $share_fission = UserFission::get([
+                'from_user_id' => $from_user_id,
+                'user_id' => $user_id,
+            ]);
+            if(!$share_fission) {
+                $share_fission = new UserFission;
+                $share_fission->data([
+                    'from_user_id'  => $from_user_id,
+                    'user_id' => $user_id,
+                    'video_id' => $video_id
+                ]);
+                $share_fission->save();
             }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];

@@ -120,6 +120,17 @@ CREATE TABLE IF NOT EXISTS  `users_formids` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '收集用户formid,用于消息推送';
 
 
+CREATE TABLE IF NOT EXISTS `users_fissions` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `video_id` VARCHAR(63) NOT NULL DEFAULT '' COMMENT '视频ID',
+    `user_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '点击分享链接的用户',
+    `from_user_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '生成分享链接的用户',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '用户裂变记录表';
+
+
 CREATE TABLE IF NOT EXISTS  `videos_display_logs` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL COMMENT '用户ID',
