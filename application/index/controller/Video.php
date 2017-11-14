@@ -134,6 +134,9 @@ class Video extends Controller
                                                     ->order('id', 'desc')
                                                     ->select();
             foreach ($top_comments as $val) {
+                if(empty($val['content'])) {
+                    continue;
+                }
                 $is_digg = Db::table('users_logs')
                                     ->where('user_id', $user_id)
                                     ->where('video_id', $val['id'])
