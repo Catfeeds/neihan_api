@@ -136,7 +136,7 @@ class Mgr(object):
     def get_users(self):
         try:
             ret = []
-            q = self.session.query(User)
+            q = self.session.query(User).filter(User.skip_msg == 0)
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())
