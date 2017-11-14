@@ -36,6 +36,7 @@ class User(BaseModel):
     openid = Column(VARCHAR(64))
     user_name = Column(VARCHAR(128))
     user_avatar = Column(VARCHAR(512))
+    skip_msg = Column(Integer)
 
     def conv_result(self):
         ret = {}
@@ -44,6 +45,7 @@ class User(BaseModel):
         ret["openid"] = self.openid
         ret["user_name"] = self.user_name
         ret["user_avatar"] = self.user_avatar
+        ret["skip_msg"] = self.skip_msg
 
         return ret
 
