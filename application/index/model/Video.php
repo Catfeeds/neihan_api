@@ -18,7 +18,9 @@ class Video extends Model
         $p = 1;
 
         $sql_select = "SELECT * FROM videos";
-        $sql_where = " WHERE category_id IN (65, 1111) AND top_comments = 1 ";
+        # $sql_where = " WHERE category_id IN (65, 1111) AND top_comments = 1 ";
+        $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
+
         if(!empty($level)) {
             $sql_where .= " AND level IN (".join(',', $level).")";
         }
@@ -34,7 +36,7 @@ class Video extends Model
 
         $records = Db::query($sql, ['user_id' => $user_id]);
         foreach ($records as $key => $record) {
-            $comments = json_decode($record['comments'], true);
+            # $comments = json_decode($record['comments'], true);
 
             $info = array(
                 'video_id' => strval($record['group_id']),
@@ -54,6 +56,8 @@ class Video extends Model
                 'level' => $record['level'],
                 'comments' => []
             );
+
+            /*
             if(!empty($comments)) {
                 foreach ($comments as $c) {
                     $info['comment'][] = [
@@ -66,6 +70,8 @@ class Video extends Model
                     ];
                 }
             }
+            */
+
             $ret[] = $info;
         }
         return $ret;
