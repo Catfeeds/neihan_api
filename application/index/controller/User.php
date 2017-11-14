@@ -180,7 +180,6 @@ class User extends Controller
 
                 # 记录用户裂变数据
                 $share_fission = UserFission::get([
-                    'from_user_id' => $from_user_id,
                     'user_id' => $user_id,
                 ]);
                 if(!$share_fission) {
