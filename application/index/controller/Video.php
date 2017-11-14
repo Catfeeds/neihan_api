@@ -157,11 +157,11 @@ class Video extends Controller
             }
             if(empty($info['comments']))  {
                 $info['comments'][] = array(
-                    'comment_id' => 0,
+                    'comment_id' => 1,
                     'user_name' => $record['user_name'],
                     'user_avatar' => $record['user_avatar'],
                     'content' => $record['content'],
-                    'create_time' => date('Y-m-d H:i:s', $record['online_time']),
+                    'create_time' => $record['online_time'],
                     'digg_count' => $record['digg_count'],
                     'comment_count' => $record['comment_count']
                 );
