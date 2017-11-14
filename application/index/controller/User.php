@@ -162,35 +162,39 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $share_click = UserShareClick::get([
-                'from_user_id' => $from_user_id,
-                'user_id' => $user_id,
-                'video_id' => $video_id
-            ]);
-            if(!$share_click) {
-                $share_click = new UserShareClick;
-                $share_click->data([
-                    'from_user_id'  => $from_user_id,
+            if($from_user_id != $user_id) {
+                $share_click = UserShareClick::get([
+                    'from_user_id' => $from_user_id,
                     'user_id' => $user_id,
                     'video_id' => $video_id
                 ]);
-                $share_click->save();
+                if(!$share_click) {
+                    $share_click = new UserShareClick;
+                    $share_click->data([
+                        'from_user_id'  => $from_user_id,
+                        'user_id' => $user_id,
+                        'video_id' => $video_id
+                    ]);
+                    $share_click->save();
+                }
+
+                # 记录用户裂变数据
+                $share_fission = UserFission::get([
+                    'from_user_id' => $from_user_id,
+                    'user_id' => $user_id,
+                ]);
+                if(!$share_fission) {
+                    $share_fission = new UserFission;
+                    $share_fission->data([
+                        'from_user_id'  => $from_user_id,
+                        'user_id' => $user_id,
+                        'video_id' => $video_id
+                    ]);
+                    $share_fission->save();
+                }
             }
 
-            # 记录用户裂变数据
-            $share_fission = UserFission::get([
-                'from_user_id' => $from_user_id,
-                'user_id' => $user_id,
-            ]);
-            if(!$share_fission) {
-                $share_fission = new UserFission;
-                $share_fission->data([
-                    'from_user_id'  => $from_user_id,
-                    'user_id' => $user_id,
-                    'video_id' => $video_id
-                ]);
-                $share_fission->save();
-            }
+            
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
