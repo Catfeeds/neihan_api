@@ -34,6 +34,7 @@ class Common extends Controller
 
         $settings = Setting::get($setting_id);
         $data['d']['online'] = intval($settings['online']);
+        $data['d']['share'] = intval($settings['share']);
 
         return Response::create($data, 'json')->code(200);
     }
