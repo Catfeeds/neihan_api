@@ -138,7 +138,7 @@ class Mgr(object):
     def get_users(self):
         try:
             ret = []
-            q = self.session.query(User).filter(User.skip_msg == 0)
+            q = self.session.query(User).filter(User.is_active == 1)
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())
@@ -242,6 +242,7 @@ class Mgr(object):
         try:
             ret = {}
             rows = self.session.query(Video) \
+                .filter(Video.category_id == 187) \
                 .order_by(Video.display_click_ratio.desc()) \
                 .offset(int(randrange(0, 100))).limit(1)
             for row in rows:
