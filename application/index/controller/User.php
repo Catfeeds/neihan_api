@@ -215,6 +215,8 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
+            User::where('id', $user_id)->update(['is_active' => 1]);
+
             $user_formid = UserFormId::get([
                 'user_id' => $user_id,
                 'form_id' => $form_id
