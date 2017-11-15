@@ -20,8 +20,19 @@ class Common extends Controller
      */
     public function index()
     {
+        $comconfig = Config::get('comconfig');
+        $request = Request::instance();
         $data = ['c' => 0, 'm'=> '', 'd' => []];
-        $settings = Setting::get(1);
+
+        $setting_id = 1;
+        foreach ($comconfig['domain_settings'] as $key => $value) {
+            if(strrpos($request->domain(), $key) !== false) {
+                $setting_id = $value;
+                break;
+            }
+        }
+
+        $settings = Setting::get($setting_id);
         $data['d']['online'] = intval($settings['online']);
 
         return Response::create($data, 'json')->code(200);
