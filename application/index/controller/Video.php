@@ -16,6 +16,7 @@ use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
 use app\index\model\Comment;
 use app\index\model\VideoDisplayLogs;
+use app\index\model\UserStore;
 use app\index\model\Setting;
 
 class Video extends Controller
@@ -90,6 +91,54 @@ class Video extends Controller
                 }
                 $display_sql = $display_sql . join(',', $display_logs);
                 Db::execute($display_sql);
+            }
+            
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function store_list()
+    {
+        try {
+            $p = Request::instance()->has('p', 'get') ? Request::instance()->get('p/d') : 1;
+            $n = Request::instance()->has('n', 'get') ? Request::instance()->get('n/d') : 10;
+            $user_id = Request::instance()->get('user_id');
+
+            $data = array('c' => 0, 'm' => '', 'd' => array());
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $records = UserStore::where('user_id', $user_id)
+                ->page("{$p}, {$n}")
+                ->order('id desc')
+                ->select();
+
+            foreach ($records as $key => $value) {
+                $record = $value->video;
+                $data['d'][] = [
+                    'video_id' => strval($record['group_id']),
+                    'content' => $record['content'],
+                    'online_time' => date('Y-m-d H:i:s', $record['online_time']),
+                    'category_name' => $record['category_name'],
+                    'url' => timestamp_url($record['vurl']),
+                    'cover_image' => str_replace('.webp', '', $record['cover_image']),
+                    'user_name' => $record['user_name'],
+                    'user_avatar' => $record['user_avatar'],
+                    'play_count' => $record['play_count']+$record['c_play_count'],
+                    'digg_count' => $record['digg_count']+$record['c_digg_count'],
+                    'bury_count' => $record['bury_count']+$record['c_bury_count'],
+                    'share_count' => $record['share_count']+$record['c_share_count'],
+                    'comment_count' => $record['comment_count']+$record['c_comment_count'],
+                    'is_digg' => 0,
+                    'level' => $record['level'],
+                    'comments' => []
+                ];
             }
             
         } catch (Exception $e) {
@@ -298,31 +347,64 @@ class Video extends Controller
             ]);
             $user_log->save();
 
-            /*
-            # 暂时不用小程序码分享
-            $access_token = $this->_access_token();
-            if(!empty($access_token)) {
-                $wxconfig = Config::get('wxconfig');
-                $request_url = $wxconfig['code_api'].$access_token['access_token'];
-                $params = [
-                    'page' => $page,
-                    'scene' => 'uid='.$user_id.'&vid='.$video_id.'&sid='.$user_share->id
-                ];
-                $resp = curl_post($request_url, json_encode($params));
-                if(!empty($resp)) {
-                    $code_filename = strval(time()).'.jpeg';
-                    $codefile = './static/code/'.$code_filename;
-                    file_put_contents($codefile, $resp);
-                }
+            $data['d'] = ['id' => $user_share->id];
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];   
+        }
+        
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function store()
+    {
+        try {
+            $user_id = Request::instance()->post('user_id');
+            $video_id = Request::instance()->post('video_id');
+
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            if(empty($user_id) || empty($video_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
             }
 
-            $data['d'] = ['id' => $user_share->id, 'code' => '/static/code/'.$code_filename];
+            $user = User::get($user_id);
+            if(empty($user)) {
+                $data['c'] = -1024;
+                $data['m'] = 'User Not Exists';
+                return Response::create($data, 'json')->code(200);   
+            }
 
-            $user_share->code = $data['d']['code'];
-            $user_share->save();
-            */
+            $video = Video_Model::get(['item_id' => $video_id]);
+            if(empty($video)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Video Not Exists';
+                return Response::create($data, 'json')->code(200);   
+            }
 
-            $data['d'] = ['id' => $user_share->id];
+            $user_store = new UserStore;
+            $exists = $user_store->where('user_id', $user_id)
+                ->where('video_id', $video_id)
+                ->count();
+            if(!$exists) {
+                $user_store->data([
+                    'user_id'  => $user_id,
+                    'video_id' => $video_id
+                ]);
+                $user_store->save();
+
+                $com_config = Config::get('comconfig');
+                $user_log = new UserLog;
+                $user_log->data([
+                    'user_id' => $user_id,
+                    'video_id' => $video_id,
+                    'type' => $com_config['log_type']['store']
+                ]);
+                $user_log->save();
+            }
+
+            $data['d'] = [];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];   
         }
