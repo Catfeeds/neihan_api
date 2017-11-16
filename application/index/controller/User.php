@@ -18,6 +18,20 @@ use app\index\model\UserFormId;
 
 class User extends Controller
 {
+    public function _initialize()
+    {
+        $request = Request::instance();
+        $comconfig = Config::get('comconfig');
+
+        $this->app_code = 'neihan_1';
+        foreach ($comconfig['domain_settings'] as $key => $value) {
+            if(strrpos($request->domain(), $key) !== false) {
+                $this->app_code = $value;
+                break;
+            }
+        }
+    }
+
     public function index()
     {
         $data = ['c' => 0, 'm'=> '', 'd' => []];
@@ -57,7 +71,8 @@ class User extends Controller
                 $user = new User_Model;
                 $user->data([
                     'openid'  => $ret['openid'],
-                    'unionid' => ''
+                    'unionid' => '',
+                    'source' => $this->app_code
                 ]);
                 $user->save();    
             }

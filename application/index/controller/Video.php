@@ -20,6 +20,21 @@ use app\index\model\Setting;
 
 class Video extends Controller
 {
+
+    public function _initialize()
+    {
+        $request = Request::instance();
+        $comconfig = Config::get('comconfig');
+
+        $this->app_code = 'neihan_1';
+        foreach ($comconfig['domain_settings'] as $key => $value) {
+            if(strrpos($request->domain(), $key) !== false) {
+                $this->app_code = $value;
+                break;
+            }
+        }
+    }
+
     /**
      * 显示资源列表
      *
