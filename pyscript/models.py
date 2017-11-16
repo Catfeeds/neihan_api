@@ -143,8 +143,12 @@ class Mgr(object):
         try:
             ret = []
             q = self.session.query(User)
+            if params.get('skip_msg', '') != '':
+                q = q.filter(User.skip_msg == params['skip_msg'])
             if params.get('is_active', '') != '':
                 q = q.filter(User.is_active == params['is_active'])
+            if params.get('source', '') != '':
+                q = q.filter(User.source == params['source'])
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())

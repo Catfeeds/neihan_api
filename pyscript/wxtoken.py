@@ -8,18 +8,21 @@ from settings import *
 
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
-_filename = _current_pwd + '/../application/extra/access_token.txt'
+_filename = _current_pwd + '/../application/extra/access_token{}.txt'
 
 
-def get_token():
+def get_token(source=''):
+    if not source:
+        source = 'neihan_1'
     logging.info('管理微信小程序的access token...')
-    if not os.path.isfile(_filename):
-        with open(_filename, 'wb') as f:
+    filename = _filename.format(source)
+    if not os.path.isfile(filename):
+        with open(filename, 'wb') as f:
             pass
 
     is_expired = False
     data = {}
-    with open(_filename, 'rb') as f:
+    with open(filename, 'rb') as f:
         try:
             data = json.loads(f.read())
             if data['expires_time'] - int(time()) - 1000 < 0:
@@ -28,7 +31,7 @@ def get_token():
             data = {}
             is_expired = True
     if is_expired:
-        resp = requests.get(WX_TOKEN_API)
+        resp = requests.get(WX_TOKEN_API[suorce])
         if resp and resp.status_code == 200:
             data = resp.json()
             if 'access_token' in data:

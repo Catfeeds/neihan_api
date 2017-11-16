@@ -1,6 +1,7 @@
 # coding=utf8
 from gevent import monkey;monkey.patch_all()
 from gevent.pool import Pool
+import sys
 import requests
 import os
 import json
@@ -22,14 +23,9 @@ _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
 
-def get_users():
-    return _mgr.get_users()
-
-
 def send_msg(arg):
     u = arg['u']
     video = arg['video']
-    
     formid = _mgr.get_user_formid(u['id'])
     if not formid:
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
@@ -57,8 +53,8 @@ def send_msg(arg):
     }
     _mgr.user_formid_used(formid['id'])
 
-    access_token = wxtoken.get_token()
-    api = WX_MSG_API + access_token['access_token']
+    access_token = wxtoken.get_token(u['source'])
+    api = WX_MSG_API[u['source']] + access_token['access_token']
     resp = requests.post(api, json.dumps(params, ensure_ascii=False))
     print resp
     if resp and resp.status_code == 200:
@@ -113,9 +109,18 @@ def should_send():
 
 
 def main():
+    try:
+        uparams = {
+            'is_active': 1,
+            'source': sys.argv[1],
+            'skip_msg': 0
+        }
+    except:
+        logging.info('参数不完整')
+        return None
     while True:
         if should_send():
-            users = get_users()
+            users = _mgr.get_users(uparams)
             if users:
                 video = _mgr.get_hot_video()
                 args = [{'u': user, 'video': video} for user in users]
