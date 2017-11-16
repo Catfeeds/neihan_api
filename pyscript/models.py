@@ -37,6 +37,8 @@ class User(BaseModel):
     user_name = Column(VARCHAR(128))
     user_avatar = Column(VARCHAR(512))
     skip_msg = Column(Integer)
+    is_active = Column(Integer)
+    source = Column(VARCHAR(32))
 
     def conv_result(self):
         ret = {}
@@ -46,6 +48,8 @@ class User(BaseModel):
         ret["user_name"] = self.user_name
         ret["user_avatar"] = self.user_avatar
         ret["skip_msg"] = self.skip_msg
+        ret["is_active"] = self.is_active
+        ret["source"] = self.source
 
         return ret
 
@@ -135,10 +139,12 @@ class Mgr(object):
         self.session = sessionmaker(bind=engine)()
         self.engine = engine
 
-    def get_users(self):
+    def get_users(self, params={}):
         try:
             ret = []
-            q = self.session.query(User).filter(User.is_active == 1)
+            q = self.session.query(User)
+            if params.get('is_active', '') != '':
+                q = q.filter(User.is_active == params['is_active'])
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())

@@ -29,6 +29,7 @@ def get_users():
 def send_msg(arg):
     u = arg['u']
     video = arg['video']
+    
     formid = _mgr.get_user_formid(u['id'])
     if not formid:
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
