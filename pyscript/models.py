@@ -253,6 +253,7 @@ class Mgr(object):
             ret = {}
             rows = self.session.query(Video) \
                 .filter(Video.category_id == 187) \
+                .filter(Video.content != '') \
                 .order_by(Video.display_click_ratio.desc()) \
                 .offset(int(randrange(0, 100))).limit(1)
             for row in rows:
