@@ -46,7 +46,7 @@ def send_msg(arg):
                 "color": "#173177"
             },
             "keyword3": {
-                "value": "众多精彩视频尽在极品内涵段子君",
+                "value": "众多精彩视频尽在{}".format(APPNAME[u['source']]),
                 "color": "#173177"
             }
         }
