@@ -54,7 +54,7 @@ def send_msg(arg):
     _mgr.user_formid_used(formid['id'])
 
     access_token = wxtoken.get_token(u['source'])
-    api = WX_MSG_API[u['source']] + access_token['access_token']
+    api = WX_MSG_API + access_token['access_token']
     resp = requests.post(api, json.dumps(params, ensure_ascii=False))
     print resp
     if resp and resp.status_code == 200:

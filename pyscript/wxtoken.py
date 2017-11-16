@@ -31,7 +31,7 @@ def get_token(source=''):
             data = {}
             is_expired = True
     if is_expired:
-        resp = requests.get(WX_TOKEN_API[suorce])
+        resp = requests.get(WX_TOKEN_API[source])
         if resp and resp.status_code == 200:
             data = resp.json()
             if 'access_token' in data:
