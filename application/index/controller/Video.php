@@ -44,11 +44,12 @@ class Video extends Controller
     public function index()
     {
         try {
-            $p = Request::instance()->has('p', 'get') ? Request::instance()->get('p/d') : 1;
-            $n = Request::instance()->has('n', 'get') ? Request::instance()->get('n/d') : 5;
+            $request = Request::instance();
+            $p = $request->has('p', 'get') ? $request->get('p/d') : 1;
+            $n = $request->has('n', 'get') ? $request->get('n/d') : 5;
             $n = 5;
-            $user_id = Request::instance()->get('user_id');
-            $order = Request::instance()->has('order', 'get') ? Request::instance()->get('order') : 'comment';
+            $user_id = $request->get('user_id');
+            $order = $request->has('order', 'get') ? $request->get('order') : 'comment';
 
             $data = array('c' => 0, 'm' => '', 'd' => array());
 
@@ -58,7 +59,27 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $settings = Setting::get(1);
+            // $settings = Setting::get(1);
+            $app_code = 'neihan_1';
+            $comconfig = Config::get('comconfig');
+
+            $version = $request->get('version');
+            if(empty($version)) {
+                $version = '10000';
+            }
+            foreach ($comconfig['domain_settings'] as $key => $value) {
+                if(strrpos($request->domain(), $key) !== false) {
+                    $app_code = $value;
+                    break;
+                }
+            }
+            $result = Setting::where('app_code', $app_code)
+                ->where('version', $version)
+                ->limit(1)
+                ->order('id', 'desc')
+                ->select();
+            $settings = $result[0];
+
             if($settings['online'] == 1) {
                 $video_model = new Video_Model;
                 $video_awsome = $video_model->get_videos($user_id, [4]);
