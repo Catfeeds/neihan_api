@@ -54,7 +54,7 @@ class User extends Controller
             if($this->app_code == 'neihan_1') {
                 $wxconfig = Config::get('wxconfig');
             } elseif($this->app_code == 'neihan_2') {
-                $wxconfig = Config::get('wxconfig_2');
+                $wxconfig = Config::get('wxconfig2');
             }
             
             $request_url = $wxconfig['login_api'].'&js_code='.$js_code;
