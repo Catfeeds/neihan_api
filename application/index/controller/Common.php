@@ -51,7 +51,7 @@ class Common extends Controller
                 'share' => $result[0]->share,
                 'touch' => $result[0]->touch,
                 'replay_share' => $result[0]->replay_share,
-                'share_interval' => $result[0]->share_interval * 86400000
+                'share_interval' => $result[0]->share_interval
             ];
         } else {
             $data['d'] = [
