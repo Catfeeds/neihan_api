@@ -22,8 +22,11 @@ _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
+total_send = 0
 
 def send_msg(arg):
+    global total_send
+
     u = arg['u']
     video = arg['video']
     formid = _mgr.get_user_formid(u['id'])
@@ -60,6 +63,7 @@ def send_msg(arg):
     if resp and resp.status_code == 200:
         content = resp.json()
         if content['errcode'] == 0:
+            total_send += 1
             logging.info('用户{}-{}的消息推送成功'.format(u['openid'], u['user_name'].encode('utf8')))
         else:
             logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['errmsg']))
@@ -128,6 +132,9 @@ def main():
                 pools.map(send_msg, args)
             else:
                 logging.info('没有用户，暂停消息推送')
+
+            logging.info('成功发送消息给{}个用户'.format(total_send))
+            _mgr.save_msg_send_record({'total': total_send, 'source': sys.argv[1]})
         else:
             logging.info('还未到消息推送时间点或已发送过消息')
         sleep(60)

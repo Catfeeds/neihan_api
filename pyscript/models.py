@@ -132,6 +132,28 @@ class Video(BaseModel):
         return ret
 
 
+class MsgSendRecord(BaseModel):
+
+    __tablename__ = "msg_send_record"
+
+    id = Column(Integer, primary_key=True)
+    total = Column(Integer)
+    source = Column(VARCHAR(32))
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["total"] = self.total
+        ret["source"] = self.source
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
 class Mgr(object):
 
     def __init__(self, engine):
@@ -287,6 +309,19 @@ class Mgr(object):
         finally:
             self.session.close()
         return ret
+
+    def save_msg_send_record(info):
+        try:
+            if not info:
+                return None
+            info['create_time'] = int(time()) + 86400
+            info['update_time'] = int(time()) + 86400
+            self.session.add(MsgSendRecord(**info))
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("save msg send error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
 
     '''
     def count_showed_videos(self):
