@@ -50,7 +50,8 @@ class Common extends Controller
                 'auth' => $result[0]->auth,
                 'share' => $result[0]->share,
                 'touch' => $result[0]->touch,
-                'replay_share' => $result[0]->replay_share
+                'replay_share' => $result[0]->replay_share,
+                'share_interval' => $result[0]->share_interval * 86400000
             ];
         } else {
             $data['d'] = [
@@ -59,7 +60,8 @@ class Common extends Controller
                 'auth' => 0,
                 'share' => 0,
                 'touch' => 0,
-                'replay_share' => 0
+                'replay_share' => 0,
+                'share_interval' => 0
             ];
         }
 
