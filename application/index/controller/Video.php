@@ -299,6 +299,8 @@ class Video extends Controller
                 $video->c_play_count += 1;
             } elseif($type == 'play_end') {
                 $video->c_play_end_count += 1;
+            } elseif($type == 'replay') {
+                $video->c_replay_count += 1;
             }
             $video->save();
 
