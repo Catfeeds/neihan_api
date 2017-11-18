@@ -23,11 +23,17 @@ _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
 total_send = 0
-# title = '【精品推荐】这里有个比车模更大的大姐姐'
 title = '【精品推荐】关系很不错！但就是不知道适不适合做女朋友？求老司机给说道说道！'
-# title = '【精品推荐】'
+# title = '【精品推荐】日本便利店纯真女店员'
+# title = '【精品推荐】喜欢哪一个大姐姐？'
+# title = '【精品推荐】好可爱的兔兔'
+# title = '【精品推荐】这样的女神，给你一晚上，能干嘛？我让她跳舞，跳个够！'
 
 comment = "此女可以疯狂输出……"
+# comment = "如果我没猜错，桌子底下应该还藏着一个人 店カキケコ女售ザチゼ群ザ "
+# comment = "卧槽，我喜欢第一个，卧槽，我喜欢第二个，卧槽，我喜欢第三个，卧槽，我……"
+# comment = "隔着衣服我也能看出里面的宏伟"
+# comment = "这舞跳的我给87分，因为我没看见13"
 
 
 def send_msg(arg):
