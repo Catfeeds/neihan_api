@@ -23,6 +23,10 @@ _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
 total_send = 0
+title = '【精品推荐】这里有个比车模更大的大姐姐'
+# title = '【精品推荐】美女这样穿衣服，不会掉吗？'
+# title = '【精品推荐】'
+
 
 def send_msg(arg):
     global total_send
@@ -41,7 +45,7 @@ def send_msg(arg):
         "form_id": formid['form_id'].encode('utf8'),
         "data": {
             "keyword1": {
-                "value": video['content'].encode('utf8'),
+                "value": title,
                 "color": "#173177"
             },
             "keyword2": {

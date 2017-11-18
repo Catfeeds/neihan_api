@@ -108,7 +108,7 @@ class Video extends Controller
                 $display_sql = "INSERT INTO `videos_display_logs` (`user_id` , `video_id` , `create_time` , `update_time`) VALUES ";
                 $display_logs = [];
                 foreach ($vids as $vid) {
-                    $display_logs[] = "({$user_id} , {$vid} , {$curr_time} , {$curr_time})";
+                    $display_logs[] = "({$user_id} , '{$vid}' , {$curr_time} , {$curr_time})";
                 }
                 $display_sql = $display_sql . join(',', $display_logs);
                 Db::execute($display_sql);

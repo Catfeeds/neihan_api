@@ -310,7 +310,7 @@ class Mgr(object):
             self.session.close()
         return ret
 
-    def save_msg_send_record(info):
+    def save_msg_send_record(self, info):
         try:
             if not info:
                 return None
