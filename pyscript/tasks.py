@@ -23,9 +23,11 @@ _mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
 total_send = 0
-title = '【精品推荐】这里有个比车模更大的大姐姐'
-# title = '【精品推荐】美女这样穿衣服，不会掉吗？'
+# title = '【精品推荐】这里有个比车模更大的大姐姐'
+title = '【精品推荐】关系很不错！但就是不知道适不适合做女朋友？求老司机给说道说道！'
 # title = '【精品推荐】'
+
+comment = "此女可以疯狂输出……"
 
 
 def send_msg(arg):
@@ -53,7 +55,7 @@ def send_msg(arg):
                 "color": "#173177"
             },
             "keyword3": {
-                "value": "众多精彩视频尽在{}".format(APPNAME[u['source']]),
+                "value": comment,
                 "color": "#173177"
             }
         }
