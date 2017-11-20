@@ -39,6 +39,7 @@ class User(BaseModel):
     skip_msg = Column(Integer)
     is_active = Column(Integer)
     source = Column(VARCHAR(32))
+    parent_id = Column(Integer)
 
     def conv_result(self):
         ret = {}
@@ -50,6 +51,7 @@ class User(BaseModel):
         ret["skip_msg"] = self.skip_msg
         ret["is_active"] = self.is_active
         ret["source"] = self.source
+        ret["parent_id"] = self.parent_id
 
         return ret
 
@@ -72,6 +74,32 @@ class UserFormId(BaseModel):
         ret["user_id"] = self.user_id
         ret["form_id"] = self.form_id
         ret["is_used"] = self.is_used
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
+class UserFission(BaseModel):
+
+    __tablename__ = "users_fissions"
+
+    id = Column(Integer, primary_key=True)
+    parent_user_id = Column(Integer)
+    from_user_id = Column(VARCHAR(64))
+    user_id = Column(VARCHAR(64))
+    video_id = Column(VARCHAR(64))
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["parent_user_id"] = self.parent_user_id
+        ret["from_user_id"] = self.from_user_id
+        ret["user_id"] = self.user_id
+        ret["video_id"] = self.video_id
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
 
@@ -324,6 +352,32 @@ class Mgr(object):
             logging.warning("save msg send error : %s" % e, exc_info=True)
         finally:
             self.session.close()
+
+    def get_user_fission(self, user_id):
+        try:
+            ret = {}
+            q = self.session.query(UserFission) \
+                .filter(UserFission.user_id == str(user_id))
+
+            rows = q.all()
+            for row in rows:
+                ret = row.conv_result()
+                break
+        except Exception as e:
+            logging.warning("get user fission error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def update_user_parent(self, user_id, parent_id):
+        try:
+            self.session.query(User) \
+                .filter(User.id == int(user_id)) \
+                .update({'parent_user_id': int(parent_id)}, synchronize_session='fetch')
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("update user parent error : %s" % e, exc_info=True)
 
     '''
     def count_showed_videos(self):
