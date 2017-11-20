@@ -39,7 +39,7 @@ class User(BaseModel):
     skip_msg = Column(Integer)
     is_active = Column(Integer)
     source = Column(VARCHAR(32))
-    parent_id = Column(Integer)
+    parent_user_id = Column(Integer)
 
     def conv_result(self):
         ret = {}
@@ -51,7 +51,7 @@ class User(BaseModel):
         ret["skip_msg"] = self.skip_msg
         ret["is_active"] = self.is_active
         ret["source"] = self.source
-        ret["parent_id"] = self.parent_id
+        ret["parent_user_id"] = self.parent_user_id
 
         return ret
 

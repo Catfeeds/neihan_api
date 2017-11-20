@@ -199,24 +199,20 @@ class User extends Controller
                 }
 
                 # 记录用户裂变数据
-                try {
-                    $share_fission = UserFission::get(['user_id' => $user_id]);
+                $share_fission = UserFission::get(['user_id' => $user_id]);
 
-                    $uinfo = User_Model::get($from_user_id);
-                    $parent_user_id = $uinfo['parent_id'] ? $uinfo['parent_id'] : $from_user_id;
+                $uinfo = User_Model::get($from_user_id);
+                $parent_user_id = $uinfo['parent_id'] ? $uinfo['parent_id'] : $from_user_id;
 
-                    if(!$share_fission) {
-                        $share_fission = new UserFission;
-                        $share_fission->data([
-                            'parent_user_id' => $parent_user_id,
-                            'from_user_id'  => $from_user_id,
-                            'user_id' => $user_id,
-                            'video_id' => $video_id
-                        ]);
-                        $share_fission->save();
-                    }
-                } catch (Exception $e) {
-                    
+                if(!$share_fission) {
+                    $share_fission = new UserFission;
+                    $share_fission->data([
+                        'parent_user_id' => $parent_user_id,
+                        'from_user_id'  => $from_user_id,
+                        'user_id' => $user_id,
+                        'video_id' => $video_id
+                    ]);
+                    $share_fission->save();
                 }
             }
 
