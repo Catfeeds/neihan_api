@@ -126,6 +126,7 @@ def should_send():
 
 
 def main():
+    global total_send
     try:
         uparams = {
             'is_active': 1,
@@ -143,11 +144,15 @@ def main():
                 args = [{'u': user, 'video': video} for user in users]
                 pools = Pool(WORKER_THREAD_NUM)
                 pools.map(send_msg, args)
+
+                logging.info('成功发送消息给{}个用户'.format(total_send))
+                _mgr.save_msg_send_record({
+                    'group_id': video['group_id'],
+                    'total': total_send,
+                    'source': sys.argv[1],
+                })
             else:
                 logging.info('没有用户，暂停消息推送')
-
-            logging.info('成功发送消息给{}个用户'.format(total_send))
-            _mgr.save_msg_send_record({'total': total_send, 'source': sys.argv[1]})
         else:
             logging.info('还未到消息推送时间点或已发送过消息')
         sleep(60)

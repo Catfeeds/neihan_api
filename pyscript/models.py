@@ -137,6 +137,7 @@ class MsgSendRecord(BaseModel):
     __tablename__ = "msg_send_record"
 
     id = Column(Integer, primary_key=True)
+    group_id = Column(VARCHAR(64))
     total = Column(Integer)
     source = Column(VARCHAR(32))
     create_time = Column(Integer)
@@ -146,6 +147,7 @@ class MsgSendRecord(BaseModel):
         ret = {}
 
         ret["id"] = self.id
+        ret["group_id"] = self.group_id
         ret["total"] = self.total
         ret["source"] = self.source
         ret["create_time"] = self.create_time
@@ -314,8 +316,8 @@ class Mgr(object):
         try:
             if not info:
                 return None
-            info['create_time'] = int(time()) + 86400
-            info['update_time'] = int(time()) + 86400
+            info['create_time'] = int(time()) + 3600 * 8
+            info['update_time'] = int(time()) + 3600 * 8
             self.session.add(MsgSendRecord(**info))
         except Exception as e:
             self.session.rollback()
