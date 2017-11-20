@@ -204,7 +204,7 @@ class User extends Controller
 
                 if(!$share_fission) {
                     $uinfo = User_Model::get($from_user_id);
-                    $parent_user_id = $uinfo['parent_id'] ? $uinfo['parent_id'] : $from_user_id;
+                    $parent_user_id = $uinfo['parent_user_id'] ? $uinfo['parent_user_id'] : $from_user_id;
 
                     $share_fission = new UserFission;
                     $share_fission->data([
