@@ -229,18 +229,18 @@ class Mgr(object):
 
     def get_user_formid(self, user_id, is_used=0):
         try:
-            ret = {}
+            ret = []
             available_time = int(time()) - 864000 * 6
             q = self.session.query(UserFormId) \
                 .filter(UserFormId.user_id == int(user_id)) \
                 .filter(UserFormId.is_used == int(is_used)) \
                 .filter(UserFormId.create_time >= available_time) \
-                .order_by(UserFormId.create_time.asc())
+                .order_by(UserFormId.create_time.asc()) \
+                .limit(2)
 
             rows = q.all()
             for row in rows:
-                ret = row.conv_result()
-                break
+                ret.append(row.conv_result())
         except Exception as e:
             logging.warning("get users error : %s" % e, exc_info=True)
         finally:

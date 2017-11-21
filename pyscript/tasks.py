@@ -47,6 +47,10 @@ def send_msg(arg):
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
         return None
 
+    if u['ulevel'] > 0:
+        if len(formid) < 2:
+            return None
+
     params = {
         "touser": u['openid'].encode('utf8'),
         "template_id": TEMPLATE_ID[u['source']],
@@ -58,10 +62,6 @@ def send_msg(arg):
                 "color": "#173177"
             },
             "keyword2": {
-                "value": "美女&搞笑视频",
-                "color": "#173177"
-            },
-            "keyword3": {
                 "value": comment,
                 "color": "#173177"
             }
@@ -136,12 +136,18 @@ def main():
     except:
         logging.info('参数不完整')
         return None
+
+    if len(sys.argv) >= 3:
+        ulevel = sys.argv[2]
+    else:
+        ulevel = 0
+
     while True:
         if should_send():
             users = _mgr.get_users(uparams)
             if users:
                 video = get_hot_video()
-                args = [{'u': user, 'video': video} for user in users]
+                args = [{'u': user, 'video': video, 'ulevel': ulevel} for user in users]
                 pools = Pool(WORKER_THREAD_NUM)
                 pools.map(send_msg, args)
 
