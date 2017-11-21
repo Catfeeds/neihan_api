@@ -26,9 +26,9 @@ total_send = 0
 _videos = [
     {
         'from_user_id': u'1',
-        'group_id': u'72329640435',
-        'title': u'倒数第二个我要了，你们呢？',
-        'comment': u'卧槽，我喜欢第一个，卧槽，我喜欢第二个，卧槽，我喜欢第三个，卧槽，我……'
+        'group_id': u'74191101249',
+        'title': u'妹子再香总有一个地方是腥的',
+        'comment': u'妹子，你是认真的吗！我不信，给我闻闻。'
     }
 ]
 
@@ -158,6 +158,7 @@ def main():
                     'from_user_id': int(video['from_user_id']),
                     'group_id': video['group_id'],
                     'total': total_send,
+                    'active_member': 0,
                     'source': sys.argv[1],
                 })
             else:

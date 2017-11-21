@@ -168,6 +168,7 @@ class MsgSendRecord(BaseModel):
     from_user_id = Column(Integer)
     group_id = Column(VARCHAR(64))
     total = Column(Integer)
+    active_member = Column(Integer)
     source = Column(VARCHAR(32))
     create_time = Column(Integer)
     update_time = Column(Integer)
@@ -179,6 +180,7 @@ class MsgSendRecord(BaseModel):
         ret["from_user_id"] = self.from_user_id
         ret["group_id"] = self.group_id
         ret["total"] = self.total
+        ret["active_member"] = self.active_member
         ret["source"] = self.source
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
