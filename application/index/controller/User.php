@@ -14,6 +14,7 @@ use app\index\model\UserShare;
 use app\index\model\UserShareClick;
 use app\index\model\UserFission;
 use app\index\model\UserFormId;
+use app\index\model\MsgSendRecord;
 
 
 class User extends Controller
@@ -196,6 +197,11 @@ class User extends Controller
                         'video_id' => $video_id
                     ]);
                     $share_click->save();
+
+                    $msg_send = MsgSendRecord::get([
+                        'from_user_id' => $from_user_id,
+                        'video_id' => $video_id
+                    ])->setInc('active_member');
                 }
 
 
