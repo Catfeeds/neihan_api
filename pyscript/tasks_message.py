@@ -80,6 +80,9 @@ def main():
             continue
 
         for task in tasks:
+            if datetime.now() < task['send_time']:
+                continue
+
             _mgr.update_message_tasks(task['id'], {'is_send': 1})
             # video = _mgr.get_videos({'group_id': task['group_id']})
             # comment = _mgr.get_comment({'group_id': task['group_id']})
