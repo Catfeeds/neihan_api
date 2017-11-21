@@ -29,6 +29,7 @@ def send_msg(arg):
 
     u = arg['u']
     video = arg['video']
+    access_token = arg['access_token']
     formids = _mgr.get_user_formid(u['id'])
     if not formids:
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
@@ -57,7 +58,6 @@ def send_msg(arg):
     }
     _mgr.user_formid_used(formid['id'])
 
-    access_token = wxtoken.get_token(u['source'])
     api = WX_MSG_API + access_token['access_token']
     resp = requests.post(api, json.dumps(params, ensure_ascii=False))
     print resp
@@ -96,7 +96,8 @@ def main():
                     'title': task['title'],
                     'comment': task['comment']
                 }
-                args = [{'u': user, 'video': video, 'ulevel': task['formid_level']} for user in users]
+                access_token = wxtoken.get_token(task['app'])
+                args = [{'u': user, 'video': video, 'ulevel': task['formid_level'], 'access_token': access_token} for user in users]
                 pools = Pool(WORKER_THREAD_NUM)
                 pools.map(send_msg, args)
 
