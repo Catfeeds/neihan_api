@@ -47,7 +47,7 @@ def send_msg(arg):
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
         return None
 
-    if u['ulevel'] > 0:
+    if arg['ulevel'] > 0:
         if len(formid) < 2:
             return None
 
