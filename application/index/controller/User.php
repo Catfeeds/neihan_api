@@ -187,7 +187,7 @@ class User extends Controller
                 $share_click = UserShareClick::get([
                     'from_user_id' => $from_user_id,
                     'user_id' => $user_id,
-                    'group_id' => $video_id
+                    'video_id' => $video_id
                 ]);
                 if(!$share_click) {
                     $share_click = new UserShareClick;
@@ -200,7 +200,7 @@ class User extends Controller
 
                     $msg_send = MsgSendRecord::get([
                         'from_user_id' => $from_user_id,
-                        'video_id' => $video_id
+                        'group_id' => $video_id
                     ])->setInc('active_member');
                 }
 
