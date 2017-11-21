@@ -42,15 +42,16 @@ def send_msg(arg):
 
     u = arg['u']
     video = arg['video']
-    formid = _mgr.get_user_formid(u['id'])
-    if not formid:
+    formids = _mgr.get_user_formid(u['id'])
+    if not formids:
         logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
         return None
 
     if arg['ulevel'] > 0:
-        if len(formid) < 2:
+        if len(formids) < 2:
             return None
 
+    formid = formids[0]
     params = {
         "touser": u['openid'].encode('utf8'),
         "template_id": TEMPLATE_ID[u['source']],
