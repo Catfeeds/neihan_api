@@ -160,6 +160,23 @@ class Video(BaseModel):
         return ret
 
 
+class Comment(BaseModel):
+
+    __tablename__ = "comment_v2"
+
+    id = Column(Integer, primary_key=True)
+    group_id = Column(VARCHAR(64))
+    content = Column(VARCHAR(1024))
+
+    def conv_result(self):
+        ret = {}
+        ret["id"] = self.id
+        ret["group_id"] = self.group_id
+        ret["content"] = self.content
+
+        return ret
+
+
 class MsgSendRecord(BaseModel):
 
     __tablename__ = "msg_send_record"
@@ -182,6 +199,44 @@ class MsgSendRecord(BaseModel):
         ret["total"] = self.total
         ret["active_member"] = self.active_member
         ret["source"] = self.source
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
+class Message(BaseModel):
+
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True)
+    app = Column(VARCHAR(64))
+    from_user_id = Column(Integer)
+    group_id = Column(VARCHAR(64))
+    title = Column(VARCHAR(1024))
+    comment = Column(VARCHAR(1024))
+    send_time = Column(DateTime)
+    formid_level = Column(Integer)
+    is_send = Column(Integer)
+    send_member = Column(Integer)
+    active_member = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["app"] = self.app
+        ret["from_user_id"] = self.from_user_id
+        ret["group_id"] = self.group_id
+        ret["title"] = self.title
+        ret["comment"] = self.comment
+        ret["send_time"] = self.send_time
+        ret["formid_level"] = self.formid_level
+        ret["is_send"] = self.is_send
+        ret["send_member"] = self.send_member
+        ret["active_member"] = self.active_member
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
 
@@ -240,7 +295,7 @@ class Mgr(object):
                 .filter(UserFormId.is_used == int(is_used)) \
                 .filter(UserFormId.create_time >= available_time) \
                 .order_by(UserFormId.create_time.asc()) \
-                .limit(2)
+                .limit(20)
 
             rows = q.all()
             for row in rows:
@@ -330,6 +385,8 @@ class Mgr(object):
                 q = q.filter(Video.category_id.in_(params['category']))
             if params.get('is_expired', '') != '':
                 q = q.filter(Video.is_expired == int(params['is_expired']))
+            if params.get('group_id', '') != '':
+                q = q.filter(Video.group_id == params['group_id'])
 
             if params.get('offset', '') != '':
                 q = q.offset(params['offset'])
@@ -383,6 +440,46 @@ class Mgr(object):
         except Exception as e:
             self.session.rollback()
             logging.warning("update user parent error : %s" % e, exc_info=True)
+
+    def get_message_tasks(self, params={}):
+        try:
+            ret = []
+            q = self.session.query(Message)
+            if params.get('is_send', '') != '':
+                q = q.filter(Message.is_send == params['is_send'])
+            rows = q.all()
+            for row in rows:
+                ret.append(row.conv_result())
+        except Exception as e:
+            logging.warning("get message tasks error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def update_message_tasks(self, message_id, data={}):
+        try:
+            self.session.query(Message) \
+                .filter(Message.id == int(message_id)) \
+                .update(data, synchronize_session='fetch')
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("update message task error : %s" % e, exc_info=True)
+
+    def get_comment(self, params={}):
+        try:
+            ret = []
+            q = self.session.query(Comment)
+            if params.get('group_id', '') != '':
+                q = q.filter(Comment.group_id == params['group_id'])
+            rows = q.all()
+            for row in rows:
+                ret.append(row.conv_result())
+        except Exception as e:
+            logging.warning("get users error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
 
     '''
     def count_showed_videos(self):

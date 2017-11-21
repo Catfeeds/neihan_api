@@ -161,4 +161,22 @@ CREATE TABLE IF NOT EXISTS  `settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT 'API配置表';
 
 
+CREATE TABLE IF NOT EXISTS  `messages` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `app` VARCHAR(64) NOT NULL COMMENT '小程序名称',
+    `from_user_id` INT(11) NOT NULL COMMENT '来源用户ID',
+    `group_id` VARCHAR(64) NOT NULL COMMENT '视频ID',
+    `title` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '自定义标题，为空时取视频的标题',
+    `comment` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '自定义评论，为空时取视频的热门评论',
+    `send_time` VARCHAR(64) NOT NULL COMMENT '推送时间',
+    `formid_level` INT(11) NOT NULL COMMENT '1所有有formid的用户;2formid数大于2的用户',
+    `is_send` INT(11) NOT NULL DEFAULT '0' COMMENT '是否已发送',
+    `send_member` INT(11) NOT NULL DEFAULT '0' COMMENT '成功发送的用户数',
+    `active_member` INT(11) NOT NULL DEFAULT '0' COMMENT '直接激活的用户数',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '定时消息推送任务表';
+
+
 
