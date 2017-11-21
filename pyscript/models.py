@@ -447,6 +447,8 @@ class Mgr(object):
             q = self.session.query(Message)
             if params.get('is_send', '') != '':
                 q = q.filter(Message.is_send == params['is_send'])
+            if params.get('send_time', '') != '':
+                q = q.filter(Message.send_time <= params['send_time'])
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())

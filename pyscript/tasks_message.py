@@ -73,16 +73,13 @@ def send_msg(arg):
 def main():
     global total_send
     while True:
-        tasks = _mgr.get_message_tasks({'is_send': 0})
+        tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now()})
         if len(tasks) == 0:
             logging.info('没有消息推送任务')
             sleep(30)
             continue
 
         for task in tasks:
-            if datetime.now() < task['send_time']:
-                continue
-
             _mgr.update_message_tasks(task['id'], {'is_send': 1})
             # video = _mgr.get_videos({'group_id': task['group_id']})
             # comment = _mgr.get_comment({'group_id': task['group_id']})
