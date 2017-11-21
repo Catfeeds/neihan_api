@@ -347,6 +347,7 @@ class Mgr(object):
             info['create_time'] = int(time()) + 3600 * 8
             info['update_time'] = int(time()) + 3600 * 8
             self.session.add(MsgSendRecord(**info))
+            self.session.commit()
         except Exception as e:
             self.session.rollback()
             logging.warning("save msg send error : %s" % e, exc_info=True)

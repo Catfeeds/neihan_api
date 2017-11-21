@@ -25,6 +25,7 @@ _current_pwd = os.path.dirname(os.path.realpath(__file__))
 total_send = 0
 _videos = [
     {
+        'from_user_id': u'1',
         'group_id': u'72329640435',
         'title': u'倒数第二个我要了，你们呢？',
         'comment': u'卧槽，我喜欢第一个，卧槽，我喜欢第二个，卧槽，我喜欢第三个，卧槽，我……'
@@ -55,7 +56,7 @@ def send_msg(arg):
     params = {
         "touser": u['openid'].encode('utf8'),
         "template_id": TEMPLATE_ID[u['source']],
-        "page": "pages/index/index?video_id={}&from_user_id=1".format(video['group_id'].encode('utf8')),
+        "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id'].encode('utf8')),
         "form_id": formid['form_id'].encode('utf8'),
         "data": {
             "keyword1": {
@@ -154,6 +155,7 @@ def main():
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
                 _mgr.save_msg_send_record({
+                    'from_user_id': video['from_user_id'],
                     'group_id': video['group_id'],
                     'total': total_send,
                     'source': sys.argv[1],
