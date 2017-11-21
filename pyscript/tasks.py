@@ -155,7 +155,7 @@ def main():
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
                 _mgr.save_msg_send_record({
-                    'from_user_id': video['from_user_id'],
+                    'from_user_id': int(video['from_user_id']),
                     'group_id': video['group_id'],
                     'total': total_send,
                     'source': sys.argv[1],

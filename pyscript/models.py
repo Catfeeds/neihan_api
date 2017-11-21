@@ -165,6 +165,7 @@ class MsgSendRecord(BaseModel):
     __tablename__ = "msg_send_record"
 
     id = Column(Integer, primary_key=True)
+    from_user_id = Column(Integer)
     group_id = Column(VARCHAR(64))
     total = Column(Integer)
     source = Column(VARCHAR(32))
@@ -175,6 +176,7 @@ class MsgSendRecord(BaseModel):
         ret = {}
 
         ret["id"] = self.id
+        ret["from_user_id"] = self.from_user_id
         ret["group_id"] = self.group_id
         ret["total"] = self.total
         ret["source"] = self.source
