@@ -97,9 +97,26 @@ def main():
                     'comment': task['comment']
                 }
                 access_token = wxtoken.get_token(task['app'])
-                args = [{'u': user, 'video': video, 'ulevel': task['formid_level'], 'access_token': access_token} for user in users]
-                pools = Pool(WORKER_THREAD_NUM)
-                pools.map(send_msg, args)
+
+                while len(users):
+                    args = []
+                    for x in xrange(WORKER_THREAD_NUM):
+                        try:
+                            args.append({
+                                'u': users.pop(),
+                                'video': video,
+                                'ulevel': task['formid_level'],
+                                'access_token': access_token
+                            })
+                        except:
+                            pass
+                    pools.map(send_msg, args)
+                    sleep(10)
+
+
+                # args = [{'u': user, 'video': video, 'ulevel': task['formid_level'], 'access_token': access_token} for user in users]
+                # pools = Pool(WORKER_THREAD_NUM)
+                # pools.map(send_msg, args)
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
                 _mgr.update_message_tasks(task['id'], {'send_member': total_send})
