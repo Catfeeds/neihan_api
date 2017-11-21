@@ -98,6 +98,7 @@ def main():
                 }
                 access_token = wxtoken.get_token(task['app'])
 
+                pools = Pool(WORKER_THREAD_NUM)
                 while len(users):
                     args = []
                     for x in xrange(WORKER_THREAD_NUM):
