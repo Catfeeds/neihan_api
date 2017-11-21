@@ -79,9 +79,13 @@ class User extends Controller
                 $user->data([
                     'openid'  => $ret['openid'],
                     'unionid' => '',
-                    'source' => $this->app_code
+                    'source' => $this->app_code,
+                    'session_key' => $ret['session_key']
                 ]);
                 $user->save();    
+            } else {
+                $user->session_key = $ret['session_key'];
+                $user->save();
             }
             $data['d'] = ['user_id' => $user->id, 'openid' => $user->openid, 'session_key' => $ret['session_key']];
         } catch (Exception $e) {
