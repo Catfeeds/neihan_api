@@ -54,15 +54,15 @@ def send_msg(arg):
     params = {
         "touser": u['openid'].encode('utf8'),
         "template_id": TEMPLATE_ID[u['source']],
-        "page": "pages/index/index?video_id={}&from_user_id=10".format(video['group_id'].encode('utf8')),
+        "page": "pages/index/index?video_id={}&from_user_id=1".format(video['group_id'].encode('utf8')),
         "form_id": formid['form_id'].encode('utf8'),
         "data": {
             "keyword1": {
-                "value": title,
+                "value": video['title'].encode('utf8'),
                 "color": "#173177"
             },
             "keyword2": {
-                "value": comment,
+                "value": video['comment'].encode('utf8'),
                 "color": "#173177"
             }
         }
