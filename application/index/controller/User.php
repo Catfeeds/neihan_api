@@ -276,4 +276,31 @@ class User extends Controller
 
         return Response::create($data, 'json')->code(200);
     }
+
+    public function share_group()
+    {
+        try {
+            $user_id = Request::instance()->post('user_id');
+            $video_id = Request::instance()->post('video_id');
+            $group_name = Request::instance()->post('group_name');
+            $group_id = Request::instance()->post('group_id');
+            $encrypt_data = Request::instance()->post('encrypt_data');
+
+
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            if(empty($user_id) || empty($video_id) || empty($group_name) || empty($encrypt_data)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $user = User_Model::get($user_id);
+            
+            
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
 }

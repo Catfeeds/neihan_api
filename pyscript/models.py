@@ -254,6 +254,8 @@ class Mgr(object):
         try:
             ret = []
             q = self.session.query(User)
+            if params.get('user_id', '') != '':
+                q = q.filter(User.id == int(params['user_id']))
             if params.get('skip_msg', '') != '':
                 q = q.filter(User.skip_msg == params['skip_msg'])
             if params.get('is_active', '') != '':

@@ -133,7 +133,8 @@ def main():
         uparams = {
             'is_active': 1,
             'source': sys.argv[1],
-            'skip_msg': 0
+            'skip_msg': 0,
+            'user_id': 11
         }
     except:
         logging.info('参数不完整')
