@@ -86,8 +86,8 @@ class UserFission(BaseModel):
 
     id = Column(Integer, primary_key=True)
     parent_user_id = Column(Integer)
-    from_user_id = Column(VARCHAR(64))
-    user_id = Column(VARCHAR(64))
+    from_user_id = Column(Integer)
+    user_id = Column(Integer)
     video_id = Column(VARCHAR(64))
     create_time = Column(Integer)
     update_time = Column(Integer)
@@ -263,6 +263,31 @@ class MessageSendDetail(BaseModel):
         ret["from_user_id"] = self.from_user_id
         ret["group_id"] = self.group_id
         ret["user_id"] = self.user_id
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
+class UserShareClick(BaseModel):
+    __tablename__ = "users_shares_clicks"
+
+    id = Column(Integer, primary_key=True)
+    from_user_id = Column(Integer)
+    video_id = Column(VARCHAR(64))
+    user_id = Column(Integer)
+    parent_user_id = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["from_user_id"] = self.from_user_id
+        ret["video_id"] = self.video_id
+        ret["user_id"] = self.user_id
+        ret["parent_user_id"] = self.parent_user_id
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
 
@@ -525,6 +550,53 @@ class Mgr(object):
         finally:
             self.session.close()
 
+    def get_parent_users(self, params={}):
+        try:
+            ret = []
+            q = self.session.query(UserShareClick)
+            rows = q.all()
+            uids = []
+            for row in rows:
+                if row.user_id not in uids:
+                    uids.append(row.user_id)
+                    ret.append(row.conv_result())
+        except Exception as e:
+            logging.warning("get user fission error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def get_first_share_click(self, params={}):
+        try:
+            ret = {}
+            q = self.session.query(UserShareClick)
+            if params.get('user_id', '') != '':
+                q = q.filter(UserShareClick.user_id == int(params['user_id']))
+            rows = q.order_by(UserShareClick.id.asc()).limit(1).all()
+            for row in rows:
+                ret = row.conv_result()
+                break
+        except Exception as e:
+            logging.warning("get first share click error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def insert_fission(self, info):
+        try:
+            if not info:
+                return None
+
+            if self.get_user_fission(info['user_id']):
+                return None
+
+            self.session.add(UserFission(**info))
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("save msg send error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
     '''
     def count_showed_videos(self):
         try:
