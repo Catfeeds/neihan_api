@@ -342,7 +342,7 @@ class Mgr(object):
     def get_user_formid(self, user_id, is_used=0):
         try:
             ret = []
-            available_time = int(time()) - 864000 * 6
+            available_time = int(time()) - 864000 * 5
             q = self.session.query(UserFormId) \
                 .filter(UserFormId.user_id == int(user_id)) \
                 .filter(UserFormId.is_used == int(is_used)) \
