@@ -203,12 +203,17 @@ class User extends Controller
                     ]);
                     $share_click->save();
 
-                    $msg_send = Message::get([
-                        'from_user_id' => $from_user_id,
-                        'group_id' => $video_id,
-                        'is_send' => 1,
-                        'app' => $this->app_code
-                    ])->setInc('active_member');
+                    try {
+                        $msg_send = Message::get([
+                            'from_user_id' => $from_user_id,
+                            'group_id' => $video_id,
+                            'is_send' => 1,
+                            'app' => $this->app_code
+                        ])->setInc('active_member');
+                    } catch (Exception $e) {
+                        
+                    }
+                    
                 }
 
 
