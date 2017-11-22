@@ -209,7 +209,10 @@ class User extends Controller
                             'group_id' => $video_id,
                             'is_send' => 1,
                             'app' => $this->app_code
-                        ])->setInc('active_member');
+                        ]);
+                        if($msg_send) {
+                            $msg_send->setInc('active_member');
+                        }
                     } catch (Exception $e) {
                         
                     }
