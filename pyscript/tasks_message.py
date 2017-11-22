@@ -66,7 +66,7 @@ def send_msg(arg):
         if content['errcode'] == 0:
             total_send += 1
             mdetail = {
-                'message_id': 0,
+                'message_id': arg['message_id'],
                 'from_user_id': video['from_user_id'],
                 'group_id': video['group_id'],
                 'user_id': u['id']
@@ -111,6 +111,7 @@ def main():
                     for x in xrange(WORKER_THREAD_NUM):
                         try:
                             args.append({
+                                'message_id': task['id'],
                                 'u': users.pop(),
                                 'video': video,
                                 'ulevel': task['formid_level'],
@@ -119,7 +120,7 @@ def main():
                         except:
                             pass
                     pools.map(send_msg, args)
-                    sleep(10)
+                    sleep(5)
 
 
                 # args = [{'u': user, 'video': video, 'ulevel': task['formid_level'], 'access_token': access_token} for user in users]
