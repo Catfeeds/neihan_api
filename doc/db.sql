@@ -179,4 +179,15 @@ CREATE TABLE IF NOT EXISTS  `messages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '定时消息推送任务表';
 
 
+CREATE TABLE IF NOT EXISTS `messages_send_detail` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `message_id` INT(11) NOT NULL COMMENT '推送消息ID',
+    `from_user_id` INT(11) NOT NULL COMMENT '来源用户ID',
+    `group_id` VARCHAR(64) NOT NULL COMMENT '视频ID',
+    `user_id` VARCHAR(64) NOT NULL COMMENT '送达用户ID',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '定时消息推送任务送达列表';
+
 

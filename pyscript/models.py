@@ -243,6 +243,32 @@ class Message(BaseModel):
         return ret
 
 
+class MessageSendDetail(BaseModel):
+
+    __tablename__ = "messages_send_detail"
+
+    id = Column(Integer, primary_key=True)
+    message_id = Column(Integer)
+    from_user_id = Column(Integer)
+    group_id = Column(VARCHAR(64))
+    user_id = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["message_id"] = self.message_id
+        ret["from_user_id"] = self.from_user_id
+        ret["group_id"] = self.group_id
+        ret["user_id"] = self.user_id
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
 class Mgr(object):
 
     def __init__(self, engine):
@@ -484,6 +510,20 @@ class Mgr(object):
         finally:
             self.session.close()
         return ret
+
+    def save_message_send_detail(self, info):
+        try:
+            if not info:
+                return None
+            info['create_time'] = int(time()) + 3600 * 8
+            info['update_time'] = int(time()) + 3600 * 8
+            self.session.add(MessageSendDetail(**info))
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("save message send detail error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
 
     '''
     def count_showed_videos(self):

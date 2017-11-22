@@ -65,6 +65,13 @@ def send_msg(arg):
         content = resp.json()
         if content['errcode'] == 0:
             total_send += 1
+            mdetail = {
+                'message_id': 0,
+                'from_user_id': video['from_user_id'],
+                'group_id': video['group_id'],
+                'user_id': u['id']
+            }
+            _mgr.save_message_send_detail(mdetail)
             logging.info('用户{}-{}的消息推送成功'.format(u['openid'], u['user_name'].encode('utf8')))
         else:
             logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['errmsg']))
