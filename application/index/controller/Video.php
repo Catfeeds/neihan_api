@@ -15,7 +15,7 @@ use app\index\model\UserShare;
 use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
 use app\index\model\Comment;
-use app\index\model\VideoDisplayLogs;
+use app\index\model\VideoDisplayLog;
 use app\index\model\UserStore;
 use app\index\model\Setting;
 
@@ -102,8 +102,6 @@ class Video extends Controller
 
             # 更新视频展示数
             if(!empty($vids)) {
-                Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
-            
                 $curr_time = time();
                 $display_sql = "INSERT INTO `videos_display_logs` (`user_id` , `video_id` , `create_time` , `update_time`) VALUES ";
                 $display_logs = [];
@@ -112,6 +110,8 @@ class Video extends Controller
                 }
                 $display_sql = $display_sql . join(',', $display_logs);
                 Db::execute($display_sql);
+
+                Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
             }
             
         } catch (Exception $e) {
@@ -186,6 +186,15 @@ class Video extends Controller
             $record = Video_Model::get(['item_id' => $video_id]);
             $record->c_display_count += 1;
             $record->save();
+
+
+            $displaylog = New VideoDisplayLog;
+            $displaylog->data([
+                'user_id' => $user_id,
+                'video_id' => $video_id,
+            ]);
+            $displaylog->save();
+
 
             $info = array(
                 'video_id' => strval($record['group_id']),
