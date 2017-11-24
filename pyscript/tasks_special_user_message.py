@@ -99,7 +99,6 @@ def main():
 
                         video['from_user_id'] = 100001
                         video['title'] = video['content']
-                        print video
 
                         args.append({
                             'u': user[0],
@@ -107,7 +106,8 @@ def main():
                             'access_token': access_token
                         })
                     except:
-                        traceback.print_exc()
+                        pass
+                        # traceback.print_exc()
                 pools.map(send_msg, args)
                 sleep(3)
             logging.info('成功发送消息给{}个用户'.format(total_send))
