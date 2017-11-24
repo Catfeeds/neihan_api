@@ -256,8 +256,8 @@ class User extends Controller
     public function formid()
     {
         try {
-            $user_id = Request::instance()->get('user_id');
-            $form_id = Request::instance()->get('form_id');
+            $user_id = Request::instance()->post('user_id');
+            $form_id = Request::instance()->post('form_id');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
