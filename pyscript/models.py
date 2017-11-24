@@ -297,6 +297,28 @@ class MessageTask(BaseModel):
         return ret
 
 
+class MessageSetting(BaseModel):
+
+    __tablename__ = "messages_settings"
+
+    id = Column(Integer, primary_key=True)
+    interval = Column(Integer)
+    status = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["interval"] = self.interval
+        ret["status"] = self.status
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
 class UserShareClick(BaseModel):
     __tablename__ = "users_shares_clicks"
 
@@ -677,6 +699,20 @@ class Mgr(object):
                 break
         except Exception as e:
             logging.warning("get message special tasks error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def get_message_setting(self):
+        try:
+            ret = []
+            q = self.session.query(MessageSetting)
+            rows = q.all()
+            for row in rows:
+                ret = row.conv_result()
+                break
+        except Exception as e:
+            logging.warning("get message setting error : %s" % e, exc_info=True)
         finally:
             self.session.close()
         return ret

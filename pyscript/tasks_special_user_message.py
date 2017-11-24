@@ -79,6 +79,12 @@ def send_msg(arg):
 def main():
     global total_send
     while True:
+        msetting = _mgr.get_message_setting()
+        if msetting['status'] != 1:
+            logging.info('消息推送已关闭')
+            sleep(30)
+            continue
+
         uparams = {
             'is_sended': 0,
             'send_time': datetime.now()
