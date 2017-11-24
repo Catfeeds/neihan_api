@@ -93,7 +93,7 @@ def main():
                         tuser = users.pop()
                         user = _mgr.get_users({'user_id': tuser['user_id']})
 
-                        access_token = wxtoken.get_token(user[0]['app'])
+                        access_token = wxtoken.get_token(user[0]['source'])
 
                         video = _mgr.get_special_video(tuser['user_id'])
 
