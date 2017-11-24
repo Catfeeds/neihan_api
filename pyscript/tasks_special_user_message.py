@@ -10,6 +10,7 @@ from datetime import datetime
 from settings import *
 from models import *
 import wxtoken
+import traceback
 
 
 _db_url = 'mysql+mysqldb://%s:%s@%s/%s?charset=utf8mb4' % \
@@ -92,7 +93,7 @@ def main():
                         tuser = users.pop()
                         user = _mgr.get_users({'user_id': tuser['user_id']})
 
-                        access_token = wxtoken.get_token(user['app'])
+                        access_token = wxtoken.get_token(user[0]['app'])
 
                         video = _mgr.get_special_video(tuser['user_id'])
 
@@ -106,7 +107,7 @@ def main():
                             'access_token': access_token
                         })
                     except:
-                        pass
+                        traceback.print_exc()
                 pools.map(send_msg, args)
                 sleep(3)
             logging.info('成功发送消息给{}个用户'.format(total_send))
