@@ -79,6 +79,7 @@ def send_msg(arg):
 def main():
     global total_send
     while True:
+        total_send = 0
         msetting = _mgr.get_message_setting()
         if msetting['status'] != 1:
             logging.info('消息推送已关闭')

@@ -80,6 +80,7 @@ def send_msg(arg):
 def main():
     global total_send
     while True:
+        total_send = 0
         tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now()})
         if len(tasks) == 0:
             logging.info('没有消息推送任务')
