@@ -7,7 +7,7 @@ from sqlalchemy import *
 from sqlalchemy import create_engine, Column, ForeignKey, String, Integer, Numeric, DateTime, Boolean, and_, or_, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
-from sqlalchemy.dialects.mysql import VARCHAR, BIGINT, TINYINT, DATETIME, TEXT, CHAR
+from sqlalchemy.dialects.mysql import VARCHAR, BIGINT, TINYINT, DATETIME, DATE, TEXT, CHAR
 from sqlalchemy.dialects.postgresql import ARRAY
 from datetime import datetime
 from time import time
@@ -167,12 +167,14 @@ class Comment(BaseModel):
     id = Column(Integer, primary_key=True)
     group_id = Column(VARCHAR(64))
     content = Column(VARCHAR(1024))
+    digg_count = Column(Integer)
 
     def conv_result(self):
         ret = {}
         ret["id"] = self.id
         ret["group_id"] = self.group_id
         ret["content"] = self.content
+        ret["digg_count"] = self.digg_count
 
         return ret
 
@@ -263,6 +265,32 @@ class MessageSendDetail(BaseModel):
         ret["from_user_id"] = self.from_user_id
         ret["group_id"] = self.group_id
         ret["user_id"] = self.user_id
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
+class MessageTask(BaseModel):
+
+    __tablename__ = "messages_tasks"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    date = Column(DATE)
+    send_time = Column(DateTime)
+    is_sended = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["user_id"] = self.user_id
+        ret["date"] = self.date
+        ret["send_time"] = self.send_time
+        ret["is_sended"] = self.is_sended
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
 
@@ -527,7 +555,7 @@ class Mgr(object):
             q = self.session.query(Comment)
             if params.get('group_id', '') != '':
                 q = q.filter(Comment.group_id == params['group_id'])
-            rows = q.all()
+            rows = q.order_by(Comment.digg_count.desc()).all()
             for row in rows:
                 ret.append(row.conv_result())
         except Exception as e:
@@ -597,6 +625,62 @@ class Mgr(object):
             logging.warning("save msg send error : %s" % e, exc_info=True)
         finally:
             self.session.close()
+
+    def finish_message_task(self, user_id):
+        try:
+            self.session.query(MessageTask) \
+                .filter(MessageTask.user_id == user_id) \
+                .update(
+                    {'is_sended': 1, 'update_time': int(time())},
+                    synchronize_session='fetch'
+                )
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("finish message task error: %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+
+    def get_special_message_tasks(self, params={}):
+        try:
+            ret = []
+            q = self.session.query(MessageTask)
+            if params.get('is_sended', '') != '':
+                q = q.filter(MessageTask.is_sended == int(params['is_sended']))
+            if params.get('send_time', '') != '':
+                q = q.filter(MessageTask.send_time <= params['send_time'])
+            rows = q.all()
+            for row in rows:
+                ret.append(row.conv_result())
+        except Exception as e:
+            logging.warning("get message special tasks error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def get_special_video(self, user_id):
+        try:
+            ret = {}
+            sql = """
+            SELECT videos.*, comments_v2.content as comment
+            FROM videos INNER JOIN comments_v2 ON videos.group_id = comments_v2.group_id 
+            WHERE videos.category_id IN (12, 109, 187)
+            AND videos.group_id NOT IN (
+                SELECT video_id FROM videos_display_logs WHERE user_id = {} GROUP BY video_id
+            )
+            AND videos.content != '' LIMIT 0, 1
+            """.format(user_id)
+            ret = self.session.execute(sql)
+            dkeys = ret.keys()
+            for row in ret.fetchall():
+                ret = dict(zip(dkeys, row))
+                break
+        except Exception as e:
+            logging.warning("get message special tasks error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
     '''
     def count_showed_videos(self):
         try:

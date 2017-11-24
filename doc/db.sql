@@ -191,3 +191,27 @@ CREATE TABLE IF NOT EXISTS `messages_send_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '定时消息推送任务送达列表';
 
 
+CREATE TABLE IF NOT EXISTS `messages_settings` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `interval` INT(11) NOT NULL COMMENT '时间间隔, 单位分钟',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '黏性用户消息推送配置';
+
+
+CREATE TABLE IF NOT EXISTS `messages_tasks` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '推送的用户ID',
+    `date` DATE COMMENT '任务日期',
+    `send_time` DATETIME COMMENT '发送时间',
+    `is_sended` INT(11) NOT NULL COMMENT '是否已发送: 0未发送1已发送',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '黏性用户消息推送配置';
+
+
+
+
+

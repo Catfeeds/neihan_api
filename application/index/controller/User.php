@@ -16,6 +16,9 @@ use app\index\model\UserFission;
 use app\index\model\UserFormId;
 use app\index\model\MsgSendRecord;
 use app\index\model\Message;
+use app\index\model\MessageTask;
+use app\index\model\MessageSetting;
+
 
 
 class User extends Controller
@@ -253,8 +256,8 @@ class User extends Controller
     public function formid()
     {
         try {
-            $user_id = Request::instance()->post('user_id');
-            $form_id = Request::instance()->post('form_id');
+            $user_id = Request::instance()->get('user_id');
+            $form_id = Request::instance()->get('form_id');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -278,6 +281,35 @@ class User extends Controller
                 ]);
                 $user_formid->save();
             }
+
+            # 黏性用户
+            try {
+                $today_t = strtotime(date('Y-m-d',time()));
+                $formids = UserFormId::where('user_id', $user_id)
+                    ->where('create_time', '>=', $today_t)
+                    ->where('create_time', '<=', $today_t+86399)
+                    ->count();
+                if($formids >= 3) {
+                    $exists = MessageTask::where('user_id', $user_id)
+                        ->where('date', date('Y-m-d',time()))
+                        ->count();
+                    if(!$exists) {
+                        $settings = MessageSetting::get(1);
+
+                        $msgtask = New MessageTask;
+                        $msgtask->data([
+                            'user_id' => $user_id,
+                            'date' => date('Y-m-d',time()),
+                            'is_sended' => 0,
+                            'send_time' => date('Y-m-d H:i:s', strtotime("+{$settings->interval} minutes"))
+                        ]);
+                        $msgtask->save();
+                    }
+                }
+            } catch (Exception $e) {
+                
+            }
+
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
