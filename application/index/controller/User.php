@@ -223,11 +223,7 @@ class User extends Controller
                         }
                     } catch (Exception $e) {
                         
-                    }
-
-                    # 代理相关
-                    # to be continue
-                    
+                    }                    
                 }
 
                 # 记录用户裂变数据
@@ -362,15 +358,17 @@ class User extends Controller
                 $data['m'] = 'Arg Missing';
                 return Response::create($data, 'json')->code(200);
             }
+
+            $user = User_Model::get($user_id);
             $promo = UserPromotionBalance::where('user_id', $user_id)->find();
             if(!empty($promo)) {
-                $upg = UserPromotionGrid::where('parent_user_id', $user_id);
                 $data['d'] = [
                     'commission' => $promo->commission,
                     'commission_avail' => $promo->commission_avail,
-                    'agent_lv1' => $upg->where('level', 1)->count(),
-                    'agent_lv2' => $upg->where('level', 2)->count(),
-                    'agent_lv3' => $upg->where('level', 3)->count()
+                    'agent_lv1' => UserPromotionGrid::where('parent_user_id', $user_id)->where('level', 1)->count(),
+                    'agent_lv2' => UserPromotionGrid::where('parent_user_id', $user_id)->where('level', 2)->count(),
+                    'agent_lv3' => UserPromotionGrid::where('parent_user_id', $user_id)->where('level', 3)->count(),
+                    'groups' => UserShare::where('user_id', $user_id)->where('create_time', '>=', $user->promotion_time)->where('wechat_gid', '<>', '')->count('distinct wechat_gid')
                 ];
             } else {
                 $data['d'] = [
@@ -378,11 +376,10 @@ class User extends Controller
                     'commission_avail' => 0,
                     'agent_lv1' => 0,
                     'agent_lv2' => 0,
-                    'agent_lv3' => 0
+                    'agent_lv3' => 0,
+                    'groups' => 0
                 ];
             }
-            
-
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
@@ -438,8 +435,6 @@ class User extends Controller
                     $user_balance->save();
                 }
             }
-
-            
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
