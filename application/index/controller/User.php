@@ -18,8 +18,9 @@ use app\index\model\MsgSendRecord;
 use app\index\model\Message;
 use app\index\model\MessageTask;
 use app\index\model\MessageSetting;
-
-
+use app\index\model\UserPromotion;
+use app\index\model\UserPromotionBalance;
+use app\index\model\UserPromotionGrid;
 
 class User extends Controller
 {
@@ -222,7 +223,6 @@ class User extends Controller
                     
                 }
 
-
                 # 记录用户裂变数据
                 $share_fission = UserFission::get(['user_id' => $user_id]);
 
@@ -327,7 +327,6 @@ class User extends Controller
             $group_id = Request::instance()->post('group_id');
             $encrypt_data = Request::instance()->post('encrypt_data');
 
-
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
             if(empty($user_id) || empty($video_id) || empty($group_name) || empty($encrypt_data)) {
@@ -339,6 +338,44 @@ class User extends Controller
             $user = User_Model::get($user_id);
             
             
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function promotion()
+    {
+        try {
+            $user_id = Request::instance()->get('user_id');
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+            $promo = UserPromotionBalance::where('user_id', $user_id)->find();
+            if(!empty($promo)) {
+                $upg = UserPromotionGrid::where('parent_user_id', $user_id);
+                $data['d'] = [
+                    'commission' => $promo->commission,
+                    'commission_avail' => $promo->commission_avail,
+                    'agent_lv1' => $upg->where('level', 1)->count(),
+                    'agent_lv2' => $upg->where('level', 2)->count(),
+                    'agent_lv3' => $upg->where('level', 3)->count()
+                ];
+            } else {
+                $data['d'] = [
+                    'commission' => 0,
+                    'commission_avail' => 0,
+                    'agent_lv1' => 0,
+                    'agent_lv2' => 0,
+                    'agent_lv3' => 0
+                ];
+            }
+            
+
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }

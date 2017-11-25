@@ -213,5 +213,88 @@ CREATE TABLE IF NOT EXISTS `messages_tasks` (
 
 
 
+#### 代理相关
+CREATE TABLE IF NOT EXISTS `settings_promotion` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `ticket` DECIMAL(8,2) NOT NULL DEFAULT '1.0' COMMENT '代理门票支一元',
+    `commission_lv1` DECIMAL(8,2) NOT NULL DEFAULT '1.0' COMMENT '一级代理佣金',
+    `commission_lv2` DECIMAL(8,2) NOT NULL DEFAULT '0.5' COMMENT '二级代理佣金',
+    `commission_lv3` DECIMAL(8,2) NOT NULL DEFAULT '0.3' COMMENT '三级代理佣金',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理相关配置';
+
+
+CREATE TABLE IF NOT EXISTS `videos_promotion` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `group_id` VARCHAR(64) NOT NULL COMMENT '视频ID',
+    `status` INT(11) NOT NULL COMMENT '状态：0不可用, 1可用',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理分享用的视频池';
+
+
+CREATE TABLE IF NOT EXISTS `users_promotion_grid` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `parent_user_id` INT(11) NOT NULL COMMENT '上级用户ID',
+    `level` INT(11) NOT NULL DEFAULT '1' COMMENT '代理等级，1，2，3',
+    `user_id` INT(11) NOT NULL  COMMENT '用户ID',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理用户表分级表';
+
+CREATE TABLE IF NOT EXISTS `users_promotion` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `parent_user_id` INT(11) NOT NULL DEFAULT 0 COMMENT '上级用户ID, 顶级用户为0',
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `status` INT(11) NOT NULL COMMENT '状态：0不可用, 1可用',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理用户表';
+
+CREATE TABLE IF NOT EXISTS `users_promotion_balance` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `commission` DECIMAL(11,2) NOT NULL DEFAULT '0.00' COMMENT '累计佣金',
+    `commission_avail` DECIMAL(11,2) NOT NULL DEFAULT '0.00' COMMENT '可提佣金',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理用户佣金表';
+
+CREATE TABLE IF NOT EXISTS `users_promotion_ticket` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `orderid` VARCHAR(64) NOT NULL COMMENT '支付订单ID,自行生成',
+    `rel_orderid` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '支付订单ID, 微信返回',
+    `amount` DECIMAL(11,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
+    `status` INT(11) NOT NULL COMMENT '状态：0支付中, 1成功, 2失败',
+    `errmsg` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '支付失败的消息',
+    `ext` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '支付服务器返回的信息',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理用户支付表，一元';
+
+CREATE TABLE IF NOT EXISTS `users_withdraw` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `orderid` VARCHAR(64) NOT NULL COMMENT '支付订单ID,自行生成',
+    `rel_orderid` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '支付订单ID, 微信返回',
+    `amount` DECIMAL(11,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
+    `status` INT(11) NOT NULL COMMENT '状态：0支付中, 1成功, 2失败',
+    `errmsg` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '支付失败的消息',
+    `ext` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '支付服务器返回的信息',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理用户提现表';
+
+
+
 
 

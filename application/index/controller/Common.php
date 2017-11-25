@@ -10,6 +10,8 @@ use think\Db;
 use think\Config;
 
 use app\index\model\Setting;
+use app\index\model\SettingPromotion;
+
 
 class Common extends Controller
 {
@@ -65,6 +67,25 @@ class Common extends Controller
             ];
         }
 
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function promotion()
+    {
+        try {
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            $settings = SettingPromotion::get(1);
+            $data['d'] = [
+                'ticket' => floatval($settings->ticket),
+                'commission_lv1' => floatval($settings->commission_lv1),
+                'commission_lv2' => floatval($settings->commission_lv2),
+                'commission_lv3' => floatval($settings->commission_lv3)
+            ];
+
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
         return Response::create($data, 'json')->code(200);
     }
 

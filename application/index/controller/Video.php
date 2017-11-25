@@ -14,10 +14,12 @@ use app\index\model\User;
 use app\index\model\UserShare;
 use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
+use app\index\model\VideoPromotion;
 use app\index\model\Comment;
 use app\index\model\VideoDisplayLog;
 use app\index\model\UserStore;
 use app\index\model\Setting;
+
 
 class Video extends Controller
 {
@@ -502,6 +504,50 @@ class Video extends Controller
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];  
         }
 
+        return Response::create($data, 'json')->code(200);
+    }
+
+
+    public function promotion()
+    {
+        try {
+            $request = Request::instance();
+
+            $user_id = $request->get('user_id');
+
+            $data = array('c' => 0, 'm' => '', 'd' => array());
+
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $videos = VideoPromotion::all(['status'=>1]);
+            foreach ($videos as $key => $record) {
+                $data['d'][] = [
+                    'video_id' => strval($record->video->group_id),
+                    'content' => $record->video->content,
+                    'online_time' => date('Y-m-d H:i:s', $record->video->online_time),
+                    'category_name' => $record->video->category_name,
+                    'url' => timestamp_url($record->video->vurl),
+                    'cover_image' => str_replace('.webp', '', $record->video->cover_image),
+                    'user_name' => $record->video->user_name,
+                    'user_avatar' => $record->video->user_avatar,
+                    'play_count' => $record->video->play_count+$record->video->c_play_count,
+                    'digg_count' => $record->video->digg_count+$record->video->c_digg_count,
+                    'bury_count' => $record->video->bury_count+$record->video->c_bury_count,
+                    'share_count' => $record->video->share_count+$record->video->c_share_count,
+                    'comment_count' => $record->video->comment_count+$record->video->c_comment_count,
+                    'is_digg' => 0,
+                    'level' => $record->video->level,
+                    'comments' => []
+                ];
+            }
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        
         return Response::create($data, 'json')->code(200);
     }
 
