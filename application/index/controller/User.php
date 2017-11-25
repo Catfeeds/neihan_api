@@ -21,6 +21,8 @@ use app\index\model\MessageSetting;
 use app\index\model\UserPromotion;
 use app\index\model\UserPromotionBalance;
 use app\index\model\UserPromotionGrid;
+use app\index\model\UserPromotionTicket;
+use app\index\model\SettingPromotion;
 
 class User extends Controller
 {
@@ -435,6 +437,48 @@ class User extends Controller
                     $user_balance->save();
                 }
             }
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function promotion_prepay()
+    {
+        try {
+            $user_id = Request::instance()->param('user_id');
+
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+            
+            $user = User_Model::get($user_id);
+            if(empty($user)) {
+                $data['c'] = -1024;
+                $data['m'] = 'User NotExists';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $ticket = New UserPromotionTicket;
+            $psetting = SettingPromotion::get(1);
+            
+            list($usec, $sec) = explode(" ", microtime());  
+            $msec = strval(round($usec*1000)); 
+            $orderid = date('YmdHis').$msec;
+            $ticket->data([
+                'user_id' => $user_id,
+                'orderid' => $orderid,
+                'rel_orderid' => '',
+                'amount' => floatval($psetting->ticket),
+                'status' => 0
+            ]);
+            $ticket->save();
+
+            $data['d'] = ['orderid' => $orderid, 'amount' => floatval($psetting->ticket)];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }

@@ -32,6 +32,7 @@ Route::rule('api/user/update/$','index/User/update');
 Route::rule('api/user/info/$','index/User/info');
 Route::rule('api/user/promo/$','index/User/promotion');
 Route::rule('api/user/promo/init/$','index/User/promotion_init');
+Route::rule('api/user/promo/prepay','index/User/promotion_prepay');
 Route::rule('api/user/click/sharelink/$','index/User/click_share_link');
 Route::rule('api/user/share/group/$','index/User/share_group');
 Route::rule('api/user/form/$','index/User/formid');
