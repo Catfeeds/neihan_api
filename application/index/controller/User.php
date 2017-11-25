@@ -180,9 +180,10 @@ class User extends Controller
     public function click_share_link()
     {
         try {
-            $from_user_id = Request::instance()->post('from_user_id');
-            $user_id = Request::instance()->post('user_id');
-            $video_id = Request::instance()->post('video_id');
+            $from_user_id = Request::instance()->param('from_user_id');
+            $user_id = Request::instance()->param('user_id');
+            $video_id = Request::instance()->param('video_id');
+            $wechat_gid = Request::instance()->param('gid');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -196,14 +197,17 @@ class User extends Controller
                 $share_click = UserShareClick::get([
                     'from_user_id' => $from_user_id,
                     'user_id' => $user_id,
-                    'video_id' => $video_id
+                    'video_id' => $video_id,
+                    'wechat_gid' => strval($wechat_gid)
                 ]);
+
                 if(!$share_click) {
                     $share_click = new UserShareClick;
                     $share_click->data([
                         'from_user_id'  => $from_user_id,
                         'user_id' => $user_id,
-                        'video_id' => $video_id
+                        'video_id' => $video_id,
+                        'wechat_gid' => strval($wechat_gid)
                     ]);
                     $share_click->save();
 
@@ -220,6 +224,9 @@ class User extends Controller
                     } catch (Exception $e) {
                         
                     }
+
+                    # 代理相关
+                    # to be continue
                     
                 }
 
@@ -403,6 +410,7 @@ class User extends Controller
 
             if($user->promotion == 0) {
                 $user->promotion = 1;
+                $user->promotion_time = time();
                 $user->save();
             }
         } catch (Exception $e) {

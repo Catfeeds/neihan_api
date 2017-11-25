@@ -333,9 +333,10 @@ class Video extends Controller
     public function share()
     {
         try {
-            $user_id = Request::instance()->post('user_id');
-            $video_id = Request::instance()->post('video_id');
-            $page = Request::instance()->post('page');
+            $user_id = Request::instance()->param('user_id');
+            $video_id = Request::instance()->param('video_id');
+            $page = Request::instance()->param('page');
+            $wechat_gid = Request::instance()->param('gid');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -368,7 +369,9 @@ class Video extends Controller
             $user_share = new UserShare;
             $user_share->data([
                 'user_id'  => $user_id,
-                'video_id' => $video_id
+                'video_id' => $video_id,
+                'code' => $this->app_code,
+                'wechat_gid' => strval($wechat_gid)
             ]);
             $user_share->save();
 
@@ -381,7 +384,10 @@ class Video extends Controller
             ]);
             $user_log->save();
 
-            $data['d'] = ['id' => $user_share->id];
+            $data['d'] = [
+                'id' => $user_share->id,
+                'num' => UserShare::where('user_id', $user_id)->where('create_time', '>=', $user->promotion_time)->where('wechat_gid', '<>', '')->count('distinct wechat_gid')
+            ];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];   
         }
