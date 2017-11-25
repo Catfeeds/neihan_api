@@ -19,6 +19,7 @@ use app\index\model\Comment;
 use app\index\model\VideoDisplayLog;
 use app\index\model\UserStore;
 use app\index\model\Setting;
+use app\index\model\UserPromotion;
 
 
 class Video extends Controller
@@ -384,9 +385,21 @@ class Video extends Controller
             ]);
             $user_log->save();
 
+            $groups = UserShare::where('user_id', $user_id)
+                ->where('create_time', '>=', $user->promotion_time)
+                ->where('wechat_gid', '<>', '')
+                ->count('distinct wechat_gid');
+            
+            if($groups >= 3 && $user->promotion == 1) {
+                $user->promotion = 2;
+                $user->save();
+
+                UserPromotion::where('user_id', $user_id)->update(['status' => 1]);
+            }
+
             $data['d'] = [
                 'id' => $user_share->id,
-                'num' => UserShare::where('user_id', $user_id)->where('create_time', '>=', $user->promotion_time)->where('wechat_gid', '<>', '')->count('distinct wechat_gid')
+                'num' => $groups
             ];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];   
