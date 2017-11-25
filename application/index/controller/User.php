@@ -381,4 +381,33 @@ class User extends Controller
         }
         return Response::create($data, 'json')->code(200);
     }
+
+    public function promotion_init()
+    {
+        try {
+            $user_id = Request::instance()->param('user_id');
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+            
+            $user = User_Model::get($user_id);
+            if(empty($user)) {
+                $data['c'] = -1024;
+                $data['m'] = 'User NotExists';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            if($user->promotion == 0) {
+                $user->promotion = 1;
+                $user->save();
+            }
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
 }
