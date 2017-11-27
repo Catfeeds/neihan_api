@@ -162,6 +162,13 @@ class User extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);   
             }
+            $ptype = 0;
+            if($user->promotion == 3) {
+                $user_promo = UserPromotion::where('user_id', $user_id)->find();
+                if($user_promo) {
+                    $ptype = $user_promo->type;    
+                }
+            }
 
             $data['d'] = [
                 'user_id' => $user->id, 
@@ -170,7 +177,8 @@ class User extends Controller
                 'gender' => $user->gender,
                 'country' => $user->country,
                 'province' => $user->province,
-                'city' => $user->city
+                'city' => $user->city,
+                'ptype' => $ptype,
             ];
 
         } catch (Exception $e) {
@@ -410,6 +418,16 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
+            if(!empty($from_user_id)) {
+                $parent_user = User_Model::get($from_user_id);
+                if($parent_user->promotion != 3) {
+                    $data['c'] = -1024;
+                    $data['m'] = 'From User Is Not Valid';
+                    return Response::create($data, 'json')->code(200);
+                }
+            }
+
+
             if($user->promotion == 0) {
                 $user->promotion = 1;
                 $user->promotion_time = time();
@@ -423,7 +441,7 @@ class User extends Controller
                         'parent_user_id' => $from_user_id,
                         'user_id' => $user_id,
                         'status' => 0,
-                        'ptype' => 0
+                        'type' => 0
                     ]);
                     $user_promo->save();
                 }
@@ -559,9 +577,71 @@ class User extends Controller
             $wxconfig = Config::get('wxconfig');
             $sign = $callback['sign'];
             unset($callback['sign']);
-            if($sign == generate_sign($callback, $wxconfig['keys'][$this->app_code])) {
-                
-            } 
+            if($sign != generate_sign($callback, $wxconfig['keys'][$this->app_code])) {
+                return 'SUCCESS';
+            }
+
+            $usorder = UserPromotionTicket::where('orderid', $wechat_order['out_trade_no'])->find();
+            if (empty($usorder) || $usorder['status'] == 1) {
+                return 'SUCCESS';
+            }
+
+            if ($wechat_order['result_code'] !== 'SUCCESS') {
+                $usorder->status = 2;
+                $usorder->errmsg = $wechat_order['err_code'].'|'.$wechat_order['err_code_res'];
+                return 'SUCCESS';
+            }
+
+            if ($wechat_order['total_fee'] != int($usorder['amount']*100)) {
+                return 'SUCCESS';
+            }
+
+            $usorder->status = 1;
+            $usorder->save();
+
+            $
+
+            # 如果你是一个代理, 那就不能做别人的代理了
+            $exists = UserPromotionGrid::where('user_id', $usorder['user_id'])->count();
+            if($exists) {
+                return 'SUCCESS';
+            }
+
+            # 加代理
+            $user_promo = UserPromotion::where('user_id', $usorder['user_id']);
+            
+            # user_id是谁的一级代理
+            $user_promo_grid = New UserPromotionGrid;
+            $user_promo_grid->data([
+                'parent_user_id' => $user_promo->parent_user_id,
+                'user_id' => $user_promo->user_id,
+                'level' => 1
+            ]);
+            $user_promo_grid->save();
+
+            # 找出parent_user_id是谁的一级代理, 把user_id加成为二级代理
+            $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)
+                ->where('level', 1)->find();
+            if(!empty($p1_promo)) {
+                $user_promo_grid = New UserPromotionGrid;
+                $user_promo_grid->data([
+                    'parent_user_id' => $p1_promo->parent_user_id,
+                    'user_id' => $user_promo->user_id,
+                    'level' => 2
+                ]);
+                $user_promo_grid->save();
+            } else {
+                $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)->where('level', 2)->find();
+
+                $user_promo_grid = New UserPromotionGrid;
+                $user_promo_grid->data([
+                    'parent_user_id' => $p1_promo->parent_user_id,
+                    'user_id' => $user_promo->user_id,
+                    'level' => 3
+                ]);
+                $user_promo_grid->save();
+            }
+
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
