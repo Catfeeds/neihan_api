@@ -632,7 +632,7 @@ class User extends Controller
             }
 
             # 加代理
-            $user_promo = UserPromotion::where('user_id', $usorder['user_id']);
+            $user_promo = UserPromotion::where('user_id', $usorder['user_id'])->find();
             
             # user_id是谁的一级代理
             $user_promo_grid = New UserPromotionGrid;
