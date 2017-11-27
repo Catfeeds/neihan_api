@@ -296,5 +296,34 @@ CREATE TABLE IF NOT EXISTS `users_withdraw` (
 
 
 
-
+CREATE TABLE IF NOT EXISTS `wechat_order` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `appid` VARCHAR(64) NOT NULL COMMENT '小程序ID',
+    `mch_id` VARCHAR(64) NOT NULL COMMENT '商户号',
+    `device_info` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '微信支付分配的终端设备号',
+    `nonce_str` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '随机字符串，不长于32位',
+    `sign` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '签名',
+    `sign_type` VARCHAR(32) NOT NULL DEFAULT 'MD5' COMMENT '签名类型，目前支持HMAC-SHA256和MD5，默认为MD5', 
+    `result_code` VARCHAR(32) NOT NULL COMMENT '业务结果, SUCCESS/FAIL',
+    `err_code` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '错误返回的信息描述',
+    `err_code_des` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '错误返回的信息描述',
+    `openid` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '用户在商户appid下的唯一标识',
+    `is_subscribe` VARCHAR(8) NOT NULL DEFAULT '' COMMENT '用户是否关注公众账号，Y-关注，N-未关注，仅在公众账号类型支付有效',
+    `trade_type` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '交易类型, JSAPI、NATIVE、APP',
+    `bank_type` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '银行类型',
+    `total_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '订单总金额，单位为分',
+    `settlement_total_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '应结订单金额=订单金额-非充值代金券金额，应结订单金额<=订单金额',
+    `fee_type` VARCHAR(8) NOT NULL DEFAULT 'CNY' COMMENT '货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见',
+    `cash_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '现金支付金额订单现金支付金额，详见',
+    `cash_fee_type` VARCHAR(8) NOT NULL DEFAULT 'CNY' COMMENT '货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见',
+    `coupon_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '代金券金额<=订单金额，订单金额-代金券金额=现金支付金额',
+    `coupon_count` INT(11) NOT NULL DEFAULT '0' COMMENT '代金券使用数量',
+    `transaction_id` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '微信支付订单号',
+    `out_trade_no` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '商户系统的订单号，与请求一致',
+    `attach` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '商家数据包，原样返回',
+    `time_end` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '支付完成时间，格式为yyyyMMddHHmmss',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '微信支付回调表';
 

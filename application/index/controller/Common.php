@@ -78,6 +78,7 @@ class Common extends Controller
             $settings = SettingPromotion::get(1);
             $data['d'] = [
                 'ticket' => floatval($settings->ticket),
+                'golden_ticket' => floatval($settings->golden_ticket),
                 'commission_lv1' => floatval($settings->commission_lv1),
                 'commission_lv2' => floatval($settings->commission_lv2),
                 'commission_lv3' => floatval($settings->commission_lv3)

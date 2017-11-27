@@ -8,6 +8,7 @@ use think\Response;
 use think\Loader;
 use think\Db;
 use think\Config;
+use think\Log;
 
 use app\index\model\User as User_Model;
 use app\index\model\UserShare;
@@ -470,15 +471,92 @@ class User extends Controller
             $msec = strval(round($usec*1000)); 
             $orderid = date('YmdHis').$msec;
             $ticket->data([
+                'appid' => $wxconfig['appids'][$this->app_code],
                 'user_id' => $user_id,
                 'orderid' => $orderid,
                 'rel_orderid' => '',
+                'nonce_str' => MD5($orderid),
+                'prepay_id' => 'wx'.date('YmdHis').generate_str(10),
                 'amount' => floatval($psetting->ticket),
                 'status' => 0
             ]);
             $ticket->save();
 
-            $data['d'] = ['orderid' => $orderid, 'amount' => floatval($psetting->ticket)];
+            $wxconfig = Config::get('wxconfig');
+            $sign_data = [
+                'appId' => $ticket->appid,
+                'timeStamp' => $ticket->create_time,
+                'nonceStr' => $ticket->nonce_str,
+                'package' => $ticket->prepay_id,
+                'signType' => 'MD5'
+            ];
+            $ticket->pay_sign = generate_sign($sign_data, $wxconfig['keys'][$this->app_code]);
+            $ticket->save();
+
+            $data['d'] = [
+                'timestamp' => strtotime($ticket->create_time),
+                'nonce_str' => $ticket->nonce_str,
+                'package' => $ticket->prepay_id,
+                'sign_type' => 'MD5',
+                'pay_sign' => $ticket->pay_sign,
+                'amount' => floatval($psetting->ticket),
+            ];
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function promotion_pay_callback()
+    {
+        try {
+            $xml = file_get_contents('php://input');
+            Log::record($xml, 'info');
+            if (!trim($xml)) {
+                return 'SUCCESS';
+            }
+            $callback = xml_to_data($xml);
+
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+            $wechat_order = New WechatOrder;
+
+            /*
+            $callback = [
+                'appid' => $req->param('appid'),
+                'mch_id' => $req->param('mch_id'),
+                'device_info' => strval($req->param('device_info')),
+                'nonce_str' => $req->param('nonce_str'),
+                'sign' => $req->param('sign'),
+                'sign_type' => $req->param('sign_type'),
+                'result_code' => $req->param('result_code'),
+                'err_code' => strval($req->param('err_code')),
+                'err_code_des' => strval($req->param('err_code_des')),
+                'openid' => $req->param('openid'),
+                'is_subscribe' => intval($req->param('is_subscribe')),
+                'trade_type' => $req->param('trade_type'),
+                'bank_type' => strval($req->param('bank_type')),
+                'total_fee' => intval($req->param('total_fee')),
+                'settlement_total_fee' => intval($req->param('settlement_total_fee')),
+                'fee_type' => strval($req->param('fee_type')),
+                'cash_fee' => intval($req->param('cash_fee')),
+                'cash_fee_type' => strval($req->param('cash_fee_type')),
+                'coupon_fee' => intval($req->param('coupon_fee')),
+                'coupon_count' => intval($req->param('appid')),
+                'transaction_id' => $req->param('transaction_id'),
+                'out_trade_no' => $req->param('out_trade_no'),
+                'attach' => intval($req->param('attach')),
+                'time_end' => $req->param('time_end')
+            ];
+            */
+            $wechat_order->data($callback);
+            $wechat_order->save();
+
+            $wxconfig = Config::get('wxconfig');
+            $sign = $callback['sign'];
+            unset($callback['sign']);
+            if($sign == generate_sign($callback, $wxconfig['keys'][$this->app_code])) {
+                
+            } 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
