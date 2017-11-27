@@ -633,6 +633,8 @@ class User extends Controller
 
             # 加代理
             $user_promo = UserPromotion::where('user_id', $usorder['user_id'])->find();
+            $user_promo->status = 2;
+            $user_promo->save();
             
             # user_id是谁的一级代理
             $user_promo_grid = New UserPromotionGrid;
@@ -659,6 +661,7 @@ class User extends Controller
                 ]);
                 $user_promo_grid->save();
             } else {
+                # 找出parent_user_id是谁的二级代理, 把user_id加成为三级代理
                 $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)->where('level', 2)->find();
 
                 $user_promo_grid = New UserPromotionGrid;
