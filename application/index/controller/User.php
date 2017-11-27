@@ -617,7 +617,7 @@ class User extends Controller
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
-            if ($wechat_order['total_fee'] != int($usorder['amount']*100)) {
+            if ($wechat_order['total_fee'] != intval($usorder['amount']*100)) {
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
