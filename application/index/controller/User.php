@@ -573,7 +573,7 @@ class User extends Controller
             $notify = new Notify($wrequest);
             Log::record($notify);
 
-            if( $notify->containsKey('out_trade_no') ) {
+            if(!$notify->containsKey('out_trade_no')) {
                 $notify->fail('Invalid Request');
             }
 
@@ -583,7 +583,7 @@ class User extends Controller
             $wechat_order->data($callback);
             $wechat_order->save();
 
-            // $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
+            $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
             // $xml = file_get_contents('php://input');
             // Log::record($xml, 'info');
             // if (!trim($xml)) {
@@ -642,6 +642,10 @@ class User extends Controller
                 'level' => 1
             ]);
             $user_promo_grid->save();
+
+            if($user_promo->parent_user_id == 0) {
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            }
 
             # 找出parent_user_id是谁的一级代理, 把user_id加成为二级代理
             $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)
