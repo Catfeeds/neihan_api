@@ -551,7 +551,7 @@ class User extends Controller
                 $data['d'] = [
                     'timeStamp' => strtotime($ticket->create_time),
                     'nonceStr' => $ticket->nonce_str,
-                    'package' => $ticket->prepay_id,
+                    'package' => 'prepay_id='.$ticket->prepay_id,
                     'signType' => 'MD5',
                     'paySign' => $ticket->pay_sign
                 ];
@@ -568,54 +568,33 @@ class User extends Controller
     public function promotion_pay_callback()
     {
         try {
-            // $wrequest = WRequest::createFromGlobals();
-            // $notify = new Notify($wrequest);
+            $wrequest = WRequest::createFromGlobals();
+            $notify = new Notify($wrequest);
+            Log::record($notify);
 
-            // if( $notify->containsKey('out_trade_no') ) {
-            //     $notify->fail('Invalid Request');
-            // }
-
-            $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
-            $xml = file_get_contents('php://input');
-            Log::record($xml, 'info');
-            if (!trim($xml)) {
-                $data = ['return_code' => 'FAIL', 'return_msg' => '数据为空'];
-                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            if( $notify->containsKey('out_trade_no') ) {
+                $notify->fail('Invalid Request');
             }
-            $callback = xml_to_data($xml);
+
+            $callback = $notify->toArray();
 
             $wechat_order = New WechatOrder;
-
-            /*
-            $callback = [
-                'appid' => $req->param('appid'),
-                'mch_id' => $req->param('mch_id'),
-                'device_info' => strval($req->param('device_info')),
-                'nonce_str' => $req->param('nonce_str'),
-                'sign' => $req->param('sign'),
-                'sign_type' => $req->param('sign_type'),
-                'result_code' => $req->param('result_code'),
-                'err_code' => strval($req->param('err_code')),
-                'err_code_des' => strval($req->param('err_code_des')),
-                'openid' => $req->param('openid'),
-                'is_subscribe' => intval($req->param('is_subscribe')),
-                'trade_type' => $req->param('trade_type'),
-                'bank_type' => strval($req->param('bank_type')),
-                'total_fee' => intval($req->param('total_fee')),
-                'settlement_total_fee' => intval($req->param('settlement_total_fee')),
-                'fee_type' => strval($req->param('fee_type')),
-                'cash_fee' => intval($req->param('cash_fee')),
-                'cash_fee_type' => strval($req->param('cash_fee_type')),
-                'coupon_fee' => intval($req->param('coupon_fee')),
-                'coupon_count' => intval($req->param('appid')),
-                'transaction_id' => $req->param('transaction_id'),
-                'out_trade_no' => $req->param('out_trade_no'),
-                'attach' => intval($req->param('attach')),
-                'time_end' => $req->param('time_end')
-            ];
-            */
             $wechat_order->data($callback);
             $wechat_order->save();
+
+            // $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
+            // $xml = file_get_contents('php://input');
+            // Log::record($xml, 'info');
+            // if (!trim($xml)) {
+            //     $data = ['return_code' => 'FAIL', 'return_msg' => '数据为空'];
+            //     return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            // }
+            // $callback = xml_to_data($xml);
+
+            // $wechat_order = New WechatOrder;
+
+            // $wechat_order->data($callback);
+            // $wechat_order->save();
 
             $wxconfig = Config::get('wxconfig');
             $sign = $callback['sign'];
@@ -643,6 +622,7 @@ class User extends Controller
 
             $usorder->status = 1;
             $usorder->save();
+
 
             # 如果你是一个代理, 那就不能做别人的代理了
             $exists = UserPromotionGrid::where('user_id', $usorder['user_id'])->count();
