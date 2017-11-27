@@ -128,10 +128,9 @@ function generate_sign($data, $sign_key)
         return None;
     }
     ksort($data);
-    $str = '';
-    foreach ($data as $key => $value) {
-        $str .= "{$key}={$value}";
-    }
-    $str .= "key={$sign_key}";
-    return strtoupper(MD5($str));
+
+    $signature = urldecode(http_build_query($options));
+    $signature = strtoupper(md5($signature.'&key='.$sign_key));
+
+    return $signature;
 }
