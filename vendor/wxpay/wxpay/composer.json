@@ -1,0 +1,15 @@
+{
+    "name": "wxpay/wxpay",
+    "type": "library",
+    "description": "微信支付 PHP SDK",
+    "keywords": [
+        "wechat",
+        "pay",
+        "sdk"
+    ],
+    "license": "BSD",
+    "minimum-stability" : "dev",
+    "autoload": {
+        "psr-4": {"WXPay\\": "src/"}
+    }
+}

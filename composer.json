@@ -17,7 +17,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "topthink/framework": "~5.0.0"
+        "topthink/framework": "~5.0.0",
+        "wxpay/wxpay": "0.0.5",
+        "thenbsp/wechat": "^2.0"
     },
     "extra": {
         "think-path": "thinkphp"

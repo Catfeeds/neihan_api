@@ -24,6 +24,8 @@ use app\index\model\UserPromotionBalance;
 use app\index\model\UserPromotionGrid;
 use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
+use Thenbsp\Wechat\Payment\Unifiedorder;
+
 
 class User extends Controller
 {
@@ -498,31 +500,63 @@ class User extends Controller
                 'user_id' => $user_id,
                 'orderid' => $orderid,
                 'rel_orderid' => '',
-                'nonce_str' => MD5($orderid),
-                'prepay_id' => 'wx'.date('YmdHis').generate_str(10),
+                'nonce_str' => '',
+                'prepay_id' => '',
                 'amount' => floatval($psetting->ticket),
                 'status' => 0
             ]);
             $ticket->save();
 
-            $wxconfig = Config::get('wxconfig');
-            $sign_data = [
-                'appId' => $ticket->appid,
-                'timeStamp' => $ticket->create_time,
-                'nonceStr' => $ticket->nonce_str,
-                'package' => $ticket->prepay_id,
-                'signType' => 'MD5'
-            ];
-            $ticket->pay_sign = generate_sign($sign_data, $wxconfig['keys'][$this->app_code]);
-            $ticket->save();
+            # 发给统一下单请求
+            $unifiedorder = new Unifiedorder(
+                $wxconfig['appids'][$this->app_code],
+                $wxconfig['mchids'][$this->app_code],
+                $wxconfig['mchkeys'][$this->app_code]
+            );
 
-            $data['d'] = [
-                'timeStamp' => strtotime($ticket->create_time),
-                'nonceStr' => $ticket->nonce_str,
-                'package' => $ticket->prepay_id,
-                'signType' => 'MD5',
-                'paySign' => $ticket->pay_sign
-            ];
+            // 必填
+            $unifiedorder->set('body',          '微信支付测试商品');
+            $unifiedorder->set('total_fee',     intval($ticket->amount*100));
+            $unifiedorder->set('openid',        $user->openid);
+            $unifiedorder->set('trade_type',    'JSAPI');
+            $unifiedorder->set('out_trade_no',  $orderid);
+            $unifiedorder->set('notify_url',    'https://www.anglailed.cn/api/user/pay/callback');
+
+            try {
+                $response = $unifiedorder->getResponse();
+            } catch (\Exception $e) {
+                exit($e->getMessage());
+            }
+
+            $pay_ret = $response->toArray();
+            if($pay_ret['return_code'] === 'SUCCESS') {
+                if($pay_ret['result_code'] === 'SUCCESS') {
+                    $ticket->prepay_id = $pay_ret['prepay_id'];
+                }
+
+                $sign_data = [
+                    'appId' => $ticket->appid,
+                    'timeStamp' => $ticket->create_time,
+                    'nonceStr' => generate_str(),
+                    'package' => $pay_ret['prepay_id'],
+                    'signType' => 'MD5'
+                ];
+
+                $ticket->nonce_str = $sign_data['nonceStr'];
+                $ticket->pay_sign = generate_sign($sign_data, $wxconfig['mchkeys'][$this->app_code]);
+                $ticket->save();
+
+                $data['d'] = [
+                    'timeStamp' => strtotime($ticket->create_time),
+                    'nonceStr' => $ticket->nonce_str,
+                    'package' => $ticket->prepay_id,
+                    'signType' => 'MD5',
+                    'paySign' => $ticket->pay_sign
+                ];
+            } else {
+                $ticket->status = 2;
+                $ticket->save();
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
