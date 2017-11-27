@@ -422,7 +422,8 @@ class User extends Controller
                     $user_promo->data([
                         'parent_user_id' => $from_user_id,
                         'user_id' => $user_id,
-                        'status' => 0
+                        'status' => 0,
+                        'ptype' => 0
                     ]);
                     $user_promo->save();
                 }
@@ -447,7 +448,9 @@ class User extends Controller
     public function promotion_prepay()
     {
         try {
+            $wxconfig = Config::get('wxconfig');
             $user_id = Request::instance()->param('user_id');
+            $ptype = intval(Request::instance()->param('ptype'));
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -463,6 +466,8 @@ class User extends Controller
                 $data['m'] = 'User NotExists';
                 return Response::create($data, 'json')->code(200);
             }
+
+            UserPromotion::where('user_id', $user_id)->update(['type' => $ptype ]);
 
             $ticket = New UserPromotionTicket;
             $psetting = SettingPromotion::get(1);
