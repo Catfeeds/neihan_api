@@ -533,14 +533,15 @@ class User extends Controller
     public function promotion_pay_callback()
     {
         try {
+            $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
             $xml = file_get_contents('php://input');
             Log::record($xml, 'info');
             if (!trim($xml)) {
-                return 'SUCCESS';
+                $data = ['return_code' => 'FAIL', 'return_msg' => '数据为空'];
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
             $callback = xml_to_data($xml);
 
-            $data = ['c' => 0, 'm'=> '', 'd' => []];
             $wechat_order = New WechatOrder;
 
             /*
@@ -578,22 +579,24 @@ class User extends Controller
             $sign = $callback['sign'];
             unset($callback['sign']);
             if($sign != generate_sign($callback, $wxconfig['keys'][$this->app_code])) {
-                return 'SUCCESS';
+                $data = ['return_code' => 'FAIL', 'return_msg' => '签名失败'];
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             $usorder = UserPromotionTicket::where('orderid', $wechat_order['out_trade_no'])->find();
             if (empty($usorder) || $usorder['status'] == 1) {
-                return 'SUCCESS';
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             if ($wechat_order['result_code'] !== 'SUCCESS') {
                 $usorder->status = 2;
                 $usorder->errmsg = $wechat_order['err_code'].'|'.$wechat_order['err_code_res'];
-                return 'SUCCESS';
+
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             if ($wechat_order['total_fee'] != int($usorder['amount']*100)) {
-                return 'SUCCESS';
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             $usorder->status = 1;
@@ -604,7 +607,7 @@ class User extends Controller
             # 如果你是一个代理, 那就不能做别人的代理了
             $exists = UserPromotionGrid::where('user_id', $usorder['user_id'])->count();
             if($exists) {
-                return 'SUCCESS';
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             # 加代理
@@ -641,10 +644,9 @@ class User extends Controller
                 ]);
                 $user_promo_grid->save();
             }
-
         } catch (Exception $e) {
-            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+            $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
         }
-        return Response::create($data, 'json')->code(200);
+        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
 }
