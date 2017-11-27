@@ -129,7 +129,7 @@ function generate_sign($data, $sign_key)
     }
     ksort($data);
 
-    $signature = urldecode(http_build_query($options));
+    $signature = urldecode(http_build_query($data));
     $signature = strtoupper(md5($signature.'&key='.$sign_key));
 
     return $signature;
