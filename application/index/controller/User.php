@@ -538,7 +538,7 @@ class User extends Controller
 
                 $sign_data = [
                     'appId' => $ticket->appid,
-                    'timeStamp' => $ticket->create_time,
+                    'timeStamp' => strtotime($ticket->create_time),
                     'nonceStr' => generate_str(),
                     'package' => 'prepay_id='.$pay_ret['prepay_id'],
                     'signType' => 'MD5'
