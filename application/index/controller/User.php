@@ -24,6 +24,7 @@ use app\index\model\UserPromotionBalance;
 use app\index\model\UserPromotionGrid;
 use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
+use app\index\model\WechatOrder;
 
 use Thenbsp\Wechat\Payment\Unifiedorder;
 use Thenbsp\Wechat\Payment\Notify;
