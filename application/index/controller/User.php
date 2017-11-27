@@ -571,7 +571,7 @@ class User extends Controller
         try {
             $wrequest = WRequest::createFromGlobals();
             $notify = new Notify($wrequest);
-            Log::record($notify);
+            # Log::record($notify);
 
             if(!$notify->containsKey('out_trade_no')) {
                 $notify->fail('Invalid Request');
@@ -584,18 +584,6 @@ class User extends Controller
             $wechat_order->save();
 
             $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
-            // $xml = file_get_contents('php://input');
-            // Log::record($xml, 'info');
-            // if (!trim($xml)) {
-            //     $data = ['return_code' => 'FAIL', 'return_msg' => '数据为空'];
-            //     return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
-            // }
-            // $callback = xml_to_data($xml);
-
-            // $wechat_order = New WechatOrder;
-
-            // $wechat_order->data($callback);
-            // $wechat_order->save();
 
             $wxconfig = Config::get('wxconfig');
             $sign = $callback['sign'];
