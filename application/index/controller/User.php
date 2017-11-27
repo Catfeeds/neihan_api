@@ -517,12 +517,11 @@ class User extends Controller
             $ticket->save();
 
             $data['d'] = [
-                'timestamp' => strtotime($ticket->create_time),
-                'nonce_str' => $ticket->nonce_str,
+                'timeStamp' => strtotime($ticket->create_time),
+                'nonceStr' => $ticket->nonce_str,
                 'package' => $ticket->prepay_id,
-                'sign_type' => 'MD5',
-                'pay_sign' => $ticket->pay_sign,
-                'amount' => floatval($psetting->ticket),
+                'signType' => 'MD5',
+                'paySign' => $ticket->pay_sign
             ];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
