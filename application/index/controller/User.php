@@ -24,8 +24,10 @@ use app\index\model\UserPromotionBalance;
 use app\index\model\UserPromotionGrid;
 use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
-use Thenbsp\Wechat\Payment\Unifiedorder;
 
+use Thenbsp\Wechat\Payment\Unifiedorder;
+use Thenbsp\Wechat\Payment\Notify;
+use Symfony\Component\HttpFoundation\Request as WRequest;
 
 class User extends Controller
 {
@@ -566,6 +568,13 @@ class User extends Controller
     public function promotion_pay_callback()
     {
         try {
+            // $wrequest = WRequest::createFromGlobals();
+            // $notify = new Notify($wrequest);
+
+            // if( $notify->containsKey('out_trade_no') ) {
+            //     $notify->fail('Invalid Request');
+            // }
+
             $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
             $xml = file_get_contents('php://input');
             Log::record($xml, 'info');
@@ -611,7 +620,7 @@ class User extends Controller
             $wxconfig = Config::get('wxconfig');
             $sign = $callback['sign'];
             unset($callback['sign']);
-            if($sign != generate_sign($callback, $wxconfig['keys'][$this->app_code])) {
+            if($sign != generate_sign($callback, $wxconfig['mchkeys'][$this->app_code])) {
                 $data = ['return_code' => 'FAIL', 'return_msg' => '签名失败'];
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
@@ -634,8 +643,6 @@ class User extends Controller
 
             $usorder->status = 1;
             $usorder->save();
-
-            $
 
             # 如果你是一个代理, 那就不能做别人的代理了
             $exists = UserPromotionGrid::where('user_id', $usorder['user_id'])->count();
