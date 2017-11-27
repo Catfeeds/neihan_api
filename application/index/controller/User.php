@@ -540,7 +540,7 @@ class User extends Controller
                     'appId' => $ticket->appid,
                     'timeStamp' => $ticket->create_time,
                     'nonceStr' => generate_str(),
-                    'package' => $pay_ret['prepay_id'],
+                    'package' => 'prepay_id='.$pay_ret['prepay_id'],
                     'signType' => 'MD5'
                 ];
 
