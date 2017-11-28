@@ -787,7 +787,7 @@ class User extends Controller
             $user_withdraw->data([
                 'user_id' => $user->id,
                 'orderid' => $orderid,
-                'amount' => float($amount),
+                'amount' => floatval($amount),
                 'status' => 0,
                 'ip' => $request->ip()
             ]);
