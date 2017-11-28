@@ -30,6 +30,8 @@ use Thenbsp\Wechat\Payment\Unifiedorder;
 use Thenbsp\Wechat\Payment\Notify;
 use Symfony\Component\HttpFoundation\Request as WRequest;
 
+use EasyWeChat\Foundation\Application;
+
 class User extends Controller
 {
     public function _initialize()
@@ -632,7 +634,7 @@ class User extends Controller
         try {
             $wrequest = WRequest::createFromGlobals();
             $notify = new Notify($wrequest);
-            # Log::record($notify);
+            Log::record($notify);
 
             if(!$notify->containsKey('out_trade_no')) {
                 $notify->fail('Invalid Request');
@@ -747,6 +749,58 @@ class User extends Controller
             $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
         }
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+    }
+
+    public function transfer()
+    {
+        try {
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+            $request = Request::instance();
+            $user_id = $request->param('user_id');
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+            $user = User_Model::get($user_id);
+            if(empty($user)) {
+                $data['c'] = -1024;
+                $data['m'] = 'User Not Exists';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $wxconfig = Config::get('wxconfig');
+            $options = [
+                'payment' => [
+                    'merchant_id' => $wxconfig['mchids'][$this->app_code],
+                    'key' => $wxconfig['mchkeys'][$this->app_code],
+                    'cert_path' => './../application/extra/paycert/apiclient_cert.pem',
+                    'key_path' => './../application/extra/paycert/apiclient_key.pem'
+                ],
+            ];
+            $app = new Application($options);
+            $merchantPay = $app->merchant_pay;
+
+            list($usec, $sec) = explode(" ", microtime());  
+            $msec = strval(round($usec*1000)); 
+            $orderid = date('YmdHis').$msec;
+
+            $merchantPayData = [
+                'partner_trade_no' => $orderid,
+                'openid' => $user->openid,
+                'check_name' => 'NO_CHECK',  //文档中有三种校验实名的方法 NO_CHECK OPTION_CHECK FORCE_CHECK
+                're_user_name'=> '',
+                'amount' => 1,
+                'desc' => '测试企业付款',
+                'spbill_create_ip' => $request->ip(),
+            ];
+            $result = $merchantPay->send($merchantPayData);
+            print_r($result);
+
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
     }
 
 

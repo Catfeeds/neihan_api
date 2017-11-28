@@ -35,6 +35,7 @@ Route::rule('api/user/promo/init/$','index/User/promotion_init');
 Route::rule('api/user/promo/qrcode/$','index/User/promotion_qrcode');
 Route::rule('api/user/prepay/$','index/User/promotion_prepay');
 Route::rule('api/user/pay/callback/$','index/User/promotion_pay_callback');
+Route::rule('api/user/pay/transfer/$','index/User/transfer');
 Route::rule('api/user/click/sharelink/$','index/User/click_share_link');
 Route::rule('api/user/share/group/$','index/User/share_group');
 Route::rule('api/user/form/$','index/User/formid');
