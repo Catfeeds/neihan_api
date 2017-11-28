@@ -1,6 +1,6 @@
 <?php
 
-function curl_post($url, $data='', $timeout=60, $agent='', $cookie='')
+function curl_post($url, $data='', $headers=[], $timeout=60, $agent='', $cookie='')
 {
     $fn = curl_init();
     curl_setopt($fn, CURLOPT_URL, $url);
@@ -10,6 +10,9 @@ function curl_post($url, $data='', $timeout=60, $agent='', $cookie='')
     curl_setopt($fn, CURLOPT_HEADER, 0);
     curl_setopt($fn, CURLOPT_POST, TRUE);
     curl_setopt($fn, CURLOPT_POSTFIELDS, $data);
+    if($headers) {
+        curl_setopt($fn, CURLOPT_HTTPHEADER, $headers ); 
+    }
     if ($agent) {
         curl_setopt($fn, CURLOPT_USERAGENT, $agent);    
     }

@@ -602,7 +602,13 @@ class User extends Controller
                 'sence' => 'from_user_id='.$user_id
             ];
 
-            $resp = curl_post($request_url, json_encode($params));
+            $headers = [
+                "Content-type: application/json;charset=UTF-8",
+                "Accept: application/json",
+                "Cache-Control: no-cache",
+                "Pragma: no-cache"
+            ];
+            $resp = curl_post($request_url, json_encode($params), $headers);
             if(!empty($resp)) {
                 $code_filename = strval(time()).'.jpeg';
                 $codefile = './static/code/'.$code_filename;
