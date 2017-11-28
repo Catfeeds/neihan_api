@@ -25,6 +25,7 @@ use app\index\model\UserPromotionGrid;
 use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
 use app\index\model\WechatOrder;
+use app\index\model\UserWithdraw;
 
 use Thenbsp\Wechat\Payment\Unifiedorder;
 use Thenbsp\Wechat\Payment\Notify;
@@ -761,9 +762,12 @@ class User extends Controller
     {
         try {
             $data = ['c' => 0, 'm'=> '', 'd' => []];
+
             $request = Request::instance();
             $user_id = $request->param('user_id');
-            if(empty($user_id)) {
+            $amount = $request->param('amount');
+
+            if(empty($user_id) || empty($amount)) {
                 $data['c'] = -1024;
                 $data['m'] = 'Arg Missing';
                 return Response::create($data, 'json')->code(200);
@@ -774,6 +778,20 @@ class User extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);
             }
+
+            list($usec, $sec) = explode(" ", microtime());  
+            $msec = strval(round($usec*1000)); 
+            $orderid = date('YmdHis').$msec;
+
+            $user_withdraw = New UserWithdraw;
+            $user_withdraw->data([
+                'user_id' => $user->id,
+                'orderid' => $orderid,
+                'amount' => float($amount),
+                'status' => 0,
+                'ip' => $request->ip()
+            ]);
+            $user_withdraw->save();
 
             $wxconfig = Config::get('wxconfig');
             $options = [
@@ -788,22 +806,27 @@ class User extends Controller
             $app = new Application($options);
             $merchantPay = $app->merchant_pay;
 
-            list($usec, $sec) = explode(" ", microtime());  
-            $msec = strval(round($usec*1000)); 
-            $orderid = date('YmdHis').$msec;
-
             $merchantPayData = [
                 'partner_trade_no' => $orderid,
                 'openid' => $user->openid,
                 'check_name' => 'NO_CHECK',
                 're_user_name'=> '',
-                'amount' => 1,
+                'amount' => intval($user_withdraw->amount*100),
                 'desc' => '测试企业付款',
                 'spbill_create_ip' => $request->ip(),
             ];
             $result = $merchantPay->send($merchantPayData);
             print_r($result);
-
+            if($result->result_code === 'SUCCESS') {
+                $user_withdraw->rel_orderid = $result->payment_no;
+                $user_withdraw->payment_time = $result->payment_time;
+                $user_withdraw->status = 1;
+            } else {
+                $user_withdraw->status = 2;
+                $user_withdraw->ext = json_encode($result);
+                $data = ['c' => -1024, 'm'=> 'Error', 'd' => []];
+            }
+            $user_withdraw->save();
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
