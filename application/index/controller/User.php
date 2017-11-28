@@ -772,12 +772,29 @@ class User extends Controller
                 $data['m'] = 'Arg Missing';
                 return Response::create($data, 'json')->code(200);
             }
+
             $user = User_Model::get($user_id);
             if(empty($user)) {
                 $data['c'] = -1024;
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);
             }
+
+            $balance = UserPromotionBalance::get($user_id);
+            if(empty($balance)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Account Is Empty';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $amount_left = $balance->commission_avail - $amount;
+            if($amount_left < 0) {
+                $data['c'] = -1024;
+                $data['m'] = 'Money Is Not Enough';
+                return Response::create($data, 'json')->code(200);
+            }
+            $balance->commission_avail = $amount_left;
+            $balance->save();
 
             list($usec, $sec) = explode(" ", microtime());  
             $msec = strval(round($usec*1000)); 
@@ -816,7 +833,7 @@ class User extends Controller
                 'spbill_create_ip' => $request->ip(),
             ];
             $result = $merchantPay->send($merchantPayData);
-            print_r($result);
+
             if($result->result_code === 'SUCCESS') {
                 $user_withdraw->rel_orderid = $result->payment_no;
                 $user_withdraw->payment_time = $result->payment_time;
@@ -826,6 +843,10 @@ class User extends Controller
                 $user_withdraw->errmsg = $result->err_code.'|'.$result->err_code_des;
                 $user_withdraw->ext = json_encode($result);
                 $data = ['c' => -1024, 'm'=> 'Error', 'd' => []];
+
+                # 失败了再把钱加回去
+                # $balance->commission_avail += $amount;
+                # $balance->save();
             }
             $user_withdraw->save();
         } catch (Exception $e) {
