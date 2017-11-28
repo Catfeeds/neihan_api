@@ -32,6 +32,7 @@ Route::rule('api/user/update/$','index/User/update');
 Route::rule('api/user/info/$','index/User/info');
 Route::rule('api/user/promo/$','index/User/promotion');
 Route::rule('api/user/promo/init/$','index/User/promotion_init');
+Route::rule('api/user/promo/qrcode/$','index/User/promotion_qrcode');
 Route::rule('api/user/prepay/$','index/User/promotion_prepay');
 Route::rule('api/user/pay/callback/$','index/User/promotion_pay_callback');
 Route::rule('api/user/click/sharelink/$','index/User/click_share_link');
