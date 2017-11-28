@@ -566,6 +566,48 @@ class User extends Controller
         return Response::create($data, 'json')->code(200);
     }
 
+    public function promotion_qrcode()
+    {
+        try {            
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            $user_id = Request::instance()->param('user_id');
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $access_token = $this->_access_token();
+            if(empty($access_token)) {
+                $data['c'] = -1024;
+                $data['m'] = 'ACCESS TOKEN Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $wxconfig = Config::get('wxconfig');
+            $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
+            $params = [
+                'page' => 'pages/distribution/distribution?from_user_id='.$user_id,
+            ];
+
+            $resp = curl_post($request_url, json_encode($params));
+            if(!empty($resp)) {
+                $code_filename = strval(time()).'.jpeg';
+                $codefile = './static/code/'.$code_filename;
+                file_put_contents($codefile, $resp);
+            }
+
+            $data['d'] = ['id' => $user_share->id, 'code' => '/static/code/'.$code_filename];
+
+            $user_share->code = $data['d']['code'];
+            $user_share->save();
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
     public function promotion_pay_callback()
     {
         try {
@@ -612,6 +654,7 @@ class User extends Controller
             $usorder->status = 1;
             $usorder->save();
 
+            User_Model::where('id', $usorder->user_id)->update(['promotion' => 3]);
 
             # 如果你是一个代理, 那就不能做别人的代理了
             $exists = UserPromotionGrid::where('user_id', $usorder['user_id'])->count();
@@ -664,5 +707,39 @@ class User extends Controller
             $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
         }
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+    }
+
+
+    private function _access_token()
+    {
+        try {
+            $is_expired = true;
+
+            $access_token = [];
+            $access_token_file = './../application/extra/access_token'.$this->app_code.'.txt';
+            if(file_exists($access_token_file)) {
+                $access_token = json_decode(file_get_contents($access_token_file), true);
+            }
+            if(!empty($access_token)) {
+                if($access_token['expires_time'] - time() - 1000 > 0) {
+                    $is_expired = false;
+                }
+            }
+
+            if($is_expired) {
+                $wxconfig = Config::get('wxconfig');
+                $resp = curl_get($wxconfig['token_apis'][$this->app_code]);
+                if(!empty($resp)) {
+                    $access_token = json_decode($resp, true);
+                    if(array_key_exists('expires_in', $access_token)) {
+                        $access_token['expires_time'] = intval($access_token['expires_in']) + time();
+                        file_put_contents($access_token_file, json_encode($access_token));
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $access_token = [];
+        }
+        return $access_token;
     }
 }
