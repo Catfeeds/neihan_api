@@ -8,7 +8,7 @@ from settings import *
 
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
-_filename = _current_pwd + '/../application/extra/access_token{}.txt'
+_filename = _current_pwd + '/../application/extra/access_token_{}.txt'
 
 
 def get_token(source=''):
@@ -38,7 +38,7 @@ def get_token(source=''):
                 data['expires_time'] = data['expires_in'] + int(time())
                 logging.info('成功获取ACCESS TOKEN')
 
-                with open(_filename, 'wb') as f:
+                with open(filename, 'wb') as f:
                     f.write(json.dumps(data))
     else:
         logging.info('时间戳还在有效期内')
