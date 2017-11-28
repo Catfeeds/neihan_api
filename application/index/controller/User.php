@@ -780,7 +780,7 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            $balance = UserPromotionBalance::get($user_id);
+            $balance = UserPromotionBalance::where('user_id', $user_id)->find();
             if(empty($balance)) {
                 $data['c'] = -1024;
                 $data['m'] = 'Account Is Empty';
