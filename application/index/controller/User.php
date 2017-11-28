@@ -845,8 +845,8 @@ class User extends Controller
                 $data = ['c' => -1024, 'm'=> 'Error', 'd' => []];
 
                 # 失败了再把钱加回去
-                # $balance->commission_avail += $amount;
-                # $balance->save();
+                $balance->commission_avail += $amount;
+                $balance->save();
             }
             $user_withdraw->save();
         } catch (Exception $e) {
