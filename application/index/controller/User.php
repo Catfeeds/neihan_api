@@ -771,6 +771,7 @@ class User extends Controller
 
             $wxconfig = Config::get('wxconfig');
             $options = [
+                'app_id' => $wxconfig['appids'][$this->app_code],
                 'payment' => [
                     'merchant_id' => $wxconfig['mchids'][$this->app_code],
                     'key' => $wxconfig['mchkeys'][$this->app_code],
@@ -786,7 +787,6 @@ class User extends Controller
             $orderid = date('YmdHis').$msec;
 
             $merchantPayData = [
-                'mch_appid' => $wxconfig['appids'][$this->app_code],
                 'partner_trade_no' => $orderid,
                 'openid' => $user->openid,
                 'check_name' => 'NO_CHECK',  //文档中有三种校验实名的方法 NO_CHECK OPTION_CHECK FORCE_CHECK
