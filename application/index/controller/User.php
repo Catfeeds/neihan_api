@@ -632,7 +632,10 @@ class User extends Controller
     public function promotion_pay_callback()
     {
         try {
+            echo 11111;
+
             $wrequest = WRequest::createFromGlobals();
+            Log::record($wrequest);
             $notify = new Notify($wrequest);
             Log::record($notify);
 
@@ -789,7 +792,7 @@ class User extends Controller
             $merchantPayData = [
                 'partner_trade_no' => $orderid,
                 'openid' => $user->openid,
-                'check_name' => 'NO_CHECK',  //文档中有三种校验实名的方法 NO_CHECK OPTION_CHECK FORCE_CHECK
+                'check_name' => 'NO_CHECK',
                 're_user_name'=> '',
                 'amount' => 1,
                 'desc' => '测试企业付款',
