@@ -153,7 +153,8 @@ class User extends Controller
         try {
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
-            $user_id = Request::instance()->get('user_id');
+            $request = Request::instance();
+            $user_id = $request->get('user_id');
 
             if(empty($user_id)) {
                 $data['c'] = -1024;
@@ -184,7 +185,11 @@ class User extends Controller
                 'province' => $user->province,
                 'city' => $user->city,
                 'ptype' => $ptype,
+                'qrcode' => '',
             ];
+            if(!empty($user->promotion_qrcode)) {
+                $data['d']['qrcode'] = $request->domain().$user->promotion_qrcode;
+            }
 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
@@ -461,6 +466,8 @@ class User extends Controller
                     ]);
                     $user_balance->save();
                 }
+
+
             }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
@@ -604,7 +611,7 @@ class User extends Controller
 
             $resp = curl_post($request_url, json_encode($params));
             if(!empty($resp)) {
-                $code_filename = strval(time()).'.jpeg';
+                $code_filename = $user_id.strval(time()).'.jpeg';
                 $codefile = './static/code/'.$code_filename;
                 file_put_contents($codefile, $resp);
             }
@@ -714,6 +721,27 @@ class User extends Controller
                     'level' => 3
                 ]);
                 $user_promo_grid->save();
+            }
+
+            # 生成小程序码
+            $access_token = $this->_access_token();
+            if(!empty($access_token)) {
+                $wxconfig = Config::get('wxconfig');
+                $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
+                $params = [
+                    'page' => 'pages/index/index',
+                    'scene' => 'from_user_id='.$usorder['user_id']
+                ];
+
+                $resp = curl_post($request_url, json_encode($params));
+                if(!empty($resp)) {
+                    $code_filename = $usorder['user_id'].strval(time()).'.jpeg';
+                    $codefile = './static/code/'.$code_filename;
+                    file_put_contents($codefile, $resp);
+
+                    User_Model::where('id', $usorder['user_id'])
+                        ->update(['promotion_qrcode' => $codefile]);
+                }
             }
         } catch (Exception $e) {
             $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
