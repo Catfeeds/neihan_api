@@ -577,6 +577,16 @@ class User extends Controller
                 $data['m'] = 'Arg Missing';
                 return Response::create($data, 'json')->code(200);
             }
+            $user = User_Model::get($user_id);
+            if(empty($user)) {
+                $data['c'] = -1024;
+                $data['m'] = 'User Not Exists';
+                return Response::create($data, 'json')->code(200);
+            }
+            if(!empty($user->promotion_qrcode)) {
+                $data['d'] = ['code' => $user->promotion_qrcode];
+                return Response::create($data, 'json')->code(200);
+            }
 
             $access_token = $this->_access_token();
             if(empty($access_token)) {
@@ -598,10 +608,11 @@ class User extends Controller
                 file_put_contents($codefile, $resp);
             }
 
-            $data['d'] = ['id' => $user_share->id, 'code' => '/static/code/'.$code_filename];
+            $data['d'] = ['code' => '/static/code/'.$code_filename];
 
-            $user_share->code = $data['d']['code'];
-            $user_share->save();
+            $user->promotion_qrcode = $data['d']['code'];
+            $user->save();
+
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
