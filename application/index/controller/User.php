@@ -698,7 +698,7 @@ class User extends Controller
                         $codefile = './static/code/'.$code_filename;
                         file_put_contents($codefile, $resp);
 
-                        $user->promotion_qrcode = $codefile[1:]
+                        $user->promotion_qrcode = '/static/code/'.$code_filename;
                     }
                 }
             }
