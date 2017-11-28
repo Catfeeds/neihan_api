@@ -599,16 +599,10 @@ class User extends Controller
             $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
             $params = [
                 'page' => 'pages/distribution/distribution',
-                'sence' => 'from_user_id='.$user_id
+                'scene' => 'from_user_id='.$user_id
             ];
 
-            $headers = [
-                "Content-type: application/json;charset=UTF-8",
-                "Accept: application/json",
-                "Cache-Control: no-cache",
-                "Pragma: no-cache"
-            ];
-            $resp = curl_post($request_url, json_encode($params), $headers);
+            $resp = curl_post($request_url, json_encode($params));
             if(!empty($resp)) {
                 $code_filename = strval(time()).'.jpeg';
                 $codefile = './static/code/'.$code_filename;

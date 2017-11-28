@@ -11,6 +11,7 @@ function curl_post($url, $data='', $headers=[], $timeout=60, $agent='', $cookie=
     curl_setopt($fn, CURLOPT_POST, TRUE);
     curl_setopt($fn, CURLOPT_POSTFIELDS, $data);
     if($headers) {
+        curl_setopt($fn, CURLOPT_HEADER, 1);
         curl_setopt($fn, CURLOPT_HTTPHEADER, $headers ); 
     }
     if ($agent) {
