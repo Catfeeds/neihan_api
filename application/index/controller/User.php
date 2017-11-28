@@ -823,6 +823,7 @@ class User extends Controller
                 $user_withdraw->status = 1;
             } else {
                 $user_withdraw->status = 2;
+                $user_withdraw->errmsg = $result->err_code.'|'.$result->err_code_des;
                 $user_withdraw->ext = json_encode($result);
                 $data = ['c' => -1024, 'm'=> 'Error', 'd' => []];
             }
