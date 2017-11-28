@@ -716,7 +716,7 @@ class User extends Controller
             $is_expired = true;
 
             $access_token = [];
-            $access_token_file = './../application/extra/access_token'.$this->app_code.'.txt';
+            $access_token_file = './../application/extra/access_token_'.$this->app_code.'.txt';
             if(file_exists($access_token_file)) {
                 $access_token = json_decode(file_get_contents($access_token_file), true);
             }
