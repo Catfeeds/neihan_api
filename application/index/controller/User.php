@@ -660,7 +660,7 @@ class User extends Controller
             }
 
             $usorder = UserPromotionTicket::where('orderid', $wechat_order['out_trade_no'])->find();
-            if (empty($usorder) || $usorder['status'] == 1) {
+            if (empty($usorder) || $usorder->status == 1) {
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
@@ -671,23 +671,47 @@ class User extends Controller
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
-            if ($wechat_order['total_fee'] != intval($usorder['amount']*100)) {
+            if ($wechat_order['total_fee'] != intval($usorder->amount*100)) {
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             $usorder->status = 1;
             $usorder->save();
 
-            User_Model::where('id', $usorder->user_id)->update(['promotion' => 3]);
+
+            $user = User_Model::get($usorder->user_id);
+            $user->promotion = 3;
+            if($user->promotion_qrcode == '') {
+                # 生成小程序码
+                $access_token = $this->_access_token();
+                if(!empty($access_token)) {
+                    $wxconfig = Config::get('wxconfig');
+                    $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
+                    $params = [
+                        'page' => 'pages/index/index',
+                        'scene' => 'from_user_id='.$usorder->user_id
+                    ];
+
+                    $resp = curl_post($request_url, json_encode($params));
+                    if(!empty($resp)) {
+                        $code_filename = strval($usorder->user_id).strval(time()).'.jpeg';
+                        $codefile = './static/code/'.$code_filename;
+                        file_put_contents($codefile, $resp);
+
+                        $user->promotion_qrcode = $codefile;
+                    }
+                }
+            }
+            $user->save();
 
             # 如果你是一个代理, 那就不能做别人的代理了
-            $exists = UserPromotionGrid::where('user_id', $usorder['user_id'])->count();
+            $exists = UserPromotionGrid::where('user_id', $usorder->user_id)->count();
             if($exists) {
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
             # 加代理
-            $user_promo = UserPromotion::where('user_id', $usorder['user_id'])->find();
+            $user_promo = UserPromotion::where('user_id', $usorder->user_id)->find();
             $user_promo->status = 2;
             $user_promo->save();
             
@@ -726,27 +750,6 @@ class User extends Controller
                     'level' => 3
                 ]);
                 $user_promo_grid->save();
-            }
-
-            # 生成小程序码
-            $access_token = $this->_access_token();
-            if(!empty($access_token)) {
-                $wxconfig = Config::get('wxconfig');
-                $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
-                $params = [
-                    'page' => 'pages/index/index',
-                    'scene' => 'from_user_id='.$usorder['user_id']
-                ];
-
-                $resp = curl_post($request_url, json_encode($params));
-                if(!empty($resp)) {
-                    $code_filename = $usorder['user_id'].strval(time()).'.jpeg';
-                    $codefile = './static/code/'.$code_filename;
-                    file_put_contents($codefile, $resp);
-
-                    User_Model::where('id', $usorder['user_id'])
-                        ->update(['promotion_qrcode' => $codefile]);
-                }
             }
         } catch (Exception $e) {
             $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
