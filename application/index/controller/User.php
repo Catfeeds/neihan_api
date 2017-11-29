@@ -610,7 +610,7 @@ class User extends Controller
                  
                  
                 $codefile = './static/code/3341231312.png';
-                file_put_contents($codefile, imagepng($bigImg));
+                file_put_contents($codefile, $bigImg);
                 /*
                 switch ($bigType) {
                     case 1: //gif
