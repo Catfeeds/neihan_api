@@ -596,7 +596,7 @@ class User extends Controller
             if(!empty($user->promotion_qrcode)) {
                 $data['d'] = ['code' => $user->promotion_qrcode];
 
-                $bigImgPath = './public/static/image/p1.png';
+                $bigImgPath = 'static/image/p1.png';
                 $qCodePath = substr($user->promotion_qrcode, 1);
 
                 $bigImg = imagecreatefromstring(file_get_contents($bigImgPath));
