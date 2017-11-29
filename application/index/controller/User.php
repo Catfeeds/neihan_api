@@ -26,6 +26,7 @@ use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
 use app\index\model\WechatOrder;
 use app\index\model\UserWithdraw;
+use app\index\model\SettingPromotion;
 
 use Thenbsp\Wechat\Payment\Unifiedorder;
 use Thenbsp\Wechat\Payment\Notify;
@@ -609,7 +610,7 @@ class User extends Controller
             $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
             $params = [
                 'page' => 'pages/index/index',
-                'scene' => 'from_user_id='.$user_id
+                'scene' => 'from_user_id='.$user_id.'&promo=1'
             ];
 
             $resp = curl_post($request_url, json_encode($params));
@@ -633,12 +634,9 @@ class User extends Controller
     public function promotion_pay_callback()
     {
         try {
-            echo 11111;
-
             $wrequest = WRequest::createFromGlobals();
-            Log::record($wrequest);
             $notify = new Notify($wrequest);
-            Log::record($notify);
+            # Log::record($notify);
 
             if(!$notify->containsKey('out_trade_no')) {
                 $notify->fail('Invalid Request');
@@ -690,7 +688,7 @@ class User extends Controller
                     $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
                     $params = [
                         'page' => 'pages/index/index',
-                        'scene' => 'from_user_id='.$usorder->user_id
+                        'scene' => 'from_user_id='.$usorder->user_id.'&promo=1'
                     ];
 
                     $resp = curl_post($request_url, json_encode($params));
@@ -711,10 +709,19 @@ class User extends Controller
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
+            $psettings = SettingPromotion::get(1);
+
             # 加代理
             $user_promo = UserPromotion::where('user_id', $usorder->user_id)->find();
             $user_promo->status = 2;
             $user_promo->save();
+            # 加钱
+            if($user_promo->parent_user_id) {
+                UserPromotionBalance::where('user_id', $user_promo->parent_user_id)
+                    ->setInc('commission', $psettings->commission_lv1)
+                    ->setInc('commission_avail', $psettings->commission_lv1);
+            }
+            
             
             # user_id是谁的一级代理
             $user_promo_grid = New UserPromotionGrid;
@@ -740,17 +747,27 @@ class User extends Controller
                     'level' => 2
                 ]);
                 $user_promo_grid->save();
+
+                # 加钱
+                UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
+                    ->setInc('commission', $psettings->commission_lv2)
+                    ->setInc('commission_avail', $psettings->commission_lv2);
             } else {
                 # 找出parent_user_id是谁的二级代理, 把user_id加成为三级代理
-                $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)->where('level', 2)->find();
+                $p2_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)->where('level', 2)->find();
 
                 $user_promo_grid = New UserPromotionGrid;
                 $user_promo_grid->data([
-                    'parent_user_id' => $p1_promo->parent_user_id,
+                    'parent_user_id' => $p2_promo->parent_user_id,
                     'user_id' => $user_promo->user_id,
                     'level' => 3
                 ]);
                 $user_promo_grid->save();
+
+                # 加钱
+                UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
+                    ->setInc('commission', $psettings->commission_lv3)
+                    ->setInc('commission_avail', $psettings->commission_lv3);
             }
         } catch (Exception $e) {
             $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
