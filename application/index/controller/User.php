@@ -841,34 +841,34 @@ class User extends Controller
 
             if(empty($user_id) || empty($amount)) {
                 $data['c'] = -1024;
-                $data['m'] = 'Arg Missing';
+                $data['m'] = '参数错误';
                 return Response::create($data, 'json')->code(200);
             }
 
             $user = User_Model::get($user_id);
             if(empty($user)) {
                 $data['c'] = -1024;
-                $data['m'] = 'User Not Exists';
+                $data['m'] = '用户不存在';
                 return Response::create($data, 'json')->code(200);
             }
 
             if($user->source != 'neihan_1') {
                 $data['c'] = -1024;
-                $data['m'] = 'User Not Exists';
+                $data['m'] = '用户不存在';
                 return Response::create($data, 'json')->code(200);
             }
 
             $balance = UserPromotionBalance::where('user_id', $user_id)->find();
             if(empty($balance)) {
                 $data['c'] = -1024;
-                $data['m'] = 'Account Is Empty';
+                $data['m'] = '账号余额不足';
                 return Response::create($data, 'json')->code(200);
             }
 
             $amount_left = $balance->commission_avail - $amount;
             if($amount_left < 0) {
                 $data['c'] = -1024;
-                $data['m'] = 'Money Is Not Enough';
+                $data['m'] = '账号余额不足';
                 return Response::create($data, 'json')->code(200);
             }
             $balance->commission_avail = $amount_left;
@@ -920,7 +920,7 @@ class User extends Controller
                 $user_withdraw->status = 2;
                 $user_withdraw->errmsg = $result->err_code.'|'.$result->err_code_des;
                 $user_withdraw->ext = json_encode($result);
-                $data = ['c' => -1024, 'm'=> 'Error', 'd' => []];
+                $data = ['c' => -1024, 'm'=> '提现失败，请稍后再试', 'd' => []];
 
                 # 失败了再把钱加回去
                 $balance->commission_avail += $amount;
