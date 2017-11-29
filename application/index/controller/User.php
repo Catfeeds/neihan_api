@@ -595,7 +595,38 @@ class User extends Controller
             }
             if(!empty($user->promotion_qrcode)) {
                 $data['d'] = ['code' => $user->promotion_qrcode];
-                return Response::create($data, 'json')->code(200);
+
+                $dst = imagecreatefromstring(file_get_contents('./public/static/image/p1.png'));
+                $src = imagecreatefromstring(file_get_contents('./public'.$user->promotion_qrcode));
+                list($src_w, $src_h) = getimagesize($src_im);
+                //imagecopymerge($dst, $src, 10, 10, 0, 0, $src_w, $src_h, 50); 
+                imagecopy($dst, $src, 50, 680, 0, 0, $src_w, $src_h);
+
+
+                list($dst_w, $dst_h, $dst_type) = getimagesize($dst_im);
+                switch ($dst_type) {
+                    case 1://GIF
+                        header('Content-Type: image/gif');
+                        header('Content-Disposition: inline; filename="image.gif"');
+                        imagegif($dst);
+                        break;
+                    case 2://JPG
+                        header('Content-Type: image/jpeg');
+                        header('Content-Disposition: inline; filename="image.jpg"');
+                        imagejpeg($dst);
+                        break;
+                    case 3://PNG
+                        header('Content-Type: image/png');
+                        header('Content-Disposition: inline; filename="image.png"');
+                        imagepng($dst);
+                        break;
+                    default:
+                        break;
+                }
+                imagedestroy($dst);
+                imagedestroy($src);
+                exit;
+                # return Response::create($data, 'json')->code(200);
             }
 
             $access_token = $this->_access_token();
@@ -692,7 +723,7 @@ class User extends Controller
 
                     $resp = curl_post($request_url, json_encode($params));
                     if(!empty($resp)) {
-                        $code_filename = strval($usorder->user_id).strval(time()).'.jpeg';
+                        $code_filename = strval($usorder->user_id).strval(time()).'.png';
                         $codefile = './static/code/'.$code_filename;
                         file_put_contents($codefile, $resp);
 
