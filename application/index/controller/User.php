@@ -887,8 +887,8 @@ class User extends Controller
                 'payment' => [
                     'merchant_id' => $wxconfig['mchids'][$this->app_code],
                     'key' => $wxconfig['mchkeys'][$this->app_code],
-                    'cert_path' => './../application/extra/paycert/apiclient_cert.pem',
-                    'key_path' => './../application/extra/paycert/apiclient_key.pem'
+                    'cert_path' => './../application/extra/paycert_'.$this->app_code.'/apiclient_cert.pem',
+                    'key_path' => './../application/extra/paycert_'.$this->app_code.'/apiclient_key.pem'
                 ],
             ];
             $app = new Application($options);
