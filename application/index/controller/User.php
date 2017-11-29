@@ -711,7 +711,7 @@ class User extends Controller
 
             $user = User_Model::get($usorder->user_id);
             $user->promotion = 3;
-            if($user->promotion_qrcode == '') {
+            if(empty($user->promotion_qrcode)) {
                 # 生成小程序码
                 $access_token = $this->_access_token();
                 if(!empty($access_token)) {
