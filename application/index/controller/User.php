@@ -509,6 +509,13 @@ class User extends Controller
             list($usec, $sec) = explode(" ", microtime());  
             $msec = strval(round($usec*1000)); 
             $orderid = date('YmdHis').$msec;
+
+            $ticket_amount = 100;
+            if($ptype == 1) {
+                $ticket_amount = floatval($psetting->ticket);
+            } elseif($ptype == 2) {
+                $ticket_amount = floatval($psetting->golden_ticket);
+            }
             $ticket->data([
                 'appid' => $wxconfig['appids'][$this->app_code],
                 'user_id' => $user_id,
@@ -516,7 +523,7 @@ class User extends Controller
                 'rel_orderid' => '',
                 'nonce_str' => '',
                 'prepay_id' => '',
-                'amount' => floatval($psetting->ticket),
+                'amount' => floatval($ticket_amount),
                 'status' => 0
             ]);
             $ticket->save();
