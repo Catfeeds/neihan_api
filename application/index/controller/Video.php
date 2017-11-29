@@ -53,6 +53,9 @@ class Video extends Controller
             $n = 5;
             $user_id = $request->get('user_id');
             $order = $request->has('order', 'get') ? $request->get('order') : 'comment';
+            $category = $request->has('category', 'get') ? $request->get('category'): '';
+
+            $category = explode(',', $category);
 
             $data = array('c' => 0, 'm' => '', 'd' => array());
 
@@ -85,11 +88,11 @@ class Video extends Controller
 
             if($settings['online'] == 1) {
                 $video_model = new Video_Model;
-                $video_awsome = $video_model->get_videos($user_id, [4]);
-                $video_hot = $video_model->get_videos($user_id, [2]);
+                $video_awsome = $video_model->get_videos($user_id, [4], 1, $category);
+                $video_hot = $video_model->get_videos($user_id, [2], 1, $category);
 
                 $last_num = $n - count($video_awsome) - count($video_hot);
-                $video_normal = $video_model->get_videos($user_id, [0, 1], $last_num);
+                $video_normal = $video_model->get_videos($user_id, [0, 1], $last_num, $category);
 
                 $data['d'] = array_merge($video_awsome, $video_hot, $video_normal);
             } else {

@@ -12,14 +12,19 @@ class Video extends Model
 
 
 
-    public function get_videos($user_id, $level=[], $n=1, $normal=0)
+    public function get_videos($user_id, $level=[], $n=1, $category=[])
     {
         $ret = [];
         $p = 1;
 
         $sql_select = "SELECT * FROM videos";
         # $sql_where = " WHERE category_id IN (65, 1111) AND top_comments = 1 ";
-        $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
+        # $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
+        if(empty($category)) {
+            $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
+        } else {
+            $sql_where = " WHERE category_id IN (".implode(",", $category).")";
+        }
 
         if(!empty($level)) {
             $sql_where .= " AND level IN (".join(',', $level).")";

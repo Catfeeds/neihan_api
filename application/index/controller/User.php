@@ -749,7 +749,7 @@ class User extends Controller
                         imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
 
                         // 输出图像并释放内存
-                        imagejpeg($im, $outfile, 80, NULL);
+                        imagejpeg($im, $outfile, 100, NULL);
                         imagedestroy($im);
 
                         $user->promotion_qrcode = '/'.$outfile;
