@@ -846,13 +846,7 @@ class User extends Controller
             }
 
             $user = User_Model::get($user_id);
-            if(empty($user)) {
-                $data['c'] = -1024;
-                $data['m'] = '用户不存在';
-                return Response::create($data, 'json')->code(200);
-            }
-
-            if($user->source != 'neihan_1') {
+            if(empty($user) || $user->source != 'neihan_1') {
                 $data['c'] = -1024;
                 $data['m'] = '用户不存在';
                 return Response::create($data, 'json')->code(200);
@@ -862,6 +856,18 @@ class User extends Controller
             if(empty($balance)) {
                 $data['c'] = -1024;
                 $data['m'] = '账号余额不足';
+                return Response::create($data, 'json')->code(200);
+            }
+            $user_withdraw = New UserWithdraw;
+
+            $exists = $user_withdraw->where('user_id', $user_id)
+                ->where('status', 1)
+                ->where('create_time', '>=', strtotime(date('Ymd')))
+                ->where('create_time', '<=', strtotime(date('Ymd'))+86399)
+                ->count();
+            if($exists) {
+                $data['c'] = -1024;
+                $data['m'] = '一天只能提现一次';
                 return Response::create($data, 'json')->code(200);
             }
 
@@ -878,7 +884,6 @@ class User extends Controller
             $msec = strval(round($usec*1000)); 
             $orderid = date('YmdHis').$msec;
 
-            $user_withdraw = New UserWithdraw;
             $user_withdraw->data([
                 'user_id' => $user->id,
                 'orderid' => $orderid,
