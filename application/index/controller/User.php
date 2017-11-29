@@ -844,6 +844,12 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
+            if($user->source != 'neihan_1') {
+                $data['c'] = -1024;
+                $data['m'] = 'User Not Exists';
+                return Response::create($data, 'json')->code(200);
+            }
+
             $balance = UserPromotionBalance::where('user_id', $user_id)->find();
             if(empty($balance)) {
                 $data['c'] = -1024;
