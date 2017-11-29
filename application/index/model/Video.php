@@ -26,6 +26,7 @@ class Video extends Model
             $sql_where = " WHERE category_id IN (".implode(",", $category).")";
         }
 
+        $normal = 0;
         if(!empty($level)) {
             $sql_where .= " AND level IN (".join(',', $level).")";
         }
