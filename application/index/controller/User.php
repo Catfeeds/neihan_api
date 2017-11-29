@@ -797,20 +797,23 @@ class User extends Controller
             $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)
                 ->where('level', 1)->find();
             if(!empty($p1_promo)) {
-                $user_promo_grid = New UserPromotionGrid;
-                $user_promo_grid->data([
-                    'parent_user_id' => $p1_promo->parent_user_id,
-                    'user_id' => $user_promo->user_id,
-                    'level' => 2
-                ]);
-                $user_promo_grid->save();
-
-                # 加钱
-                UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
-                    ->update([
-                        'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
-                        'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
+                if(!empty($p1_promo->parent_user_id)) {
+                    $user_promo_grid = New UserPromotionGrid;
+                    $user_promo_grid->data([
+                        'parent_user_id' => $p1_promo->parent_user_id,
+                        'user_id' => $user_promo->user_id,
+                        'level' => 2
                     ]);
+                    $user_promo_grid->save();
+
+                    # 加钱
+                    UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
+                        ->update([
+                            'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
+                            'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
+                        ]); 
+                }
+                
             } else {
                 # 找出parent_user_id是谁的二级代理, 把user_id加成为三级代理
                 $p2_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)->where('level', 2)->find();
