@@ -26,7 +26,6 @@ use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
 use app\index\model\WechatOrder;
 use app\index\model\UserWithdraw;
-use app\index\model\SettingPromotion;
 
 use Thenbsp\Wechat\Payment\Unifiedorder;
 use Thenbsp\Wechat\Payment\Notify;
