@@ -481,8 +481,9 @@ class User extends Controller
     public function promotion_prepay()
     {
         try {
+            $request = Request::instance();
             $wxconfig = Config::get('wxconfig');
-            $user_id = Request::instance()->param('user_id');
+            $user_id = $request->param('user_id');
             $ptype = intval(Request::instance()->param('ptype'));
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
@@ -533,7 +534,7 @@ class User extends Controller
             $unifiedorder->set('openid',        $user->openid);
             $unifiedorder->set('trade_type',    'JSAPI');
             $unifiedorder->set('out_trade_no',  $orderid);
-            $unifiedorder->set('notify_url',    'https://www.anglailed.cn/api/user/pay/callback');
+            $unifiedorder->set('notify_url',    $request->domain().'/api/user/pay/callback');
 
             try {
                 $response = $unifiedorder->getResponse();
