@@ -600,11 +600,12 @@ class User extends Controller
 
                 $bigImgPath = 'static/image/p1.png';
                 $qCodePath = substr($user->promotion_qrcode, 1);
+                $outfile = "static/code/output.png";
 
-                $ci = new CombineImage([$bigImgPath, $qCodePath], "static/code/output.png");
+                $ci = new CombineImage([$bigImgPath, $qCodePath], $outfile);
                 $ci->combine();
 
-                $data['d'] = ['code' => substr($codefile, 1)];
+                $data['d'] = ['code' => $outfile];
                 return Response::create($data, 'json')->code(200);
             }
 
