@@ -721,7 +721,30 @@ class User extends Controller
                         $codefile = './static/code/'.$code_filename;
                         file_put_contents($codefile, $resp);
 
-                        $user->promotion_qrcode = '/static/code/'.$code_filename;
+
+                        $file = 'static/image/p1.png';
+                        $file_1 = substr($codefile, 1);
+                        $outfile = "static/code/p-".$code_filenam.".jpeg";
+
+                        // 加载水印以及要加水印的图像
+                        $stamp = imagecreatefromjpeg($file_1);
+                        $im = imagecreatefrompng($file);
+
+                        // 设置水印图像的外边距，并且获取水印图像的尺寸
+                        $marge_right = 0;
+                        $marge_bottom = 0;
+                        $sx = imagesx($stamp);
+                        $sy = imagesy($stamp);
+
+                        // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
+
+                        imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
+
+                        // 输出图像并释放内存
+                        imagejpeg($im, $outfile, 80, NULL);
+                        imagedestroy($im);
+
+                        $user->promotion_qrcode = '/'.$outfile;
                     }
                 }
             }
