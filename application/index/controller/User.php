@@ -775,10 +775,9 @@ class User extends Controller
                 UserPromotionBalance::where('user_id', $user_promo->parent_user_id)
                     ->update([
                         'commission'  => ['exp', "commission+{$psettings->commission_lv1}"],
-                        'commission_avail' => ['exp', "commission+{$psettings->commission_lv1}"],
+                        'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv1}"],
                     ]);
             }
-            
             
             # user_id是谁的一级代理
             $user_promo_grid = New UserPromotionGrid;
@@ -788,6 +787,7 @@ class User extends Controller
                 'level' => 1
             ]);
             $user_promo_grid->save();
+
 
             if($user_promo->parent_user_id == 0) {
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
@@ -809,7 +809,7 @@ class User extends Controller
                 UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
                     ->update([
                         'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
-                        'commission_avail' => ['exp', "commission+{$psettings->commission_lv2}"],
+                        'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
                     ]);
             } else {
                 # 找出parent_user_id是谁的二级代理, 把user_id加成为三级代理
@@ -827,7 +827,7 @@ class User extends Controller
                 UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
                     ->update([
                         'commission'  => ['exp', "commission+{$psettings->commission_lv3}"],
-                        'commission_avail' => ['exp', "commission+{$psettings->commission_lv3}"],
+                        'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv3}"],
                     ]);
             }
         } catch (Exception $e) {
