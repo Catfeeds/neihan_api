@@ -55,7 +55,9 @@ class Video extends Controller
             $order = $request->has('order', 'get') ? $request->get('order') : 'comment';
             $category = $request->has('category', 'get') ? $request->get('category'): '';
 
-            $category = explode(',', $category);
+            if($category){
+                $category = explode(',', $category);
+            }
 
             $data = array('c' => 0, 'm' => '', 'd' => array());
 
