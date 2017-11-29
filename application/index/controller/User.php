@@ -612,7 +612,7 @@ class User extends Controller
 
                 // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
-                imagecopy($im, $stamp, 150, 600, 0, 0, $sx, $sy);
+                imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
 
                 // 输出图像并释放内存
                 imagejpeg($im, $outfile, 80, NULL);
@@ -711,7 +711,8 @@ class User extends Controller
                     $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
                     $params = [
                         'page' => 'pages/index/index',
-                        'scene' => 'from_user_id='.$usorder->user_id.'&promo=1'
+                        'scene' => 'from_user_id='.$usorder->user_id.'&promo=1',
+                        'width' => 180
                     ];
 
                     $resp = curl_post($request_url, json_encode($params));
