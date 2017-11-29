@@ -773,8 +773,10 @@ class User extends Controller
             # 加钱
             if($user_promo->parent_user_id) {
                 UserPromotionBalance::where('user_id', $user_promo->parent_user_id)
-                    ->setInc('commission', $psettings->commission_lv1)
-                    ->setInc('commission_avail', $psettings->commission_lv1);
+                    ->update([
+                        'commission'  => ['exp', "commission+{$psettings->commission_lv1}"],
+                        'commission_avail' => ['exp', "commission+{$psettings->commission_lv1}"],
+                    ]);
             }
             
             
@@ -805,8 +807,10 @@ class User extends Controller
 
                 # 加钱
                 UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
-                    ->setInc('commission', $psettings->commission_lv2)
-                    ->setInc('commission_avail', $psettings->commission_lv2);
+                    ->update([
+                        'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
+                        'commission_avail' => ['exp', "commission+{$psettings->commission_lv2}"],
+                    ]);
             } else {
                 # 找出parent_user_id是谁的二级代理, 把user_id加成为三级代理
                 $p2_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)->where('level', 2)->find();
@@ -821,8 +825,10 @@ class User extends Controller
 
                 # 加钱
                 UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
-                    ->setInc('commission', $psettings->commission_lv3)
-                    ->setInc('commission_avail', $psettings->commission_lv3);
+                    ->update([
+                        'commission'  => ['exp', "commission+{$psettings->commission_lv3}"],
+                        'commission_avail' => ['exp', "commission+{$psettings->commission_lv3}"],
+                    ]);
             }
         } catch (Exception $e) {
             $data = ['return_code' => 'FAIL', 'return_msg' => '失败'];
