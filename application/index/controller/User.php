@@ -598,11 +598,11 @@ class User extends Controller
 
                 $file = 'static/image/p1.png';
                 $file_1 = substr($user->promotion_qrcode, 1);
-                $outfile = "static/code/output1.png";
+                $outfile = "static/code/output1.jpeg";
 
                 // 加载水印以及要加水印的图像
-                $stamp = imagecreatefrompng($file_1);
-                $im = imagecreatefromjpeg($file);
+                $stamp = imagecreatefromjpeg($file_1);
+                $im = imagecreatefrompng($file);
 
                 // 设置水印图像的外边距，并且获取水印图像的尺寸
                 $marge_right = 0;
@@ -612,10 +612,10 @@ class User extends Controller
 
                 // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
-                imagecopy($im, $stamp, 0, 0, 0, 0, imagesx($stamp), imagesy($stamp));
+                imagecopy($im, $stamp, 0, 0, 0, 0, $sx, $sy);
 
                 // 输出图像并释放内存
-                imagepng($im, $outfile, 0, NULL);
+                imagejpeg($im, $outfile, 80, NULL);
                 imagedestroy($im);
 
                 $data['d'] = ['code' => $outfile];
