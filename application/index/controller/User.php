@@ -596,35 +596,38 @@ class User extends Controller
             if(!empty($user->promotion_qrcode)) {
                 $data['d'] = ['code' => $user->promotion_qrcode];
 
-                $dst = imagecreatefromstring(file_get_contents('./public/static/image/p1.png'));
-                $src = imagecreatefromstring(file_get_contents('./public'.$user->promotion_qrcode));
-                list($src_w, $src_h) = getimagesize($src_im);
-                //imagecopymerge($dst, $src, 10, 10, 0, 0, $src_w, $src_h, 50); 
-                imagecopy($dst, $src, 50, 680, 0, 0, $src_w, $src_h);
+                $bigImgPath = './public/static/image/p1.png';
+                $qCodePath = substr($user->promotion_qrcode, 1);
 
+                $bigImg = imagecreatefromstring(file_get_contents($bigImgPath));
+                $qCodeImg = imagecreatefromstring(file_get_contents($qCodePath));
+                 
+                list($qCodeWidth, $qCodeHight, $qCodeType) = getimagesize($qCodePath);
 
-                list($dst_w, $dst_h, $dst_type) = getimagesize($dst_im);
-                switch ($dst_type) {
-                    case 1://GIF
-                        header('Content-Type: image/gif');
-                        header('Content-Disposition: inline; filename="image.gif"');
-                        imagegif($dst);
+                imagecopymerge($bigImg, $qCodeImg, 200, 300, 0, 0, $qCodeWidth, $qCodeHight, 100);
+                 
+                list($bigWidth, $bigHight, $bigType) = getimagesize($bigImgPath);
+                 
+                 
+                switch ($bigType) {
+                    case 1: //gif
+                        header('Content-Type:image/gif');
+                        imagegif($bigImg);
                         break;
-                    case 2://JPG
-                        header('Content-Type: image/jpeg');
-                        header('Content-Disposition: inline; filename="image.jpg"');
-                        imagejpeg($dst);
+                    case 2: //jpg
+                        header('Content-Type:image/jpg');
+                        imagejpeg($bigImg);
                         break;
-                    case 3://PNG
-                        header('Content-Type: image/png');
-                        header('Content-Disposition: inline; filename="image.png"');
-                        imagepng($dst);
+                    case 3: //jpg
+                        header('Content-Type:image/png');
+                        imagepng($bigImg);
                         break;
                     default:
+                        # code...
                         break;
                 }
-                imagedestroy($dst);
-                imagedestroy($src);
+                imagedestroy($bigImg);
+                imagedestroy($qcodeImg);
                 exit;
                 # return Response::create($data, 'json')->code(200);
             }
