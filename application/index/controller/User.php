@@ -609,6 +609,9 @@ class User extends Controller
                 list($bigWidth, $bigHight, $bigType) = getimagesize($bigImgPath);
                  
                  
+                $codefile = './static/code/3341231312.png';
+                file_put_contents($codefile, imagepng($bigImg));
+                /*
                 switch ($bigType) {
                     case 1: //gif
                         header('Content-Type:image/gif');
@@ -626,10 +629,11 @@ class User extends Controller
                         # code...
                         break;
                 }
+                */
                 imagedestroy($bigImg);
                 imagedestroy($qcodeImg);
-                exit;
-                # return Response::create($data, 'json')->code(200);
+                $data['d'] = ['code' => substr($codefile, 1)];
+                return Response::create($data, 'json')->code(200);
             }
 
             $access_token = $this->_access_token();
