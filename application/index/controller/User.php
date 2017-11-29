@@ -724,7 +724,7 @@ class User extends Controller
 
                         $file = 'static/image/p1.png';
                         $file_1 = substr($codefile, 1);
-                        $outfile = "static/code/p-".$code_filenam.".jpeg";
+                        $outfile = "static/code/p-".$code_filename.".jpeg";
 
                         // 加载水印以及要加水印的图像
                         $stamp = imagecreatefromjpeg($file_1);
