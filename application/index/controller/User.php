@@ -33,6 +33,8 @@ use Symfony\Component\HttpFoundation\Request as WRequest;
 
 use EasyWeChat\Foundation\Application;
 
+use Lincome\CombineImage;
+
 class User extends Controller
 {
     public function _initialize()
@@ -599,39 +601,9 @@ class User extends Controller
                 $bigImgPath = 'static/image/p1.png';
                 $qCodePath = substr($user->promotion_qrcode, 1);
 
-                $bigImg = imagecreatefromstring(file_get_contents($bigImgPath));
-                $qCodeImg = imagecreatefromstring(file_get_contents($qCodePath));
-                 
-                list($qCodeWidth, $qCodeHight, $qCodeType) = getimagesize($qCodePath);
+                $ci = new CombineImage([$bigImgPath, $qCodePath], "static/code/output.png");
+                $ci->combine();
 
-                imagecopymerge($bigImg, $qCodeImg, 200, 300, 0, 0, $qCodeWidth, $qCodeHight, 100);
-                 
-                list($bigWidth, $bigHight, $bigType) = getimagesize($bigImgPath);
-                 
-                 
-                $codefile = './static/code/3341231312.png';
-                file_put_contents($codefile, $bigImg);
-                /*
-                switch ($bigType) {
-                    case 1: //gif
-                        header('Content-Type:image/gif');
-                        imagegif($bigImg);
-                        break;
-                    case 2: //jpg
-                        header('Content-Type:image/jpg');
-                        imagejpeg($bigImg);
-                        break;
-                    case 3: //jpg
-                        header('Content-Type:image/png');
-                        imagepng($bigImg);
-                        break;
-                    default:
-                        # code...
-                        break;
-                }
-                */
-                imagedestroy($bigImg);
-                imagedestroy($qcodeImg);
                 $data['d'] = ['code' => substr($codefile, 1)];
                 return Response::create($data, 'json')->code(200);
             }
