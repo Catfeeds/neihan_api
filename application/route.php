@@ -39,3 +39,4 @@ Route::rule('api/user/pay/transfer/$','index/User/transfer');
 Route::rule('api/user/click/sharelink/$','index/User/click_share_link');
 Route::rule('api/user/share/group/$','index/User/share_group');
 Route::rule('api/user/form/$','index/User/formid');
+Route::rule('api/jump/$', 'index/Common/jump');

@@ -295,6 +295,14 @@ CREATE TABLE IF NOT EXISTS `users_withdraw` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '代理用户提现表';
 
 
+CREATE TABLE IF NOT EXISTS `users_jump` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL COMMENT '用户ID',
+    `create_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` INT(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+    PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '小程序跳转表';
+
 
 CREATE TABLE IF NOT EXISTS `wechat_order` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,

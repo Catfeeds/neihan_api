@@ -59,9 +59,13 @@ class Video extends Model
                 'share_count' => $record['share_count']+$record['c_share_count'],
                 'comment_count' => $record['comment_count']+$record['c_comment_count'],
                 'is_digg' => 0,
+                'jump' => 0,
                 'level' => $record['level'],
-                'comments' => []
+                'comments' => [],
             );
+            if($record['category_id'] == 1111) {
+                $info['jump'] = 1;
+            }
 
             /*
             if(!empty($comments)) {

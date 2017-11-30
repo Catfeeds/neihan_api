@@ -11,6 +11,7 @@ use think\Config;
 
 use app\index\model\Setting;
 use app\index\model\SettingPromotion;
+use app\index\model\UserJump;
 
 
 class Common extends Controller
@@ -83,6 +84,30 @@ class Common extends Controller
                 'commission_lv2' => floatval($settings->commission_lv2),
                 'commission_lv3' => floatval($settings->commission_lv3)
             ];
+
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function jump()
+    {
+        try {
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+            $request = Request::instance();
+            $user_id = $request->param('user_id');
+
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+            $j = new UserJump;
+            $j->data([
+                'user_id' => $user_id
+            ]);
+            $j->save();
 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
