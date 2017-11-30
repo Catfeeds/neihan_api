@@ -59,6 +59,10 @@ class Video extends Controller
                 $category = explode(',', $category);
             }
 
+            if(empty($category) && $this->app_code == 'neihan_2') {
+                $category = [1111];
+            }
+
             $data = array('c' => 0, 'm' => '', 'd' => array());
 
             if(empty($user_id)) {
