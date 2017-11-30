@@ -100,11 +100,12 @@ class Video extends Controller
                 $last_num = $n - count($video_awsome) - count($video_hot);
                 $video_normal = $video_model->get_videos($user_id, [0, 1], $last_num, $category);
 
+                $video_douyin = [];
                 if($this->app_code == 'neihan_1') {
                     $video_douyin = $video_model->get_videos($user_id, [], 1, [1111]);
                 }
 
-                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal);
+                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal, $video_douyin);
             } else {
                 $video_model = new Video_Model;
                 $data['d'] = $video_model->get_videos_waitting($user_id, $p, $n);
