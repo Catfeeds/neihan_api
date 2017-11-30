@@ -81,7 +81,7 @@ def send_msg(arg):
             total_send += 1
             logging.info('用户{}-{}的消息推送成功'.format(u['openid'], u['user_name'].encode('utf8')))
         else:
-            logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['errmsg']))
+            logging.info('用户{}-{}的消息推送失败, 失败原因{}'.format(u['openid'], u['user_name'].encode('utf8'), content['errmsg']))
 
 
 def is_sended(currtime=None):
