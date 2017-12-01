@@ -12,38 +12,26 @@ class Video extends Model
 
 
 
-    public function get_videos($user_id, $level=[], $n=1, $category=[])
+    public function get_videos($user_id, $category=[], $n=1, $order="display_click_ratio")
     {
         $ret = [];
         $p = 1;
 
         $sql_select = "SELECT * FROM videos";
-        # $sql_where = " WHERE category_id IN (65, 1111) AND top_comments = 1 ";
-        # $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
         if(empty($category)) {
             $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
         } else {
             $sql_where = " WHERE category_id IN (".implode(",", $category).")";
         }
 
-        $normal = 0;
-        if(!empty($level)) {
-            $sql_where .= " AND level IN (".join(',', $level).")";
-        }
-        if($normal) {
-            $sql_where .= " AND c_display_count < 1000 ";
-        }
-
         $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
-        $sql_order = " ORDER BY display_share_ratio DESC, comment_count DESC ";
+        $sql_order = " ORDER BY ".$order." DESC, play_count DESC ";
         $sql_limit = " LIMIT ".(($p-1)*$n).", {$n}";
 
         $sql = $sql_select.$sql_where.$sql_order.$sql_limit;
 
         $records = Db::query($sql, ['user_id' => $user_id]);
         foreach ($records as $key => $record) {
-            # $comments = json_decode($record['comments'], true);
-
             $info = array(
                 'video_id' => strval($record['group_id']),
                 'content' => $record['content'],
@@ -61,27 +49,12 @@ class Video extends Model
                 'is_digg' => 0,
                 'jump' => 0,
                 'level' => $record['level'],
+                'display_click_ratio' => $record['display_click_ratio'],
                 'comments' => [],
             );
             if($record['category_id'] == 1111) {
                 $info['jump'] = 1;
             }
-
-            /*
-            if(!empty($comments)) {
-                foreach ($comments as $c) {
-                    $info['comment'][] = [
-                        'user_name'=> $c['user_name'],
-                        'user_avatar'=> $c['user_profile_image_url'],
-                        'create_time'=> $c['create_time'],
-                        'digg_count'=> $c['digg_count'],
-                        'content'=> $c['text'],
-                        'is_digg'=> 0
-                    ];
-                }
-            }
-            */
-
             $ret[] = $info;
         }
         return $ret;

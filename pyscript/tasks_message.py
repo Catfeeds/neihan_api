@@ -116,7 +116,7 @@ def main():
                     'from_user_id': task['from_user_id'],
                     'group_id': task['group_id'],
                     'title': task['title'],
-                    'comment': tcomment if tcomment else task['comment'].encode('utf8')
+                    'comment': task['comment'] if task['comment'].encode('utf8') else tcomment
                 }
                 access_token = wxtoken.get_token(task['app'])
 
