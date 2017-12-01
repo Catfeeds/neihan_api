@@ -55,13 +55,14 @@ def send_msg(arg):
     formid = formids[0]
     params = {
         "touser": u['openid'].encode('utf8'),
-        "template_id": TEMPLATE_ID[u['source']],
+        "template_id": 'Vpq9PCekMsNMr8zQKC6Jpgd0yhfo8a319k7pdC3NvB8',
         "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id'].encode('utf8')),
         "form_id": formid['form_id'].encode('utf8'),
         "data": {
             "keyword1": {
                 "value": video['title'].encode('utf8'),
-                "color": "#173177"
+                "color": "#173177",
+                "font-size": '20px'
             },
             "keyword2": {
                 "value": video['comment'].encode('utf8'),
@@ -131,7 +132,7 @@ def main():
     global total_send
     try:
         uparams = {
-            'user_id': 11
+            'user_id': 10
         }
         if len(sys.argv) >= 2:
             uparams['user_id'] = int(sys.argv[1])
