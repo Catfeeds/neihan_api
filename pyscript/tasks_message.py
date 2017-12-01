@@ -108,7 +108,7 @@ def main():
                 'is_active': 1,
                 'source': task['app'],
                 'skip_msg': 0,
-                'user_id': 10
+                # 'user_id': 10
             }
             users = _mgr.get_users(uparams)
             if users:
