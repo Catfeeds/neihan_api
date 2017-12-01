@@ -56,7 +56,7 @@ def send_msg(arg):
                 "color": "#FF0000",
             },
             "keyword3": {
-                "value": video['comment'].encode('utf8'),
+                "value": video['comment'],
                 "color": "#173177"
             }
         }
@@ -99,7 +99,7 @@ def main():
 
             tcomment = ''
             for com in comments:
-                tcomment += "【{}】 {}\n".format(
+                tcomment += "【{}】{}\n".format(
                     com['user_name'].encode('utf8'),
                     com['content'].encode('utf8'),
                 )
@@ -116,7 +116,7 @@ def main():
                     'from_user_id': task['from_user_id'],
                     'group_id': task['group_id'],
                     'title': task['title'],
-                    'comment': tcomment if tcomment else task['comment']
+                    'comment': tcomment if tcomment else task['comment'].encode('utf8')
                 }
                 access_token = wxtoken.get_token(task['app'])
 
