@@ -45,12 +45,17 @@ def send_msg(arg):
         "template_id": TEMPLATE_ID[u['source']],
         "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id']),
         "form_id": formid['form_id'].encode('utf8'),
+        "emphasis_keyword": "keyword1.DATA",
         "data": {
             "keyword1": {
-                "value": video['title'].encode('utf8'),
-                "color": "#173177"
+                "value": "小编强力推荐！",
+                "color": "#FF0000",
             },
             "keyword2": {
+                "value": video['title'].encode('utf8'),
+                "color": "#FF0000",
+            },
+            "keyword3": {
                 "value": video['comment'].encode('utf8'),
                 "color": "#173177"
             }
@@ -90,11 +95,20 @@ def main():
         for task in tasks:
             _mgr.update_message_tasks(task['id'], {'is_send': 1})
             # video = _mgr.get_videos({'group_id': task['group_id']})
-            # comment = _mgr.get_comment({'group_id': task['group_id']})
+            comments = _mgr.get_comment({'group_id': task['group_id']})
+
+            tcomment = ''
+            for com in comments:
+                tcomment += "【{}】 {}\n".format(
+                    com['user_name'].encode('utf8'),
+                    com['content'].encode('utf8'),
+                )
+
             uparams = {
                 'is_active': 1,
                 'source': task['app'],
-                'skip_msg': 0
+                'skip_msg': 0,
+                'user_id': 10
             }
             users = _mgr.get_users(uparams)
             if users:
@@ -102,7 +116,7 @@ def main():
                     'from_user_id': task['from_user_id'],
                     'group_id': task['group_id'],
                     'title': task['title'],
-                    'comment': task['comment']
+                    'comment': tcomment if tcomment else task['comment']
                 }
                 access_token = wxtoken.get_token(task['app'])
 
@@ -122,11 +136,6 @@ def main():
                             pass
                     pools.map(send_msg, args)
                     sleep(5)
-
-
-                # args = [{'u': user, 'video': video, 'ulevel': task['formid_level'], 'access_token': access_token} for user in users]
-                # pools = Pool(WORKER_THREAD_NUM)
-                # pools.map(send_msg, args)
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
                 _mgr.update_message_tasks(task['id'], {'send_member': total_send})

@@ -162,7 +162,7 @@ class Video(BaseModel):
 
 class Comment(BaseModel):
 
-    __tablename__ = "comment_v2"
+    __tablename__ = "comment_v3"
 
     id = Column(Integer, primary_key=True)
     group_id = Column(VARCHAR(64))
