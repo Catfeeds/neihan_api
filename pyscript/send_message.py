@@ -26,9 +26,9 @@ total_send = 0
 _videos = [
     {
         'from_user_id': u'1',
-        'group_id': u'74191101249',
-        'title': u"妹子再香总有一个地方是腥的",
-        'comment': u"妹子，你是认真的吗！\n我不信，给我闻闻。"
+        'group_id': u'hyhuo_333707',
+        'title': u"究极爆乳美女",
+        'comment': u"这歌真白哦不这奶真好听"
     }
 ]
 
@@ -55,16 +55,20 @@ def send_msg(arg):
     formid = formids[0]
     params = {
         "touser": u['openid'].encode('utf8'),
-        "template_id": 'Vpq9PCekMsNMr8zQKC6Jpgd0yhfo8a319k7pdC3NvB8',
+        "template_id": 'Vpq9PCekMsNMr8zQKC6Jpg-MR3aly7yE4-owwlvSdE0',
         "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id'].encode('utf8')),
         "form_id": formid['form_id'].encode('utf8'),
         "emphasis_keyword": "keyword1.DATA",
         "data": {
             "keyword1": {
-                "value": video['title'].encode('utf8'),
+                "value": "小编强力推荐！",
                 "color": "#FF0000",
             },
             "keyword2": {
+                "value": video['title'].encode('utf8'),
+                "color": "#FF0000",
+            },
+            "keyword3": {
                 "value": video['comment'].encode('utf8'),
                 "color": "#173177"
             }
