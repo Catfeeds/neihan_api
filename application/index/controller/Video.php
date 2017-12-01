@@ -93,12 +93,16 @@ class Video extends Controller
             $settings = $result[0];
 
             if($settings['online'] == 1) {
+                $vids = [];
                 $video_model = new Video_Model;
-                $video_awsome = $video_model->get_videos($user_id, $category, 1, "display_click_ratio");
-                $video_hot = $video_model->get_videos($user_id, $category, 1, "display_share_ratio");
+                $video_awsome = $video_model->get_videos($user_id, $category, $vids, 1, "display_click_ratio");
 
+                $vids[] = $video_awsome[0]['video_id'];
+                $video_hot = $video_model->get_videos($user_id, $category, $vids, 1, "display_share_ratio");
+
+                $vids[] = $video_hot[0]['video_id'];
                 $last_num = $n - count($video_awsome) - count($video_hot);
-                $video_normal = $video_model->get_videos($user_id, $category, 3, "c_display_count");
+                $video_normal = $video_model->get_videos($user_id, $category, $vids, 3, "c_display_count", 100);
 
                 $video_douyin = [];
                 $data['d'] = array_merge($video_awsome, $video_hot, $video_normal, $video_douyin);

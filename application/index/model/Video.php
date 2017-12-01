@@ -12,7 +12,7 @@ class Video extends Model
 
 
 
-    public function get_videos($user_id, $category=[], $n=1, $order="display_click_ratio")
+    public function get_videos($user_id, $category=[], $vids=[], $n=1, $order="display_click_ratio", $dcount=0)
     {
         $ret = [];
         $p = 1;
@@ -22,6 +22,9 @@ class Video extends Model
             $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 ";
         } else {
             $sql_where = " WHERE category_id IN (".implode(",", $category).")";
+        }
+        if(!empty($vids)) {
+            $sql_where .= " AND group_id NOT IN ('".implode("','", $vids)."')";
         }
 
         $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
