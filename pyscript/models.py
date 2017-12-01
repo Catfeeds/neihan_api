@@ -162,11 +162,12 @@ class Video(BaseModel):
 
 class Comment(BaseModel):
 
-    __tablename__ = "comment_v3"
+    __tablename__ = "comments_v3"
 
     id = Column(Integer, primary_key=True)
     group_id = Column(VARCHAR(64))
     content = Column(VARCHAR(1024))
+    user_name = Column(VARCHAR(128))
     digg_count = Column(Integer)
 
     def conv_result(self):
@@ -174,6 +175,7 @@ class Comment(BaseModel):
         ret["id"] = self.id
         ret["group_id"] = self.group_id
         ret["content"] = self.content
+        ret["user_name"] = self.user_name
         ret["digg_count"] = self.digg_count
 
         return ret
