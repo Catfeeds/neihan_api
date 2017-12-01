@@ -110,7 +110,7 @@ class Video extends Controller
                 $video_model = new Video_Model;
                 $data['d'] = $video_model->get_videos_waitting($user_id, $p, $n);
             }
-            
+
 
             $vids = [];
             foreach ($data['d'] as $val) {
@@ -228,8 +228,13 @@ class Video extends Controller
                 'share_count' => $record['share_count']+$record['c_share_count'],
                 'is_digg' => 0,
                 'comment_count' => $record['comment_count']+$record['c_comment_count'],
-                'comments' => array()
+                'comments' => array(),
+                'jump' => 0
             );
+
+            if($record['category_id'] == 1111) {
+                $info['jump'] = 1;
+            }
 
             $is_digg = Db::table('users_logs')
                                     ->where('user_id', $user_id)
