@@ -686,9 +686,9 @@ class Mgr(object):
         try:
             ret = {}
             sql = """
-            SELECT videos.*, comments_v2.content as comment
-            FROM videos INNER JOIN comments_v2 ON videos.group_id = comments_v2.group_id 
-            WHERE videos.category_id IN (12, 109, 187)
+            SELECT videos.*, comments_v3.content as comment
+            FROM videos INNER JOIN comments_v3 ON videos.group_id = comments_v3.group_id 
+            WHERE videos.category_id IN (1112)
             AND videos.group_id NOT IN (
                 SELECT video_id FROM videos_display_logs WHERE user_id = {} GROUP BY video_id
             )
