@@ -54,6 +54,7 @@ def send_msg(arg):
 
     formid = formids[0]
     params = {
+        "emphasis_keyword": "keyword1",
         "touser": u['openid'].encode('utf8'),
         "template_id": 'Vpq9PCekMsNMr8zQKC6Jpgd0yhfo8a319k7pdC3NvB8',
         "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id'].encode('utf8')),
@@ -62,7 +63,6 @@ def send_msg(arg):
             "keyword1": {
                 "value": video['title'].encode('utf8'),
                 "color": "#FF0000",
-                "font": 20
             },
             "keyword2": {
                 "value": video['comment'].encode('utf8'),
