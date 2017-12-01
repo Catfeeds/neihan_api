@@ -240,7 +240,7 @@ class Video extends Controller
                 $info['is_digg'] = 1;
             }
 
-            $top_comments = Db::table('comments')->where('group_id', $record['group_id'])
+            $top_comments = Db::table('comments_v3')->where('group_id', $record['group_id'])
                                                     ->limit(5)
                                                     ->order('id', 'desc')
                                                     ->select();
