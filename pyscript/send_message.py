@@ -60,9 +60,8 @@ def send_msg(arg):
         "form_id": formid['form_id'].encode('utf8'),
         "data": {
             "keyword1": {
-                "value": video['title'].encode('utf8'),
-                "color": "#173177",
-                "font-size": '20px'
+                "value": '<font size="20">%s</font>' % video['title'].encode('utf8'),
+                "color": "#FF0000",
             },
             "keyword2": {
                 "value": video['comment'].encode('utf8'),
