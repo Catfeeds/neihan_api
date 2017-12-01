@@ -26,6 +26,9 @@ class Video extends Model
         if(!empty($vids)) {
             $sql_where .= " AND group_id NOT IN ('".implode("','", $vids)."')";
         }
+        if($dcount > 0) {
+            $sql_where .= " AND c_display_count <= {$dcount}";
+        }
 
         $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
         $sql_order = " ORDER BY ".$order." DESC, play_count DESC ";
