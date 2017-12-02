@@ -815,7 +815,7 @@ class User extends Controller
                         ]); 
                 }
 
-                $p2_promo = UserPromotionGrid::where('user_id', $p1_promo->parent_user_id)->where('level', 2)->find();
+                $p2_promo = UserPromotionGrid::where('user_id', $p1_promo->parent_user_id)->where('level', 1)->find();
                 if(!empty($p2_promo)) {
                     $user_promo_grid = New UserPromotionGrid;
                     $user_promo_grid->data([
