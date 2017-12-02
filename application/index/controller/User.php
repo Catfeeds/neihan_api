@@ -719,6 +719,7 @@ class User extends Controller
                     $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
                     $params = [
                         'page' => 'pages/index/index',
+                        # 'page' => 'pages/distribution/distribution',
                         'scene' => 'from_user_id='.$usorder->user_id.'&promo=1',
                         'width' => 180
                     ];
@@ -812,6 +813,24 @@ class User extends Controller
                             'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
                             'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
                         ]); 
+                }
+
+                $p2_promo = UserPromotionGrid::where('user_id', $p1_promo->parent_user_id)->where('level', 2)->find();
+                if(!empty($p2_promo)) {
+                    $user_promo_grid = New UserPromotionGrid;
+                    $user_promo_grid->data([
+                        'parent_user_id' => $p2_promo->parent_user_id,
+                        'user_id' => $user_promo->user_id,
+                        'level' => 3
+                    ]);
+                    $user_promo_grid->save();
+
+                    # 加钱
+                    UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
+                        ->update([
+                            'commission'  => ['exp', "commission+{$psettings->commission_lv3}"],
+                            'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv3}"],
+                        ]);
                 }
                 
             } else {
@@ -921,7 +940,7 @@ class User extends Controller
                 'check_name' => 'NO_CHECK',
                 're_user_name'=> '',
                 'amount' => intval($user_withdraw->amount*100),
-                'desc' => '测试企业付款',
+                'desc' => '代理门票',
                 'spbill_create_ip' => $request->ip(),
             ];
             $result = $merchantPay->send($merchantPayData);
