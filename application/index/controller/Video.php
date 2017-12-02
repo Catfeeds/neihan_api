@@ -487,9 +487,9 @@ class Video extends Controller
     public function comment()
     {
         try {
-            $user_id = Request::instance()->post('user_id');
-            $video_id = Request::instance()->post('video_id');
-            $content = Request::instance()->post('content');
+            $user_id = Request::instance()->param('user_id');
+            $video_id = Request::instance()->param('video_id');
+            $content = Request::instance()->param('content');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
