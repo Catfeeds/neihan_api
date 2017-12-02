@@ -536,7 +536,7 @@ class User extends Controller
             );
 
             // 必填
-            $unifiedorder->set('body',          '微信支付测试商品');
+            $unifiedorder->set('body',          '代理门票');
             $unifiedorder->set('total_fee',     intval($ticket->amount*100));
             $unifiedorder->set('openid',        $user->openid);
             $unifiedorder->set('trade_type',    'JSAPI');
@@ -718,8 +718,8 @@ class User extends Controller
                     $wxconfig = Config::get('wxconfig');
                     $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
                     $params = [
-                        'page' => 'pages/index/index',
-                        # 'page' => 'pages/distribution/distribution',
+                        # 'page' => 'pages/index/index',
+                        'page' => 'pages/distribution/distribution',
                         'scene' => 'from_user_id='.$usorder->user_id.'&promo=1',
                         'width' => 180
                     ];
