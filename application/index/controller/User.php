@@ -640,8 +640,8 @@ class User extends Controller
             $wxconfig = Config::get('wxconfig');
             $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
             $params = [
-                'page' => 'pages/index/index',
-                'scene' => 'from_user_id='.$user_id.'&promo=1'
+                'page' => 'pages/distribution/distribution',
+                'scene' => 'from_user_id=0&promo=1'
             ];
 
             $resp = curl_post($request_url, json_encode($params));
