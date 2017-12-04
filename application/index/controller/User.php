@@ -726,8 +726,8 @@ class User extends Controller
 
                     $resp = curl_post($request_url, json_encode($params));
                     if(!empty($resp)) {
-                        $code_filename = strval($usorder->user_id).strval(time()).'.png';
-                        $codefile = './static/code/'.$code_filename;
+                        $code_filename = strval($usorder->user_id).strval(time());
+                        $codefile = './static/code/'.$code_filename.'.png';
                         file_put_contents($codefile, $resp);
 
 
