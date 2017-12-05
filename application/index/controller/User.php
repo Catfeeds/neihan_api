@@ -943,7 +943,7 @@ class User extends Controller
     {
         try {
             $users =  User_Model::all(function($query){
-                $query->where('promotion', 0)->where('promotion_qrcode_new', '');
+                $query->where('promotion', 3)->where('promotion_qrcode_new', '');
             });
             foreach ($users as $u) {
                 $url = 'http://www.jialejiabianli.cn/api/user/promo/qrcode?user_id='.$u->id;
