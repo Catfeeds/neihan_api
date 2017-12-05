@@ -601,25 +601,25 @@ class User extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);
             }
-            if(empty($user->promotion_qrcode)) {
+            if(empty($user->promotion_qrcode_new) && $user->promotion == 3) {
                 $access_token = $this->_access_token();
                 if(!empty($access_token)) {
                     $wxconfig = Config::get('wxconfig');
                     $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
                     $params = [
                         'page' => 'pages/distribution/distribution',
-                        'scene' => 'from_user_id=0&promo=1',
+                        'scene' => 'from_user_id='.$user_id.'&promo=1',
                         'width' => 180
                     ];
 
                     $resp = curl_post($request_url, json_encode($params));
                     if(!empty($resp)) {
-                        $code_filename = strval($user_id).strval(time()).'.png';
-                        $codefile = './static/code/'.$code_filename;
+                        $code_filename = strval($user_id).strval(time());
+                        $codefile = './static/code/'.$code_filename.'.png';
                         file_put_contents($codefile, $resp);
 
 
-                        $file = 'static/image/p1.png';
+                        $file = 'static/image/pk1.png';
                         $file_1 = substr($codefile, 2);
                         $outfile = "static/code/p-".$code_filename.".jpeg";
 
@@ -641,7 +641,7 @@ class User extends Controller
                         imagejpeg($im, $outfile, 100, NULL);
                         imagedestroy($im);
 
-                        $user->promotion_qrcode = '/'.$outfile;
+                        $user->promotion_qrcode_new = '/'.$outfile;
                         $user->save();
                     }
                 }
