@@ -939,6 +939,23 @@ class User extends Controller
         return Response::create($data, 'json')->code(200);
     }
 
+    public function refresh_qrcode()
+    {
+        try {
+            $users =  User_Model::all(function($query){
+                $query->where('promotion', 0)->where('promotion_qrcode_new', '');
+            });
+            foreach ($users as $u) {
+                $url = 'http://www.jialejiabianli.cn/api/user/promo/qrcode?user_id='.$u->id;
+                # curl_get($url);
+                print_r($url.'<br>');
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return 'Script Done!';
+    }
+
 
     private function _access_token()
     {
