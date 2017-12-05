@@ -56,7 +56,7 @@ def send_msg(arg):
                 "color": "#FF0000",
             },
             "keyword3": {
-                "value": video['comment'],
+                "value": video['comment'].encode('utf8'),
                 "color": "#173177"
             }
         }
@@ -108,6 +108,7 @@ def main():
                 'is_active': 1,
                 'source': task['app'],
                 'skip_msg': 0,
+                'promotion': 0,
                 # 'user_id': 10
             }
             users = _mgr.get_users(uparams)
@@ -116,7 +117,8 @@ def main():
                     'from_user_id': task['from_user_id'],
                     'group_id': task['group_id'],
                     'title': task['title'],
-                    'comment': task['comment'] if task['comment'].encode('utf8') else tcomment
+                    # 'comment': task['comment'] if task['comment'].encode('utf8') else tcomment
+                    'comment': task['comment']
                 }
                 access_token = wxtoken.get_token(task['app'])
 

@@ -191,7 +191,7 @@ class User extends Controller
                 'qrcode' => '',
             ];
             if(!empty($user->promotion_qrcode)) {
-                $data['d']['qrcode'] = $request->domain().$user->promotion_qrcode;
+                $data['d']['qrcode'] = $request->domain().$user->promotion_qrcode_new;
             }
 
         } catch (Exception $e) {
