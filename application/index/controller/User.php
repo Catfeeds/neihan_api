@@ -601,61 +601,52 @@ class User extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);
             }
-            if(!empty($user->promotion_qrcode)) {
-                $data['d'] = ['code' => $user->promotion_qrcode];
+            if(empty($user->promotion_qrcode)) {
+                $access_token = $this->_access_token();
+                if(!empty($access_token)) {
+                    $wxconfig = Config::get('wxconfig');
+                    $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
+                    $params = [
+                        'page' => 'pages/distribution/distribution',
+                        'scene' => 'from_user_id=0&promo=1',
+                        'width' => 180
+                    ];
 
-                $file = 'static/image/p1.png';
-                $file_1 = substr($user->promotion_qrcode, 1);
-                $outfile = "static/code/output1.jpeg";
+                    $resp = curl_post($request_url, json_encode($params));
+                    if(!empty($resp)) {
+                        $code_filename = strval($user_id).strval(time()).'.png';
+                        $codefile = './static/code/'.$code_filename;
+                        file_put_contents($codefile, $resp);
 
-                // 加载水印以及要加水印的图像
-                $stamp = imagecreatefromjpeg($file_1);
-                $im = imagecreatefrompng($file);
 
-                // 设置水印图像的外边距，并且获取水印图像的尺寸
-                $marge_right = 0;
-                $marge_bottom = 0;
-                $sx = imagesx($stamp);
-                $sy = imagesy($stamp);
+                        $file = 'static/image/p1.png';
+                        $file_1 = substr($codefile, 2);
+                        $outfile = "static/code/p-".$code_filename.".jpeg";
 
-                // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
+                        // 加载水印以及要加水印的图像
+                        $stamp = imagecreatefromjpeg($file_1);
+                        $im = imagecreatefrompng($file);
 
-                imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
+                        // 设置水印图像的外边距，并且获取水印图像的尺寸
+                        $marge_right = 0;
+                        $marge_bottom = 0;
+                        $sx = imagesx($stamp);
+                        $sy = imagesy($stamp);
 
-                // 输出图像并释放内存
-                imagejpeg($im, $outfile, 80, NULL);
-                imagedestroy($im);
+                        // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
+                        imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
+
+                        // 输出图像并释放内存
+                        imagejpeg($im, $outfile, 100, NULL);
+                        imagedestroy($im);
+
+                        $user->promotion_qrcode = '/'.$outfile;
+                        $user->save();
+                    }
+                }
                 $data['d'] = ['code' => $outfile];
-                return Response::create($data, 'json')->code(200);
             }
-
-            $access_token = $this->_access_token();
-            if(empty($access_token)) {
-                $data['c'] = -1024;
-                $data['m'] = 'ACCESS TOKEN Missing';
-                return Response::create($data, 'json')->code(200);
-            }
-
-            $wxconfig = Config::get('wxconfig');
-            $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
-            $params = [
-                'page' => 'pages/index/index',
-                'scene' => 'from_user_id='.$user_id.'&promo=1'
-            ];
-
-            $resp = curl_post($request_url, json_encode($params));
-            if(!empty($resp)) {
-                $code_filename = $user_id.strval(time()).'.jpeg';
-                $codefile = './static/code/'.$code_filename;
-                file_put_contents($codefile, $resp);
-            }
-
-            $data['d'] = ['code' => '/static/code/'.$code_filename];
-
-            $user->promotion_qrcode = $data['d']['code'];
-            $user->save();
-
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
