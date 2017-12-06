@@ -427,7 +427,15 @@ class Mgr(object):
 
     def update_video_display_ratio(self):
         try:
-            sql = 'UPDATE videos SET display_click_ratio = c_play_count*1.0/c_display_count, display_share_ratio = c_share_count*1.0/c_display_count WHERE c_display_count >= 1'
+            sql = """
+            UPDATE videos SET 
+                display_click_ratio = c_play_count*1.0/c_display_count,
+                display_share_ratio = c_share_count*1.0/c_display_count,
+                display_play_ratio = c_play_count*1.0/c_display_count,
+                display_play_end_ratio = c_play_end_count*1.0/c_display_count,
+                play_end_ratio = c_play_end_count*1.0/c_play_count
+            WHERE c_display_count >= 1
+            """
             self.session.execute(sql)
             self.session.commit()
         except Exception as e:
