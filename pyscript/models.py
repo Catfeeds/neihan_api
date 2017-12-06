@@ -40,6 +40,7 @@ class User(BaseModel):
     is_active = Column(Integer)
     source = Column(VARCHAR(32))
     parent_user_id = Column(Integer)
+    promotion = Column(Integer)
 
     def conv_result(self):
         ret = {}
@@ -52,6 +53,7 @@ class User(BaseModel):
         ret["is_active"] = self.is_active
         ret["source"] = self.source
         ret["parent_user_id"] = self.parent_user_id
+        ret["promotion"] = self.promotion
 
         return ret
 
