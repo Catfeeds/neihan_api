@@ -431,11 +431,11 @@ class Mgr(object):
         try:
             sql = """
             UPDATE videos SET 
-                display_click_ratio = IF(c_display_count > 0, c_play_count*1.0/c_display_count, 0),
-                display_share_ratio = IF(c_display_count > 0, c_share_count*1.0/c_display_count, 0),
-                display_play_ratio = IF(c_display_count > 0, c_play_count*1.0/c_display_count, 0),
-                display_play_end_ratio = IF(c_display_count > 0, c_play_end_count*1.0/c_display_count, 0),
-                play_end_ratio = IF(c_play_count > 0, c_play_end_count*1.0/c_play_count, 0)
+                display_click_ratio = TRUNCATE( IF(c_display_count > 0, c_play_count*1.0/c_display_count, 0), 3),
+                display_share_ratio = TRUNCATE( IF(c_display_count > 0, c_share_count*1.0/c_display_count, 0), 3),
+                display_play_ratio = TRUNCATE( IF(c_display_count > 0, c_play_count*1.0/c_display_count, 0), 3),
+                display_play_end_ratio = TRUNCATE( IF(c_display_count > 0, c_play_end_count*1.0/c_display_count, 0), 3),
+                play_end_ratio = TRUNCATE( IF(c_play_count > 0, c_play_end_count*1.0/c_play_count, 0), 3)
             WHERE c_display_count >= 1
             """
             self.session.execute(sql)
@@ -448,7 +448,7 @@ class Mgr(object):
 
     def update_video_hot_ratio(self):
         try:
-            sql = 'UPDATE videos SET hot_ratio = IF(c_play_end_count > 0, (c_digg_count+c_comment_count*5)*1.0/c_play_end_count, 0) WHERE c_play_end_count >= 1'
+            sql = 'UPDATE videos SET hot_ratio = TRUNCATE( IF(c_play_end_count > 0, (c_digg_count+c_comment_count*5)*1.0/c_play_end_count, 0), 3) WHERE c_play_end_count >= 1'
             self.session.execute(sql)
             self.session.commit()
         except Exception as e:
