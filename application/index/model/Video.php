@@ -12,7 +12,7 @@ class Video extends Model
 
 
 
-    public function get_videos($user_id, $category=[], $vids=[], $n=1, $order="display_click_ratio", $dcount=0)
+    public function get_videos($user_id, $category=[], $vids=[], $n=1, $order="display_click_ratio", $gtcount=100, $ltcount=0)
     {
         $ret = [];
         $p = 1;
@@ -26,9 +26,13 @@ class Video extends Model
         if(!empty($vids)) {
             $sql_where .= " AND group_id NOT IN ('".implode("','", $vids)."')";
         }
-        if($dcount > 0) {
-            $sql_where .= " AND c_display_count <= {$dcount}";
+        if($ltcount > 0) {
+            $sql_where .= " AND c_display_count <= {$ltcount}";
         }
+        if($gtcount > 0) {
+            $sql_where .= " AND c_display_count >= {$gtcount}";
+        }
+
 
         $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
         $sql_order = " ORDER BY ".$order." DESC, play_count DESC ";
