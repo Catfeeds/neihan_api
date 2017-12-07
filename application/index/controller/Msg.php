@@ -18,7 +18,23 @@ class Msg extends Controller
             return $echostr;
         }
 
-        return 'success';
+        $xml = file_get_contents('php://input');
+        Log::record($xml, 'info');
+
+        if (!trim($xml)) {
+            return 'success';
+        }
+
+        $encrypt_data = xml_to_data($xml);
+
+        $data = array(
+            'ToUserName' => $origin_data['FromUserName'],
+            'FromUserName' => $origin_data['ToUserName'],
+            'CreateTime' => time(),
+            'MsgType' => 'text',
+            'Content' => 'lalalala'
+        );
+        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
 
 }
