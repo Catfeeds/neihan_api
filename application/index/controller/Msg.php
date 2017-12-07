@@ -53,9 +53,9 @@ class Msg extends Controller
                         'msgtype' => 'link',
                         'link' => [
                             'title' => '点此进入',
-                            'description' => '关注【极品内涵君】福利天天有',
-                            'url' => 'http://mp.weixin.qq.com/s/skDfB-NQ34ylZ7aRaZVZmQ',
-                            'thumb_url' => ''
+                            'description' => '解锁更多精彩福利视频，戳这里！！',
+                            'url' => 'https://mp.weixin.qq.com/s/QNU9fyuWzV96fwDy29pslw',
+                            'thumb_url' => 'http://www.jialejiabianli.cn/static/image/msg_logo.png'
                         ]
                     ];
                     $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
