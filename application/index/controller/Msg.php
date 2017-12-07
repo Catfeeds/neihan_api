@@ -5,6 +5,7 @@ use think\Controller;
 use think\Response;
 use think\Request;
 use think\Log;
+use think\Config;
 
 class Msg extends Controller
 {
