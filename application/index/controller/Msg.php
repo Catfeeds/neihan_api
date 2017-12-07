@@ -59,7 +59,7 @@ class Msg extends Controller
                         ]
                     ];
                     $resp = curl_post($api.$token['access_token'], $data);
-                    Log::record($resp, 'info');
+                    Log::record(json_decode($resp, true), 'info');
                 }
             }
         }
