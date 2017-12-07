@@ -58,7 +58,7 @@ class Msg extends Controller
                             'thumb_url' => ''
                         ]
                     ];
-                    $resp = curl_post($api.$token['access_token'], $data);
+                    $resp = curl_post($api.$token['access_token'], json_encode($data));
                     Log::record(json_decode($resp, true), 'info');
                 }
             }
