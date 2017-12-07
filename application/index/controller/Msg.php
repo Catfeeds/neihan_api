@@ -26,16 +26,20 @@ class Msg extends Controller
             return 'success';
         }
 
-        $encrypt_data = xml_to_data($xml);
+        $origin_data = xml_to_data($xml);
 
-        $data = array(
-            'ToUserName' => $origin_data['FromUserName'],
-            'FromUserName' => $origin_data['ToUserName'],
-            'CreateTime' => time(),
-            'MsgType' => 'text',
-            'Content' => 'lalalala'
-        );
-        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+        if(isset($origin_data['MsgType']) && $origin_data['MsgType'] == 'event') {
+            if($origin_data['Event'] == 'user_enter_tempsession') {
+                $data = array(
+                    'ToUserName' => $origin_data['FromUserName'],
+                    'FromUserName' => $origin_data['ToUserName'],
+                    'CreateTime' => time(),
+                    'MsgType' => 'text',
+                    'Content' => 'lalalala'
+                );
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            }
+        }
+        return 'success';
     }
-
 }
