@@ -70,6 +70,62 @@ class Video extends Model
         return $ret;
     }
 
+
+    public function get_jump_videos($user_id, $category=[], $vids=[], $n=1, $order="display_click_ratio", $gtcount=100, $ltcount=0)
+    {
+        $ret = [];
+        $p = 1;
+
+        $sql_select = "SELECT * FROM videos";
+        if(empty($category)) {
+            $sql_where = " WHERE category_id = 65 AND top_comments = 1 AND is_expired = 0";
+        } else {
+            $sql_where = " WHERE category_id IN (".implode(",", $category).")";
+        }
+        if(!empty($vids)) {
+            $sql_where .= " AND group_id NOT IN ('".implode("','", $vids)."')";
+        }
+        if($ltcount > 0) {
+            $sql_where .= " AND c_display_count <= {$ltcount}";
+        }
+        if($gtcount > 0) {
+            $sql_where .= " AND c_display_count >= {$gtcount}";
+        }
+
+        $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
+        $sql_order = " ORDER BY ".$order." DESC, play_count DESC ";
+        $sql_limit = " LIMIT ".(($p-1)*$n).", {$n}";
+
+        $sql = $sql_select.$sql_where.$sql_order.$sql_limit;
+
+        $records = Db::query($sql, ['user_id' => $user_id]);
+        foreach ($records as $key => $record) {
+            $info = array(
+                'video_id' => strval($record['group_id']),
+                'content' => $record['content'],
+                'online_time' => date('Y-m-d H:i:s', $record['online_time']),
+                'category_name' => $record['category_name'],
+                'url' => timestamp_url($record['vurl']),
+                'cover_image' => str_replace('.webp', '', $record['cover_image']),
+                'user_name' => '内涵君推荐',
+                'user_avatar' => $record['user_avatar'],
+                'play_count' => $record['play_count']+$record['c_play_count'],
+                'digg_count' => $record['digg_count']+$record['c_digg_count'],
+                'bury_count' => $record['bury_count']+$record['c_bury_count'],
+                'share_count' => $record['share_count']+$record['c_share_count'],
+                'comment_count' => $record['comment_count']+$record['c_comment_count'],
+                'is_digg' => 0,
+                'jump' => 0,
+                'level' => $record['level'],
+                'display_click_ratio' => $record['display_click_ratio'],
+                'comments' => [],
+                'jump' => 1
+            );
+            $ret[] = $info;
+        }
+        return $ret;
+    }
+
     public function get_videos_waitting($user_id, $p, $n)
     {
         $ret = [];

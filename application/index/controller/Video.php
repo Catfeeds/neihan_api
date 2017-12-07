@@ -108,8 +108,11 @@ class Video extends Controller
                 $last_num = $n - count($video_awsome) - count($video_hot);
                 $video_normal = $video_model->get_videos($user_id, $category, $vids, 3, "c_display_count", 0, 50);
 
+                $video_jump = $video_model->get_jump_videos($user_id, [65], [], 1, "play_count", 0, 0);
+
                 $video_douyin = [];
-                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal, $video_douyin);
+
+                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal, $video_jump, $video_douyin);
             } else {
                 $video_model = new Video_Model;
                 $data['d'] = $video_model->get_videos_waitting($user_id, $p, $n);
