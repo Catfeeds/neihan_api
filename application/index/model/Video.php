@@ -107,7 +107,7 @@ class Video extends Model
                 'category_name' => $record['category_name'],
                 'url' => timestamp_url($record['vurl']),
                 'cover_image' => str_replace('.webp', '', $record['cover_image']),
-                'user_name' => '内涵君推荐',
+                'user_name' => '内涵极品段子推荐',
                 'user_avatar' => 'http://www.jialejiabianli.cn/static/image/nhdz_icon.png',
                 'play_count' => $record['play_count']+$record['c_play_count'],
                 'digg_count' => $record['digg_count']+$record['c_digg_count'],
