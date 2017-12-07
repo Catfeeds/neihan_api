@@ -29,6 +29,7 @@ class Msg extends Controller
         $origin_data = xml_to_data($xml);
 
         if(isset($origin_data['MsgType']) && $origin_data['MsgType'] == 'event') {
+            Log::record($origin_data['MsgType'], 'info');
             if($origin_data['Event'] == 'user_enter_tempsession') {
                 $data = array(
                     'ToUserName' => $origin_data['FromUserName'],
@@ -37,6 +38,7 @@ class Msg extends Controller
                     'MsgType' => 'text',
                     'Content' => 'lalalala'
                 );
+                Log::record($data, 'info');
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
         }
