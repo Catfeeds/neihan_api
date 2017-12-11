@@ -42,17 +42,13 @@ def send_msg(arg):
         "template_id": TEMPLATE_ID[u['source']],
         "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id']),
         "form_id": formid['form_id'].encode('utf8'),
-        "emphasis_keyword": "keyword1.DATA",
+        # "emphasis_keyword": "keyword1.DATA",
         "data": {
             "keyword1": {
-                "value": "小编私人收藏！",
-                "color": "#FF0000",
+                "value": video['title'].encode('utf8'),
+                "color": "#173177",
             },
             "keyword2": {
-                "value": video['title'].encode('utf8'),
-                "color": "#FF0000",
-            },
-            "keyword3": {
                 "value": video['comment'].encode('utf8'),
                 "color": "#173177"
             }
