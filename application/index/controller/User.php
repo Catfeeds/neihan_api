@@ -311,26 +311,28 @@ class User extends Controller
 
             # 黏性用户
             try {
-                $settings = MessageSetting::get(1);
-                if($settings->status == 1) {
-                    $today_t = strtotime(date('Y-m-d',time()));
-                    $formids = UserFormId::where('user_id', $user_id)
-                        ->where('create_time', '>=', $today_t)
-                        ->where('create_time', '<=', $today_t+86399)
-                        ->count();
-                    if($formids >= 3) {
-                        $exists = MessageTask::where('user_id', $user_id)
-                            ->where('date', date('Y-m-d',time()))
+                if($this->app_code == 'neihan_2') {
+                    $settings = MessageSetting::get(1);
+                    if($settings->status == 1) {
+                        $today_t = strtotime(date('Y-m-d',time()));
+                        $formids = UserFormId::where('user_id', $user_id)
+                            ->where('create_time', '>=', $today_t)
+                            ->where('create_time', '<=', $today_t+86399)
                             ->count();
-                        if(!$exists) {
-                            $msgtask = New MessageTask;
-                            $msgtask->data([
-                                'user_id' => $user_id,
-                                'date' => date('Y-m-d',time()),
-                                'is_sended' => 0,
-                                'send_time' => date('Y-m-d H:i:s', strtotime("+{$settings->interval} minutes"))
-                            ]);
-                            $msgtask->save();
+                        if($formids >= 3) {
+                            $exists = MessageTask::where('user_id', $user_id)
+                                ->where('date', date('Y-m-d',time()))
+                                ->count();
+                            if(!$exists) {
+                                $msgtask = New MessageTask;
+                                $msgtask->data([
+                                    'user_id' => $user_id,
+                                    'date' => date('Y-m-d',time()),
+                                    'is_sended' => 0,
+                                    'send_time' => date('Y-m-d H:i:s', strtotime("+{$settings->interval} minutes"))
+                                ]);
+                                $msgtask->save();
+                            }
                         }
                     }
                 }

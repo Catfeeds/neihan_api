@@ -106,7 +106,8 @@ def main():
 
             uparams = {
                 'is_active': 1,
-                'source': task['app'],
+                # 'source': task['app'],
+                'source': 'neihan_2',
                 'skip_msg': 0,
                 'promotion': 0,
                 # 'user_id': 10
