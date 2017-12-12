@@ -16,7 +16,13 @@ def run():
             "type": "view",
             "name": "成为代理",
             "url": "http://www.baidu.com"
-        }, {
+        }, 
+        {
+            "type": "view",
+            "name": "小程序",
+            "url": "http://www.baidu.com"
+        },
+        {
             "type": "media_id",
             "name": "客服",
             "media_id": "2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg",
