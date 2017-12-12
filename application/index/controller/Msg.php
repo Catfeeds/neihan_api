@@ -107,7 +107,7 @@ class Msg extends Controller
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_APP') {
             $wxconfig = Config::get('wxconfig');
             $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
-            $token = $this->_access_token('neihan_1');
+            $token = $this->_access_token('neihan_mp');
             $data = [
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
@@ -119,6 +119,7 @@ class Msg extends Controller
                 ]
             ];
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+            Log::record($resp, 'info');
             return 'success';
         } else {
            $data = array(
