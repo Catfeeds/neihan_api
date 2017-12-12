@@ -113,7 +113,7 @@ class Msg extends Controller
                 'msgtype' => 'miniprogrampage',
                 'miniprogrampage' => [
                     'title' => '解锁更多精彩福利视频，戳这里！！',
-                    'appid' => $wxconfig['neihan_1'],
+                    'appid' => $wxconfig['appids']['neihan_1'],
                     'pagepath' => 'pages/index/index',
                     'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
                 ]
