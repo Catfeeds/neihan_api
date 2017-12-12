@@ -4,7 +4,10 @@ import requests
 import wxtoken
 from settings import *
 
-# {u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg', u'media_id': u'2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'}
+'''
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg', u'media_id': u'2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'}
+'''
+
 def run():
     API = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token='
     wx_access_token = wxtoken.get_token('neihan_mp')
@@ -33,4 +36,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-~              
