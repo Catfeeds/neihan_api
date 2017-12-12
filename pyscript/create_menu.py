@@ -18,9 +18,9 @@ def run():
             "url": "http://www.baidu.com"
         }, 
         {
-            "type": "view",
+            "type": "click",
             "name": "小程序",
-            "url": "http://www.baidu.com"
+            "key": "V1001_APP"
         },
         {
             "type": "media_id",

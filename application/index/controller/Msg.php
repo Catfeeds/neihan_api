@@ -102,35 +102,57 @@ class Msg extends Controller
             return 'success';
         }
 
-        # Log::record($origin_data, 'info');
+        Log::record($origin_data, 'info');
 
-        $data = array(
-            'ToUserName' => $origin_data['FromUserName'],
-            'FromUserName' => $origin_data['ToUserName'],
-            'CreateTime' => time(),
-            'MsgType' => 'news',
-            'ArticleCount' => 1,
-            'Articles' => array(
-                array(
-                    'Title' => '支付一元美女带回家',
-                    'Description' => '支付一元美女带回家',
-                    # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                    'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
-                    'Url' => 'http://www.baidu.com'
+        if(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_APP') {
+            $wxconfig = Config::get('wxconfig');
+            $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
+            $token = $this->_access_token('neihan_1');
+            $data = [
+                'touser' => $origin_data['FromUserName'],
+                'msgtype' => 'miniprogrampage',
+                'miniprogrampage' => [
+                    'title' => '解锁更多精彩福利视频，戳这里！！',
+                    'appid' => $wxconfig['neihan_1'],
+                    'pagepath' => 'pages/index/index',
+                    'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                ]
+            ];
+            $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+            return 'success';
+        } else {
+           $data = array(
+                'ToUserName' => $origin_data['FromUserName'],
+                'FromUserName' => $origin_data['ToUserName'],
+                'CreateTime' => time(),
+                'MsgType' => 'news',
+                'ArticleCount' => 1,
+                'Articles' => array(
+                    array(
+                        'Title' => '支付一元美女带回家',
+                        'Description' => '支付一元美女带回家',
+                        'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                        # 'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
+                        'Url' => 'http://www.baidu.com'
+                    )
                 )
-            )
-        );
-
+            ); 
+        }
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
 
-    private function _access_token()
+    private function _access_token($app_code='')
     {
         try {
             $is_expired = true;
 
             $access_token = [];
-            $access_token_file = './../application/extra/access_token_'.$this->app_code.'.txt';
+            if(!empty($app_code)) {
+                $access_token_file = './../application/extra/access_token_'.$app_code.'.txt';
+            } else {
+                $access_token_file = './../application/extra/access_token_'.$this->app_code.'.txt';
+            }
+            
             if(file_exists($access_token_file)) {
                 $access_token = json_decode(file_get_contents($access_token_file), true);
             }
