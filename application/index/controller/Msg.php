@@ -7,6 +7,7 @@ use think\Request;
 use think\Log;
 use think\Config;
 
+
 class Msg extends Controller
 {
     public function _initialize()
@@ -64,6 +65,62 @@ class Msg extends Controller
             }
         }
         return 'success';
+    }
+
+    public function mp()
+    {   
+        $sign = Request::instance()->get('signature');
+        $msg_sign = Request::instance()->get('msg_signature');
+        $timestamp = Request::instance()->get('timestamp');
+        $nonce = Request::instance()->get('nonce');
+        $echostr = Request::instance()->get('echostr');
+        if (!empty($echostr)) {
+            return $echostr;
+        }
+
+        $xml = file_get_contents('php://input');
+        Log::record($xml, 'info');
+
+        if (!trim($xml)) {
+            return 'success';
+        }
+
+        $encrypt_data = xml_to_data($xml);
+
+        $wxmsg_mp = Config::get('wxmsg_mp');
+        $wxmsg_config = $wxmsg_mp[$this->app_code];
+        $wxmsg = new \WxMsg\WXBizMsgCrypt($wxmsg_config['token'], $wxmsg_config['aes_key'], $wxmsg_config['appid']);
+        $format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%s]]></Encrypt></xml>";
+        $from_xml = sprintf($format, $encrypt_data['Encrypt']);
+        $decrypt_xml = '';
+        $errcode = $wxmsg->decryptMsg($msg_sign, $timestamp, $nonce, $from_xml, $decrypt_xml);
+        if ($errcode == 0) {
+            $origin_data = xml_to_data($decrypt_xml);
+        } else {
+            $origin_data = [];
+            return 'success';
+        }
+
+        $taobao_code = '';
+        preg_match('/￥(.*?)￥/i',$origin_data['Content'],$code_match);
+        if(empty($code_match)) {
+            if(ctype_alnum($origin_data['Content'])) {
+                $taobao_code = '￥'.$origin_data['Content'].'￥';
+            } else {
+                return 'success';
+            }
+        } else {
+            $taobao_code = $code_match[0];
+        }
+
+        $data = array(
+            'ToUserName' => $origin_data['FromUserName'],
+            'FromUserName' => $origin_data['ToUserName'],
+            'CreateTime' => time(),
+            'MsgType' => 'text',
+            'Content' => '这是测试消息'
+        );
+        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
 
     private function _access_token()
