@@ -101,18 +101,6 @@ class Msg extends Controller
             return 'success';
         }
 
-        $taobao_code = '';
-        preg_match('/￥(.*?)￥/i',$origin_data['Content'],$code_match);
-        if(empty($code_match)) {
-            if(ctype_alnum($origin_data['Content'])) {
-                $taobao_code = '￥'.$origin_data['Content'].'￥';
-            } else {
-                return 'success';
-            }
-        } else {
-            $taobao_code = $code_match[0];
-        }
-
         $data = array(
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
