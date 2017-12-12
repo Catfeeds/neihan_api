@@ -69,6 +69,8 @@ class Msg extends Controller
 
     public function mp()
     {
+        $xml = '<xml><ToUserName><![CDATA[toUser]]></ToUserName><FromUserName><![CDATA[fromUser]]></FromUserName><CreateTime>12345678</CreateTime><MsgType><![CDATA[news]]></MsgType><ArticleCount>2</ArticleCount><Articles><item><Title><![CDATA[title1]]></Title> <Description><![CDATA[description1]]></Description><PicUrl><![CDATA[picurl]]></PicUrl><Url><![CDATA[url]]></Url></item><item><Title><![CDATA[title]]></Title><Description><![CDATA[description]]></Description><PicUrl><![CDATA[picurl]]></PicUrl><Url><![CDATA[url]]></Url></item></Articles></xml>';
+        print_r(xml_to_data($xml));die;
         $sign = Request::instance()->get('signature');
         $msg_sign = Request::instance()->get('msg_signature');
         $timestamp = Request::instance()->get('timestamp');
@@ -104,14 +106,21 @@ class Msg extends Controller
 
         Log::record($origin_data, 'info');
 
-        $data = array(
+        $data = [
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
             'CreateTime' => time(),
             'MsgType' => 'news',
-            'ArticleCount' => 1,
+            'ArticleCount' => 2,
             'Articles' => [
                 'item' => [
+                    [
+                        'Title' => '支付一元美女带回家',
+                        'Description' => '支付一元美女带回家',
+                        # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                        'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
+                        'Url' => 'http://www.baidu.com'
+                    ],
                     [
                         'Title' => '支付一元美女带回家',
                         'Description' => '支付一元美女带回家',
@@ -121,7 +130,18 @@ class Msg extends Controller
                     ]
                 ]
             ]
-        );
+        ];
+
+        /*
+        $data = [
+            'ToUserName' => $origin_data['FromUserName'],
+            'FromUserName' => $origin_data['ToUserName'],
+            'CreateTime' => time(),
+            'MsgType' => 'image',
+            'MediaId' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+        ];
+        */
+
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
 
