@@ -106,6 +106,7 @@ class Msg extends Controller
 
         Log::record($origin_data, 'info');
 
+        /*
         $data = array(
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
@@ -131,8 +132,9 @@ class Msg extends Controller
                 )
             )
         );
+        */
 
-        /*
+    
         $data = array(
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
@@ -140,7 +142,7 @@ class Msg extends Controller
             'MsgType' => 'image',
             'MediaId' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
         );
-        */
+        Log::record($data, 'info');
 
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
