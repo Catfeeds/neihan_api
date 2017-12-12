@@ -104,7 +104,6 @@ class Msg extends Controller
 
         Log::record($origin_data, 'info');
 
-        /*
         $data = array(
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
@@ -112,27 +111,25 @@ class Msg extends Controller
             'MsgType' => 'news',
             'ArticleCount' => 2,
             'Articles' => array(
-                'item' => array(
-                    array(
-                        'Title' => '支付一元美女带回家',
-                        'Description' => '支付一元美女带回家',
-                        # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                        'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
-                        'Url' => 'http://www.baidu.com'
-                    ),
-                    array(
-                        'Title' => '支付一元美女带回家',
-                        'Description' => '支付一元美女带回家',
-                        # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                        'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
-                        'Url' => 'http://www.baidu.com'
-                    )
+                array(
+                    'Title' => '支付一元美女带回家',
+                    'Description' => '支付一元美女带回家',
+                    # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                    'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
+                    'Url' => 'http://www.baidu.com'
+                ),
+                array(
+                    'Title' => '支付一元美女带回家',
+                    'Description' => '支付一元美女带回家',
+                    # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                    'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
+                    'Url' => 'http://www.baidu.com'
                 )
             )
         );
-        */
 
     
+        /*
         $data = array(
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
@@ -140,6 +137,7 @@ class Msg extends Controller
             'MsgType' => 'image',
             'MediaId' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
         );
+        */
         Log::record($data, 'info');
 
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
