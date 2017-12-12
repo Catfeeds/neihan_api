@@ -79,7 +79,7 @@ class Msg extends Controller
         }
 
         $xml = file_get_contents('php://input');
-        Log::record($xml, 'info');
+        # Log::record($xml, 'info');
 
         if (!trim($xml)) {
             return 'success';
@@ -92,6 +92,7 @@ class Msg extends Controller
         $wxmsg = new \WxMsg\WXBizMsgCrypt($wxmsg_config['token'], $wxmsg_config['aes_key'], $wxmsg_config['appid']);
         $format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%s]]></Encrypt></xml>";
         $from_xml = sprintf($format, $encrypt_data['Encrypt']);
+
         $decrypt_xml = '';
         $errcode = $wxmsg->decryptMsg($msg_sign, $timestamp, $nonce, $from_xml, $decrypt_xml);
         if ($errcode == 0) {
@@ -100,6 +101,8 @@ class Msg extends Controller
             $origin_data = [];
             return 'success';
         }
+
+        Log::record($origin_data, 'info');
 
         $data = array(
             'ToUserName' => $origin_data['FromUserName'],
