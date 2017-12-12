@@ -68,7 +68,7 @@ class Msg extends Controller
     }
 
     public function mp()
-    {   
+    {
         $sign = Request::instance()->get('signature');
         $msg_sign = Request::instance()->get('msg_signature');
         $timestamp = Request::instance()->get('timestamp');
@@ -108,8 +108,19 @@ class Msg extends Controller
             'ToUserName' => $origin_data['FromUserName'],
             'FromUserName' => $origin_data['ToUserName'],
             'CreateTime' => time(),
-            'MsgType' => 'text',
-            'Content' => '这是测试消息'
+            'MsgType' => 'news',
+            'ArticleCount' => 1,
+            'Articles' => [
+                'item' => [
+                    [
+                        'Title' => '支付一元美女带回家',
+                        'Description' => '支付一元美女带回家',
+                        # 'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                        'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
+                        'Url' => 'http://www.baidu.com'
+                    ]
+                ]
+            ]
         );
         return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
     }
