@@ -15,7 +15,7 @@ def run():
         "button": [{
             "type": "view",
             "name": "成为代理",
-            "url": "http://www.baidu.com"
+            "url": "http://www.zyo69.cn/pay?member_id=1"
         }, 
         {
             "type": "click",
