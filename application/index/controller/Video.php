@@ -643,7 +643,7 @@ class Video extends Controller
 
             if($is_expired) {
                 $wxconfig = Config::get('wxconfig');
-                $resp = curl_get($wxconfig['token_api'][$app_code]);
+                $resp = curl_get($wxconfig['token_apis'][$app_code]);
                 if(!empty($resp)) {
                     $access_token = json_decode($resp, true);
                     if(array_key_exists('expires_in', $access_token)) {
