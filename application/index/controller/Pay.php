@@ -40,6 +40,7 @@ class Pay extends Controller
     public function jump()
     {
         $user_id = Request::instance()->get('user_id');
+        $ip = Request::instance()->ip();
         if(empty($user_id)) {
             $this->redirect('/pay/', 302);
         }
@@ -71,7 +72,7 @@ class Pay extends Controller
             'user_id' => $user_id,
             'orderid' => $orderid,
             'rel_orderid' => '',
-            'ip' => $request->ip(),
+            'ip' => $ip,
             'amount' => floatval($ticket_amount),
             'status' => 0
         ]);
