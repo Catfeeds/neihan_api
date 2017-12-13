@@ -437,7 +437,7 @@ class Video extends Controller
                 $user->promotion = 3;
 
                 # 生成一个公众号二维码
-                $user_promotion_qrcode = $this->_generate_qrcode($user->id);
+                $user->promotion_qrcode = $this->_generate_qrcode($user->id);
                 $user->save();
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
@@ -662,7 +662,7 @@ class Video extends Controller
     {
         $api = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token='.$wx_token['access_token'];
         $req_data = [
-            'action_name'=> 'QR_LIMIT_STR_SCENE',
+            'action_name'=> 'QR_LIMIT_SCENE',
             'action_info'=> [
                 'scene'=> ['scene_id'=> $user_id]
             ]
@@ -702,7 +702,7 @@ class Video extends Controller
 
         // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
-        imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
+        imagecopy($im, $stamp, 200, 670, 0, 0, $sx, $sy);
 
         // 输出图像并释放内存
         imagejpeg($im, $outfile, 100, NULL);
