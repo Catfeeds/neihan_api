@@ -11,6 +11,7 @@ use think\Config;
 use think\Log;
 
 use app\index\model\User as User_Model;
+use app\index\model\UserMp;
 use app\index\model\UserShare;
 use app\index\model\UserShareClick;
 use app\index\model\UserFission;
@@ -449,10 +450,15 @@ class User extends Controller
                 }
             }
 
-
             if($user->promotion == 0) {
-                $user->promotion = 1;
-                $user->promotion_time = time();
+                $usermp = UserMp::where('id', $user->user_mp_id)->find();
+                if($usermp && $usermp->promotion == 1) {
+                    $user->promotion = 2;
+                    $user->promotion_time = $usermp->promotion_time;
+                } else {
+                    $user->promotion = 1;
+                    $user->promotion_time = time();
+                }
                 $user->save();
 
                 $user_promo = UserPromotion::where('parent_user_id', $from_user_id)
@@ -478,8 +484,6 @@ class User extends Controller
                     ]);
                     $user_balance->save();
                 }
-
-
             }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];

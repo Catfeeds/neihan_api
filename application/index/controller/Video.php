@@ -421,6 +421,26 @@ class Video extends Controller
                 $user->save();
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 1]);
+            } elseif($groups >= 3 && $user->promotion == 2) {
+                /*
+                $user->promotion = 3;
+
+                # 生成一个公众号二维码
+                $user_promotion_qrcode = $this->_generate_qrcode($user->id);
+                $user->save();
+
+                UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
+                */
+            }
+
+            if($user_id == 10 && $user->promotion == 2) {
+                $user->promotion = 3;
+
+                # 生成一个公众号二维码
+                $user_promotion_qrcode = $this->_generate_qrcode($user->id);
+                $user->save();
+
+                UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
             }
 
             $data['d'] = [
@@ -632,5 +652,58 @@ class Video extends Controller
             $access_token = [];
         }
         return $access_token;
+    }
+
+    private function _get_ticket($wx_token, $user_id)
+    {
+        $api = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token='.$wx_token['access_token'];
+        $req_data = [
+            'action_name'=> 'QR_LIMIT_STR_SCENE',
+            'action_info'=> [
+                'scene'=> ['scene_id'=> $user_id]
+            ]
+        ];
+        $resp = curl_post($api, json_encode($req_data));
+        $resp = json_decode($resp, true);
+        return $resp;
+    }
+
+
+    private function _generate_qrcode($user_id) 
+    {
+        $token  = $this->_access_token('neihan_mp');
+        $ticket = $this->_get_ticket($token, $user_id);
+
+        $api = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='.urlencode($ticket['ticket']);
+        $resp = curl_get($api);
+
+        $code_filename = 'mp'.strval($user_id).strval(time());
+        $codefile = './static/code/'.$code_filename.'.png';
+        file_put_contents($codefile, $resp);
+
+
+        $file = 'static/image/p1.png';
+        $file_1 = substr($codefile, 2);
+        $outfile = "static/code/p-".$code_filename.".jpeg";
+
+        // 加载水印以及要加水印的图像
+        $stamp = imagecreatefromjpeg($file_1);
+        $im = imagecreatefrompng($file);
+
+        // 设置水印图像的外边距，并且获取水印图像的尺寸
+        $marge_right = 0;
+        $marge_bottom = 0;
+        $sx = imagesx($stamp);
+        $sy = imagesy($stamp);
+
+        // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
+
+        imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
+
+        // 输出图像并释放内存
+        imagejpeg($im, $outfile, 100, NULL);
+        imagedestroy($im);
+
+        return '/'.$outfile;
     }
 }
