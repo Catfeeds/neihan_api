@@ -40,8 +40,8 @@ class Pay extends Controller
             'mchName' => 'iphone8',
             'orderNo' => $orderid,
             'price' => $ticket_amount,
-            'backUrl' => 'http://www.zyo.cn/pay/success',
-            'postUrl' => 'http://www.zyo.cn/pay/notify',
+            'backUrl' => 'http://www.zyo69.cn/pay/success',
+            'postUrl' => 'http://www.zyo69.cn/pay/notify',
             'payType' => 'wxpay'
         ];
 
@@ -104,7 +104,7 @@ class Pay extends Controller
     public function notify()
     {
         try {
-            $request = Request::instance()
+            $request = Request::instance();
 
             $orderNo = $request->param('orderNo');
             $payNo = $request->param('payNo');
@@ -141,12 +141,12 @@ class Pay extends Controller
         } catch (Exception $e) {
             return 'FAIL';
         }
-        return 'SUCCESS'
+        return 'SUCCESS';
     }
 
-    public function success()
+    public function page()
     {
-        return $this->fetch('success');;
+        return $this->fetch('result');;
     }
 
 }

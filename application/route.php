@@ -16,6 +16,8 @@ Route::rule('__miss__', 'index/Error/index');
 
 Route::rule('pay/$', 'index/Pay/index');
 Route::rule('pay/jump/$', 'index/Pay/jump');
+Route::rule('pay/success/$', 'index/Pay/page');
+Route::rule('pay/notify/$', 'index/Pay/notify');
 
 Route::rule('api/doc/$','index/Index/doc');
 Route::rule('api/msg/$', 'index/Msg/index');
