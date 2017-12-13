@@ -14,6 +14,9 @@ use think\Route;
 
 Route::rule('__miss__', 'index/Error/index');
 
+Route::rule('pay/$', 'index/Pay/index');
+Route::rule('pay/jump/$', 'index/Pay/jump');
+
 Route::rule('api/doc/$','index/Index/doc');
 Route::rule('api/msg/$', 'index/Msg/index');
 Route::rule('api/msg/mp/$', 'index/Msg/mp');
@@ -42,5 +45,6 @@ Route::rule('api/user/click/sharelink/$','index/User/click_share_link');
 Route::rule('api/user/share/group/$','index/User/share_group');
 Route::rule('api/user/form/$','index/User/formid');
 Route::rule('api/jump/$', 'index/Common/jump');
+
 
 # Route::rule('api/refresh_qrcode/$', 'index/User/refresh_qrcode');
