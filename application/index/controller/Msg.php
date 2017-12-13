@@ -109,7 +109,7 @@ class Msg extends Controller
 
         # 找上线
         $parent_user = '';
-        if(isset($origin_data['Ticket']) && $origin_data['Ticket'] != ) {
+        if(isset($origin_data['Ticket']) && $origin_data['Ticket'] != '') {
             $parent_user = $usermp->where('qrcode_ticket', $origin_data['Ticket'])->find();
         }
 
