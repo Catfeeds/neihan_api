@@ -91,7 +91,7 @@ class Msg extends Controller
         $encrypt_data = xml_to_data($xml);
 
         $wxmsg_mp = Config::get('wxmsg_mp');
-        $wxmsg_config = $wxmsg_mp[$this->app_code];
+        $wxmsg_config = $wxmsg_mp['neihan_mp'];
         $wxmsg = new \WxMsg\WXBizMsgCrypt($wxmsg_config['token'], $wxmsg_config['aes_key'], $wxmsg_config['appid']);
         $format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%s]]></Encrypt></xml>";
         $from_xml = sprintf($format, $encrypt_data['Encrypt']);
