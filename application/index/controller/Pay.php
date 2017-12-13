@@ -6,7 +6,8 @@ use think\Response;
 use think\Request;
 use think\Config;
 
-use app\index\model\UserPromotionTicket;
+
+use app\index\model\UserMpTicket;
 use app\index\model\UserMp;
 
 
@@ -16,6 +17,16 @@ class Pay extends Controller
     {
         $this->payconfig = Config::get('mp_pay');
         $this->wxconfig = Config::get('wxconfig');
+
+        $request = Request::instance();
+        $comconfig = Config::get('comconfig');
+        $this->app_code = 'neihan_1';
+        foreach ($comconfig['domain_settings'] as $key => $value) {
+            if(strrpos($request->domain(), $key) !== false) {
+                $this->app_code = $value;
+                break;
+            }
+        }
     }
 
     public function index()
@@ -54,14 +65,13 @@ class Pay extends Controller
         $params['signMsg'] = $sign;
         $redirect_url = $api.'?'.http_build_query($params);
 
-        $ticket = New UserPromotionTicket;
+        $ticket = New UserMpTicket;
         $ticket->data([
             'appid' => $this->wxconfig['appids']['neihan_mp'],
             'user_id' => $user_id,
             'orderid' => $orderid,
             'rel_orderid' => '',
-            'nonce_str' => '',
-            'prepay_id' => '',
+            'ip' => $request->ip(),
             'amount' => floatval($ticket_amount),
             'status' => 0
         ]);
@@ -117,7 +127,7 @@ class Pay extends Controller
                 return 'SUCCESS';
             }
 
-            $usorder = UserPromotionTicket::where('orderid', $orderNo)->find();
+            $usorder = UserMpTicket::where('orderid', $orderNo)->find();
             if(empty($usorder) || $usorder['status'] === 1) {
                 return 'SUCCESS';
             }
@@ -131,6 +141,7 @@ class Pay extends Controller
                 return 'SUCCESS';
             }
 
+            $usorder->rel_orderid = $payNo;
             $usorder->status = 1;
             $usorder->save();
 
@@ -139,6 +150,21 @@ class Pay extends Controller
                 $user->promotion_time = time();
                 $user->save();
             }
+
+            $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
+            $token = $this->_access_token('neihan_mp');
+            $data = [
+                'touser' => $user->openid,
+                'msgtype' => 'miniprogrampage',
+                'miniprogrampage' => [
+                    'title' => '点击进入, 分享三个群即可成为代理！',
+                    'appid' => $this->wxconfig['appids']['neihan_1'],
+                    'pagepath' => 'pages/index/index',
+                    'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                ]
+            ];
+            $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+
         } catch (Exception $e) {
             return 'FAIL';
         }
@@ -148,6 +174,44 @@ class Pay extends Controller
     public function page()
     {
         return $this->fetch('result');;
+    }
+
+
+    private function _access_token($app_code='')
+    {
+        try {
+            $is_expired = true;
+
+            $access_token = [];
+            if(empty($app_code)) {
+                $app_code = $this->app_code;
+            }
+            $access_token_file = './../application/extra/access_token_'.$app_code.'.txt';
+            
+            if(file_exists($access_token_file)) {
+                $access_token = json_decode(file_get_contents($access_token_file), true);
+            }
+            if(!empty($access_token)) {
+                if($access_token['expires_time'] - time() - 1000 > 0) {
+                    $is_expired = false;
+                }
+            }
+
+            if($is_expired) {
+                $wxconfig = Config::get('wxconfig');
+                $resp = curl_get($wxconfig['token_apis'][$app_code]);
+                if(!empty($resp)) {
+                    $access_token = json_decode($resp, true);
+                    if(array_key_exists('expires_in', $access_token)) {
+                        $access_token['expires_time'] = intval($access_token['expires_in']) + time();
+                        file_put_contents($access_token_file, json_encode($access_token));
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $access_token = [];
+        }
+        return $access_token;
     }
 
 }
