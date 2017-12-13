@@ -107,6 +107,11 @@ class Msg extends Controller
 
         Log::record($origin_data, 'info');
 
+        # 找上线
+        $parent_user = '';
+        if(isset($origin_data['Ticket']) && $origin_data['Ticket'] != ) {
+            $parent_user = $usermp->where('qrcode_ticket', $origin_data['Ticket'])->find();
+        }
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'subscribe') {
             $token = $this->_access_token('neihan_mp');
@@ -114,11 +119,13 @@ class Msg extends Controller
             $resp = curl_get($api);
             $resp = json_decode($resp, true);
 
+
             # 创建用户
             $usermp = UserMp::get(['openid' => $origin_data['FromUserName']]);
             if(empty($usermp)) {
                 $usermp = new UserMp;
                 $usermp->data([
+                    'parent_user_id' => $parent_user ? $parent_user->id : 0,
                     'user_name' => $resp['nickname'],
                     'user_avatar' => $resp['headimgurl'],
                     'gender' => $resp['sex'],
