@@ -423,18 +423,6 @@ class Video extends Controller
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 1]);
             } elseif($groups >= 3 && $user->promotion == 2) {
-                /*
-                $user->promotion = 3;
-
-                # 生成一个公众号二维码
-                $user_promotion_qrcode = $this->_generate_qrcode($user->id);
-                $user->save();
-
-                UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
-                */
-            }
-
-            if($user_id == 10 && $user->promotion == 2) {
                 $user->promotion = 3;
 
                 # 生成一个公众号二维码

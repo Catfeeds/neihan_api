@@ -614,52 +614,11 @@ class User extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);
             }
-            if(empty($user->promotion_qrcode_new) && $user->promotion == 3) {
-                $access_token = $this->_access_token();
-                if(!empty($access_token)) {
-                    $wxconfig = Config::get('wxconfig');
-                    $request_url = $wxconfig['code_apis'][$this->app_code].$access_token['access_token'];
-                    $params = [
-                        'page' => 'pages/distribution/distribution',
-                        'scene' => 'from_user_id='.$user_id.'&promo=1',
-                        'width' => 180
-                    ];
-
-                    $resp = curl_post($request_url, json_encode($params));
-                    if(!empty($resp)) {
-                        $code_filename = strval($user_id).strval(time());
-                        $codefile = './static/code/'.$code_filename.'.png';
-                        file_put_contents($codefile, $resp);
-
-
-                        $file = 'static/image/pk1.png';
-                        $file_1 = substr($codefile, 2);
-                        $outfile = "static/code/p-".$code_filename.".jpeg";
-
-                        // 加载水印以及要加水印的图像
-                        $stamp = imagecreatefromjpeg($file_1);
-                        $im = imagecreatefrompng($file);
-
-                        // 设置水印图像的外边距，并且获取水印图像的尺寸
-                        $marge_right = 0;
-                        $marge_bottom = 0;
-                        $sx = imagesx($stamp);
-                        $sy = imagesy($stamp);
-
-                        // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
-
-                        imagecopy($im, $stamp, 220, 690, 0, 0, $sx, $sy);
-
-                        // 输出图像并释放内存
-                        imagejpeg($im, $outfile, 100, NULL);
-                        imagedestroy($im);
-
-                        $user->promotion_qrcode_new = '/'.$outfile;
-                        $user->save();
-                    }
-                }
-                $data['d'] = ['code' => $outfile];
+            $outfile = '';
+            if($user->mp_qrcode) {
+                $outfile = Request::instance()->domain().$user->mp_qrcode;
             }
+            $data['d'] = ['code' => $outfile];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
