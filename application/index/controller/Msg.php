@@ -7,7 +7,7 @@ use think\Request;
 use think\Log;
 use think\Config;
 
-use app\index\model\User_Model;
+use app\index\model\User as User_Model;
 
 
 class Msg extends Controller
