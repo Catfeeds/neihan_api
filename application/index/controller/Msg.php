@@ -122,7 +122,7 @@ class Msg extends Controller
                     "city" =>  $resp['city'],
                     "province" => $resp['province'],
                     "country" => $resp['country'],
-                    "unionid" => $resp['unionid'],
+                    "unionid" => isset($resp['unionid']) ? $resp['unionid'] : '',
                     'openid'  => $origin_data['FromUserName'],
                     'source' => 'neihan_mp_1',
                     'subscribe' => 1
@@ -135,7 +135,7 @@ class Msg extends Controller
                 $user->city = $resp['city'];
                 $user->province = $resp['province'];
                 $user->country = $resp['country'];
-                $user->unionid = $resp['unionid'];
+                $user->unionid = isset($resp['unionid']) ? $resp['unionid'] : '';
                 $user->subscribe = 1;
                 $user->save();
             }
