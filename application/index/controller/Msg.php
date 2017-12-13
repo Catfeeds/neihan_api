@@ -106,12 +106,15 @@ class Msg extends Controller
 
         Log::record($origin_data, 'info');
 
+        $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
+
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'subscribe') {
             $token = $this->_access_token('neihan_mp');
             $api = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token['access_token'].'&openid='.$origin_data['FromUserName'].'&lang=zh_CN';
             $resp = curl_get($api);
             $resp = json_decode($resp, true);
 
+            # 创建用户
             $usermp = UserMp::get(['openid' => $origin_data['FromUserName']]);
             if(empty($usermp)) {
                 $usermp = new UserMp;
@@ -139,6 +142,24 @@ class Msg extends Controller
                 $usermp->subscribe = 1;
                 $usermp->save();
             }
+
+            # 给用户发客服消息
+            $data = array(
+                'ToUserName' => $origin_data['FromUserName'],
+                'FromUserName' => $origin_data['ToUserName'],
+                'CreateTime' => time(),
+                'MsgType' => 'news',
+                'ArticleCount' => 1,
+                'Articles' => array(
+                    array(
+                        'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
+                        'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
+                        'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                        'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
+                    )
+                )
+            ); 
+            return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
         }
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'unsubscribe') {
@@ -146,6 +167,7 @@ class Msg extends Controller
         }
 
 
+        # 各种按钮
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_APP') {
             $wxconfig = Config::get('wxconfig');
             $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
@@ -155,7 +177,7 @@ class Msg extends Controller
                 'msgtype' => 'miniprogrampage',
                 'miniprogrampage' => [
                     'title' => '解锁更多精彩福利视频，戳这里！！',
-                    'appid' => $wxconfig['appids']['neihan_1'],
+                    'appid' => $wxconfig['appids'][$this->app_code],
                     'pagepath' => 'pages/index/index',
                     'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
                 ]
@@ -163,26 +185,76 @@ class Msg extends Controller
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             Log::record($resp, 'info');
             return 'success';
+        } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_PROMO') {
+            if($usermp->promotion  == 1) {
+                $data = array(
+                    'ToUserName' => $origin_data['FromUserName'],
+                    'FromUserName' => $origin_data['ToUserName'],
+                    'CreateTime' => time(),
+                    'MsgType' => 'news',
+                    'ArticleCount' => 1,
+                    'Articles' => array(
+                        array(
+                            'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
+                            'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
+                            'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                            'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
+                        )
+                    )
+                ); 
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            } elseif($usermp->promotion == 2) {
+                $wxconfig = Config::get('wxconfig');
+                $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
+                $token = $this->_access_token('neihan_mp');
+
+                $from_user_id = 0;
+                $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
+                if(!empty($from_user_app)) {
+                    $from_user_id = $from_user_app->id;
+                }
+
+                $data = [
+                    'touser' => $origin_data['FromUserName'],
+                    'msgtype' => 'miniprogrampage',
+                    'miniprogrampage' => [
+                        'title' => '点击进入, 分享三个群即可成为代理！',
+                        'appid' => $wxconfig['appids'][$this->app_code],
+                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id.'&user_mp_id='.$usermp->id,
+                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                    ]
+                ];
+                $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+                Log::record($resp, 'info');
+                return 'success';
+            } elseif($usermp->promotion == 3) {
+                wxconfig = Config::get('wxconfig');
+                $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
+                $token = $this->_access_token('neihan_mp');
+
+                $from_user_id = 0;
+                $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
+                if(!empty($from_user_app)) {
+                    $from_user_id = $from_user_app->id;
+                }
+        
+                $data = [
+                    'touser' => $origin_data['FromUserName'],
+                    'msgtype' => 'miniprogrampage',
+                    'miniprogrampage' => [
+                        'title' => '点击进入, 查看你的代理人数！',
+                        'appid' => $wxconfig['appids'][$this->app_code],
+                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id.'&user_mp_id='.$usermp->id,
+                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                    ]
+                ];
+                $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+                Log::record($resp, 'info');
+                return 'success';
+            }
         }
 
-        $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
-        $data = array(
-            'ToUserName' => $origin_data['FromUserName'],
-            'FromUserName' => $origin_data['ToUserName'],
-            'CreateTime' => time(),
-            'MsgType' => 'news',
-            'ArticleCount' => 1,
-            'Articles' => array(
-                array(
-                    'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
-                    'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
-                    'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                    'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
-                )
-            )
-        ); 
-        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
-        # return 'success';
+        return 'success';
     }
 
     private function _access_token($app_code='')

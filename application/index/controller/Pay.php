@@ -147,8 +147,8 @@ class Pay extends Controller
             $usorder->status = 1;
             $usorder->save();
 
-            if($user->promotion == 0) {
-                $user->promotion = 1;
+            if($user->promotion == 1) {
+                $user->promotion = 2;
                 $user->promotion_time = time();
                 $user->save();
 
@@ -166,7 +166,7 @@ class Pay extends Controller
                     'msgtype' => 'miniprogrampage',
                     'miniprogrampage' => [
                         'title' => '点击进入, 分享三个群即可成为代理！',
-                        'appid' => $this->wxconfig['appids']['neihan_1'],
+                        'appid' => $this->wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id.'&user_mp_id='.$user->id,
                         'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
                     ]

@@ -432,7 +432,11 @@ class Video extends Controller
                 $user->save();
 
                 UserMp::where('id', $user->user_mp_id)
-                    ->update(['promotion_qrcode' => $mp_qrcode[0], 'qrcode_ticket' => $mp_qrcode[1]]);
+                    ->update([
+                        'promotion' => 3,
+                        'promotion_qrcode' => $mp_qrcode[0],
+                        'qrcode_ticket' => $mp_qrcode[1]
+                ]);
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
             }
