@@ -13,10 +13,10 @@ def run():
     wx_access_token = wxtoken.get_token('neihan_mp')
     params = {
         "button": [{
-            "type": "view",
+            "type": "click",
             "name": "成为代理",
-            "url": "http://www.zyo69.cn/pay?member_id=1"
-        }, 
+            "key": "V1001_PROMO"
+        },
         {
             "type": "click",
             "name": "小程序",
