@@ -438,7 +438,7 @@ class Video extends Controller
                 $user->promotion = 3;
 
                 # 生成一个公众号二维码
-                $mp_qrcode = $this->_generate_qrcode($user->id)
+                $mp_qrcode = $this->_generate_qrcode($user->id);
                 $user->mp_qrcode = $mp_qrcode[0];
                 $user->mp_qrcode_ticket = $mp_qrcode[1];
                 $user->save();
