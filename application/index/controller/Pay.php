@@ -23,7 +23,6 @@ class Pay extends Controller
             $this->redirect('/pay/', 302);
         }
 
-
         $uId = '654136';
         $key = '0plGZtA2dqU=';
         $api = 'http://pay.lwod789.cn/pay/PayApi';
