@@ -109,8 +109,8 @@ class Pay extends Controller
 
             $orderNo = $request->param('orderNo');
             $payNo = $request->param('payNo');
-            $PayPrice = $request->param('PayPrice');
-            $SignMsg = $request->param('SignMsg');
+            $PayPrice = $request->param('payPrice');
+            $SignMsg = $request->param('signMsg');
 
             $ussign = strtoupper(md5($orderNo.$payNo.$PayPrice.$this->payconfig['key']));
             if(strtoupper($SignMsg) != $ussign) {
