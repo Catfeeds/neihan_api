@@ -11,6 +11,7 @@ use think\Config;
 use think\Cache;
 
 use app\index\model\User;
+use app\index\model\UserMp;
 use app\index\model\UserShare;
 use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
@@ -441,6 +442,9 @@ class Video extends Controller
                 $user->mp_qrcode = $mp_qrcode[0];
                 $user->mp_qrcode_ticket = $mp_qrcode[1];
                 $user->save();
+
+                UserMp::where('id', $user->user_mp_id)
+                    ->update(['promotion_qrcode' => $mp_qrcode[0], 'qrcode_ticket' => $mp_qrcode[1]]);
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
             }
