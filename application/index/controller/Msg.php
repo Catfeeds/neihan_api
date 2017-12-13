@@ -163,27 +163,27 @@ class Msg extends Controller
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             Log::record($resp, 'info');
             return 'success';
-        } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_PROMO') {
-            $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
-            $data = array(
-                'ToUserName' => $origin_data['FromUserName'],
-                'FromUserName' => $origin_data['ToUserName'],
-                'CreateTime' => time(),
-                'MsgType' => 'news',
-                'ArticleCount' => 1,
-                'Articles' => array(
-                    array(
-                        'Title' => '支付一元美女带回家',
-                        'Description' => '支付一元美女带回家',
-                        'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                        # 'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
-                        'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
-                    )
-                )
-            ); 
-            return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
         }
-        return 'success';
+
+        $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
+        $data = array(
+            'ToUserName' => $origin_data['FromUserName'],
+            'FromUserName' => $origin_data['ToUserName'],
+            'CreateTime' => time(),
+            'MsgType' => 'news',
+            'ArticleCount' => 1,
+            'Articles' => array(
+                array(
+                    'Title' => '支付一元美女带回家',
+                    'Description' => '支付一元美女带回家',
+                    'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                    # 'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
+                    'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
+                )
+            )
+        ); 
+        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+        # return 'success';
     }
 
     private function _access_token($app_code='')

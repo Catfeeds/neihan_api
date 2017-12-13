@@ -15,6 +15,7 @@ class Pay extends Controller
     public function _initialize()
     {
         $this->payconfig = Config::get('mp_pay');
+        $this->wxconfig = Config::get('wxconfig');
     }
 
     public function index()
@@ -55,7 +56,7 @@ class Pay extends Controller
 
         $ticket = New UserPromotionTicket;
         $ticket->data([
-            'appid' => $wxconfig['appids']['neihan_mp'],
+            'appid' => $this->wxconfig['appids']['neihan_mp'],
             'user_id' => $user_id,
             'orderid' => $orderid,
             'rel_orderid' => '',
