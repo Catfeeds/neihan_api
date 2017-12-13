@@ -621,13 +621,17 @@ class Video extends Controller
         return str_replace('timestamp', strval(time()).'.'.strval(rand(10, 60)), $url);
     }
 
-    private function _access_token()
+    private function _access_token($app_code='')
     {
         try {
+
+            if(empty($app_code)) {
+                $app_code = $this->app_code;
+            }
             $is_expired = true;
 
             $access_token = [];
-            $access_token_file = './../application/extra/access_token'.$this->app_code.'.txt';
+            $access_token_file = './../application/extra/access_token'.$app_code.'.txt';
             if(file_exists($access_token_file)) {
                 $access_token = json_decode(file_get_contents($access_token_file), true);
             }
@@ -639,7 +643,7 @@ class Video extends Controller
 
             if($is_expired) {
                 $wxconfig = Config::get('wxconfig');
-                $resp = curl_get($wxconfig['token_api'][$this->app_code]);
+                $resp = curl_get($wxconfig['token_api'][$app_code]);
                 if(!empty($resp)) {
                     $access_token = json_decode($resp, true);
                     if(array_key_exists('expires_in', $access_token)) {
