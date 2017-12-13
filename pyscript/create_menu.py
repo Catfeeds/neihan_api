@@ -22,11 +22,11 @@ def run():
             "name": "推广",
             "key": "V1001_QRCODE"
         },
-        {
-            "type": "click",
-            "name": "小程序",
-            "key": "V1001_APP"
-        },
+        # {
+        #     "type": "click",
+        #     "name": "小程序",
+        #     "key": "V1001_APP"
+        # },
         {
             "type": "media_id",
             "name": "客服",
