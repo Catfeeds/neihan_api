@@ -26,10 +26,6 @@ function curl_post($url, $data='', $headers=[], $timeout=60, $agent='', $cookie=
     if ($cookie) {
        curl_setopt($fn, CURLOPT_COOKIE,$cookie);
     }
-    
-
-    
-    $data["{$file['name']}"]=$file_obj;
     $fm = curl_exec($fn);
     curl_close($fn);
     return $fm;
