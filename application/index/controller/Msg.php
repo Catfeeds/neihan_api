@@ -112,10 +112,10 @@ class Msg extends Controller
             $resp = curl_get($api);
             $resp = json_decode($resp, true);
 
-            $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
-            if(empty($user)) {
-                $user = new UserMp;
-                $user->data([
+            $usermp = UserMp::get(['openid' => $origin_data['FromUserName']]);
+            if(empty($usermp)) {
+                $usermp = new UserMp;
+                $usermp->data([
                     'user_name' => $resp['nickname'],
                     'user_avatar' => $resp['headimgurl'],
                     'gender' => $resp['sex'],
@@ -127,22 +127,22 @@ class Msg extends Controller
                     'source' => 'neihan_mp_1',
                     'subscribe' => 1
                 ]);
-                $user->save();    
+                $usermp->save();    
             } else {
-                $user->user_name = $resp['nickname'];
-                $user->user_avatar = $resp['headimgurl'];
-                $user->gender = $resp['sex'];
-                $user->city = $resp['city'];
-                $user->province = $resp['province'];
-                $user->country = $resp['country'];
-                $user->unionid = isset($resp['unionid']) ? $resp['unionid'] : '';
-                $user->subscribe = 1;
-                $user->save();
+                $usermp->user_name = $resp['nickname'];
+                $usermp->user_avatar = $resp['headimgurl'];
+                $usermp->gender = $resp['sex'];
+                $usermp->city = $resp['city'];
+                $usermp->province = $resp['province'];
+                $usermp->country = $resp['country'];
+                $usermp->unionid = isset($resp['unionid']) ? $resp['unionid'] : '';
+                $usermp->subscribe = 1;
+                $usermp->save();
             }
         }
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'unsubscribe') {
-            $user = UserMp::where('openid', $origin_data['FromUserName'])->update(['subscribe' => 0]);        
+           UserMp::where('openid', $origin_data['FromUserName'])->update(['subscribe' => 0]);        
         }
 
 
@@ -174,10 +174,9 @@ class Msg extends Controller
             'ArticleCount' => 1,
             'Articles' => array(
                 array(
-                    'Title' => '支付一元美女带回家',
-                    'Description' => '支付一元美女带回家',
+                    'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
+                    'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
                     'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                    # 'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
                     'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
                 )
             )

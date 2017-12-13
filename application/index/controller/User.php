@@ -88,6 +88,7 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);   
             }
 
+            
             $user = User_Model::get(['openid' => $ret['openid']]);
             if(empty($user)) {
                 $user = new User_Model;
@@ -102,6 +103,7 @@ class User extends Controller
                 $user->session_key = $ret['session_key'];
                 $user->save();
             }
+            
             $data['d'] = ['user_id' => $user->id, 'openid' => $user->openid, 'session_key' => $ret['session_key']];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
@@ -122,6 +124,7 @@ class User extends Controller
             $country = Request::instance()->post('country');
             $province = Request::instance()->post('province');
             $city = Request::instance()->post('city');
+            $user_mp_id = Request::instance()->post('user_mp_id');
 
             if(empty($user_id)) {
                 $data['c'] = -1024;
@@ -142,6 +145,10 @@ class User extends Controller
             $user->country = $country ? $country : '';
             $user->province = $province ? $province : '';
             $user->city = $city ? $city : '';
+
+            if(!$user->user_mp_id) {
+                $user->user_mp_id = $user_mp_id;
+            }
             $user->save();
 
         } catch (Exception $e) {

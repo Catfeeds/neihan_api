@@ -9,6 +9,7 @@ use think\Config;
 
 use app\index\model\UserMpTicket;
 use app\index\model\UserMp;
+use app\index\model\User;
 
 
 class Pay extends Controller
@@ -150,22 +151,28 @@ class Pay extends Controller
                 $user->promotion = 1;
                 $user->promotion_time = time();
                 $user->save();
+
+
+                $from_user_id = 0;
+                $from_user_app = User::where('user_mp_id', $user->parent_user_id)->find();
+                if(!empty($from_user_app)) {
+                    $from_user_id = $from_user_app->id;
+                }
+
+                $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
+                $token = $this->_access_token('neihan_mp');
+                $data = [
+                    'touser' => $user->openid,
+                    'msgtype' => 'miniprogrampage',
+                    'miniprogrampage' => [
+                        'title' => '点击进入, 分享三个群即可成为代理！',
+                        'appid' => $this->wxconfig['appids']['neihan_1'],
+                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id.'&user_mp_id='.$user->id,
+                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                    ]
+                ];
+                $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             }
-
-            $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
-            $token = $this->_access_token('neihan_mp');
-            $data = [
-                'touser' => $user->openid,
-                'msgtype' => 'miniprogrampage',
-                'miniprogrampage' => [
-                    'title' => '点击进入, 分享三个群即可成为代理！',
-                    'appid' => $this->wxconfig['appids']['neihan_1'],
-                    'pagepath' => 'pages/index/index',
-                    'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
-                ]
-            ];
-            $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
-
         } catch (Exception $e) {
             return 'FAIL';
         }
