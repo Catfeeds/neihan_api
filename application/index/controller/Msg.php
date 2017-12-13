@@ -228,7 +228,7 @@ class Msg extends Controller
                 Log::record($resp, 'info');
                 return 'success';
             } elseif($usermp->promotion == 3) {
-                wxconfig = Config::get('wxconfig');
+                $wxconfig = Config::get('wxconfig');
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
                 $token = $this->_access_token('neihan_mp');
 
