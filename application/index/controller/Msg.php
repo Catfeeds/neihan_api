@@ -177,7 +177,7 @@ class Msg extends Controller
                         'Description' => '支付一元美女带回家',
                         'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
                         # 'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
-                        'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id;
+                        'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id
                     )
                 )
             ); 
