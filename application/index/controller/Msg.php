@@ -258,9 +258,9 @@ class Msg extends Controller
                 'FromUserName' => $origin_data['ToUserName'],
                 'CreateTime' => time(),
                 'MsgType' => 'image',
-                'ArticleCount' => 1,
                 'MediaId' => $MediaId
-            ); 
+            );
+            Log::record($data, 'info');
             return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
         }
 
