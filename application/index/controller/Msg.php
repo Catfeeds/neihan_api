@@ -107,16 +107,35 @@ class Msg extends Controller
         Log::record($origin_data, 'info');
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'subscribe') {
+            $token = $this->_access_token('neihan_mp');
+            $api = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token['access_token'].'&openid='.$origin_data['FromUserName'].'&lang=zh_CN';
+            $resp = curl_get($api);
+            $resp = json_decode($resp, true);
+
             $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
             if(empty($user)) {
                 $user = new UserMp;
                 $user->data([
+                    'user_name' => $resp['nickname'],
+                    'user_avatar' => $resp['headimgurl'],
+                    'gender' => $resp['sex'],
+                    "city" =>  $resp['city'],
+                    "province" => $resp['province'],
+                    "country" => $resp['country'],
+                    "unionid" => $resp['unionid'],
                     'openid'  => $origin_data['FromUserName'],
                     'source' => 'neihan_mp_1',
                     'subscribe' => 1
                 ]);
                 $user->save();    
             } else {
+                $user->user_name = $resp['nickname'];
+                $user->user_avatar = $resp['headimgurl'];
+                $user->gender = $resp['sex'];
+                $user->city = $resp['city'];
+                $user->province = $resp['province'];
+                $user->country = $resp['country'];
+                $user->unionid = $resp['unionid'];
                 $user->subscribe = 1;
                 $user->save();
             }
