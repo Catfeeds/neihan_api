@@ -7,7 +7,7 @@ use think\Request;
 use think\Log;
 use think\Config;
 
-use app\index\model\User as User_Model;
+use app\index\model\UserMp;
 
 
 class Msg extends Controller
@@ -107,24 +107,23 @@ class Msg extends Controller
         Log::record($origin_data, 'info');
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'subscribe') {
-            $user = User_Model::get(['openid_mp' => $origin_data['FromUserName']]);
+            $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
             if(empty($user)) {
-                $user = new User_Model;
+                $user = new UserMp;
                 $user->data([
-                    'openid_mp'  => $origin_data['FromUserName'],
-                    'source' => '',
-                    'source_mp' => 'neihan_mp_1',
-                    'subscribe_mp' => 1
+                    'openid'  => $origin_data['FromUserName'],
+                    'source' => 'neihan_mp_1',
+                    'subscribe' => 1
                 ]);
                 $user->save();    
             } else {
-                $user->subscribe_mp = 1;
+                $user->subscribe = 1;
                 $user->save();
             }
         }
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'unsubscribe') {
-            $user = User_Model::where('openid_mp', $origin_data['FromUserName'])->update(['subscribe_mp' => 0]);        
+            $user = UserMp::where('openid', $origin_data['FromUserName'])->update(['subscribe' => 0]);        
         }
 
 
