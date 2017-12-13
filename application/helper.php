@@ -10,7 +10,7 @@ function curl_post($url, $data='', $headers=[], $timeout=60, $agent='', $cookie=
     curl_setopt($fn, CURLOPT_HEADER, 0);
     curl_setopt($fn, CURLOPT_POST, TRUE);
 
-    if($data['file']) {
+    if(isset($data['file']) && $data['file']) {
         $data['media'] = new CURLFile(realpath($data['file']));
     }
     
