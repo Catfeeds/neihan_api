@@ -437,7 +437,9 @@ class Video extends Controller
                 $user->promotion = 3;
 
                 # 生成一个公众号二维码
-                $user->promotion_qrcode = $this->_generate_qrcode($user->id);
+                $mp_qrcode = $this->_generate_qrcode($user->id)
+                $user->mp_qrcode = $mp_qrcode[0];
+                $user->mp_qrcode_ticket = $mp_qrcode[1];
                 $user->save();
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
@@ -708,6 +710,6 @@ class Video extends Controller
         imagejpeg($im, $outfile, 100, NULL);
         imagedestroy($im);
 
-        return '/'.$outfile;
+        return ['/'.$outfile, $ticket['ticket']];
     }
 }
