@@ -242,7 +242,7 @@ class Msg extends Controller
                 $post_data = array(
                     "access_token" => $token['access_token'],
                     "type" => "image",
-                    "media" => "@.".$usermp->promotion_qrcode,
+                    "file" => '.'.$usermp->promotion_qrcode,
                 );
                 Log::record($post_data, 'info');
                 $resp = curl_post($api, $post_data);

@@ -9,6 +9,11 @@ function curl_post($url, $data='', $headers=[], $timeout=60, $agent='', $cookie=
     curl_setopt($fn, CURLOPT_REFERER, $url);
     curl_setopt($fn, CURLOPT_HEADER, 0);
     curl_setopt($fn, CURLOPT_POST, TRUE);
+
+    if($data['file']) {
+        $data['file'] => new CURLFile(realpath($data['file'])), 
+    }
+    
     curl_setopt($fn, CURLOPT_POSTFIELDS, $data);
     curl_setopt($fn, CURLOPT_ENCODING, "");
     if($headers) {
@@ -19,8 +24,12 @@ function curl_post($url, $data='', $headers=[], $timeout=60, $agent='', $cookie=
         curl_setopt($fn, CURLOPT_USERAGENT, $agent);    
     }
     if ($cookie) {
-       curl_setopt($fn,CURLOPT_COOKIE,$cookie);
+       curl_setopt($fn, CURLOPT_COOKIE,$cookie);
     }
+    
+
+    
+    $data["{$file['name']}"]=$file_obj;
     $fm = curl_exec($fn);
     curl_close($fn);
     return $fm;
