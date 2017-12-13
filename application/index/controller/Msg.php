@@ -234,34 +234,34 @@ class Msg extends Controller
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
                 Log::record($resp, 'info');
                 return 'success';
-            } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_QRCODE') {
-                if(!$usermp->qrcode_media_id) {
-                    $token = $this->_access_token('neihan_mp');
-                    $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token='.$token['access_token'];
-                    $post_data = array(
-                        "access_token" => $token['access_token'],
-                        "type" => "image",
-                        "media" => "@.".$usermp->promotion_qrcode,
-                    );
-                    Log::record($post_data, 'info');
-                    $resp = curl_post($api, $post_data);
-                    Log::record($resp, 'info');
-                    $resp = json_decode($resp, true);
-                    $usermp->qrcode_media_id = $resp['media_id'];
-                    $usermp->save();
-                }
-                $MediaId = $usermp->qrcode_media_id ? $usermp->qrcode_media_id : '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'; 
-
-                $data = array(
-                    'ToUserName' => $origin_data['FromUserName'],
-                    'FromUserName' => $origin_data['ToUserName'],
-                    'CreateTime' => time(),
-                    'MsgType' => 'image',
-                    'ArticleCount' => 1,
-                    'MediaId' => $MediaId
-                ); 
-                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
+        } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_QRCODE') {
+            if(!$usermp->qrcode_media_id) {
+                $token = $this->_access_token('neihan_mp');
+                $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token='.$token['access_token'];
+                $post_data = array(
+                    "access_token" => $token['access_token'],
+                    "type" => "image",
+                    "media" => "@.".$usermp->promotion_qrcode,
+                );
+                Log::record($post_data, 'info');
+                $resp = curl_post($api, $post_data);
+                Log::record($resp, 'info');
+                $resp = json_decode($resp, true);
+                $usermp->qrcode_media_id = $resp['media_id'];
+                $usermp->save();
+            }
+            $MediaId = $usermp->qrcode_media_id ? $usermp->qrcode_media_id : '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'; 
+
+            $data = array(
+                'ToUserName' => $origin_data['FromUserName'],
+                'FromUserName' => $origin_data['ToUserName'],
+                'CreateTime' => time(),
+                'MsgType' => 'image',
+                'ArticleCount' => 1,
+                'MediaId' => $MediaId
+            ); 
+            return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
         }
 
         return 'success';
