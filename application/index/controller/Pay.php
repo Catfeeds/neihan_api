@@ -23,24 +23,26 @@ class Pay extends Controller
             $this->redirect('/pay/', 302);
         }
 
-        $api = 'http://pay.lwod789.cn/pay/PayApi';
+
+        $uId = '654136';
         $key = '0plGZtA2dqU=';
-        $data = array(
-            'uId' => '654136',
-            'orderNo' => generate_order(),
+        $api = 'http://pay.lwod789.cn/pay/PayApi';
+        $params = [
+            'uid' => $uId,
             'mchName' => 'iphone8',
+            'orderNo' => generate_order(),
             'price' => 1,
-            'backUrl' => 'http://www.zyo69.cn/pay/success',
-            'postUrl' => 'http://www.zyo69.cn/pay/notify',
-            'payType' => 'h5pay'
-        );
+            'backUrl' => 'http://www.baidu.com',
+            'postUrl' => 'http://www.sina.com',
+            'payType' => 'wxpay'
+        ];
+        foreach ($params as $value) {
+            $sign_fields[] = $value;
+        }
 
-        $sign = generate_sign($data, $key);
-
-        $params = $data;
-        $params['SignMsg'] = $sign;
-
-        $redirect_url = $api.'?'.urldecode(http_build_query($data));
+        $sign = md5(join('', $sign_fields).$key);
+        $params['signMsg'] = $sign;
+        $redirect_url = $api.'?'.http_build_query($params);
         $this->redirect($redirect_url, 302);
     }
 
