@@ -181,8 +181,9 @@ class Msg extends Controller
                     )
                 )
             ); 
+            return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
         }
-        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+        return 'success';
     }
 
     private function _access_token($app_code='')
