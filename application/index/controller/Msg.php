@@ -124,7 +124,7 @@ class Msg extends Controller
         }
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'unsubscribe') {
-            $user = User_Model::where('openid_mp', $origin_data['FromUserName'])->update(['subscribe_mp' => 0]]);        
+            $user = User_Model::where('openid_mp', $origin_data['FromUserName'])->update(['subscribe_mp' => 0]);        
         }
 
 
