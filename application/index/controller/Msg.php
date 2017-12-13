@@ -8,6 +8,7 @@ use think\Log;
 use think\Config;
 
 use app\index\model\UserMp;
+use app\index\model\User;
 
 
 class Msg extends Controller
