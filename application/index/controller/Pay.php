@@ -56,7 +56,7 @@ class Pay extends Controller
             'price' => $ticket_amount,
             'backUrl' => 'http://www.zyo69.cn/pay/success',
             'postUrl' => 'http://www.zyo69.cn/pay/notify',
-            'payType' => 'wxpay'
+            'payType' => 'h5pay'
         ];
 
         foreach ($params as $value) {
