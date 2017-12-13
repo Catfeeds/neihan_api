@@ -106,7 +106,6 @@ class Msg extends Controller
 
         Log::record($origin_data, 'info');
 
-        $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
 
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'subscribe') {
             $token = $this->_access_token('neihan_mp');
@@ -166,6 +165,7 @@ class Msg extends Controller
            UserMp::where('openid', $origin_data['FromUserName'])->update(['subscribe' => 0]);        
         }
 
+        $usermp = UserMp::get(['openid' => $origin_data['FromUserName']]);
 
         # 各种按钮
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_APP') {
