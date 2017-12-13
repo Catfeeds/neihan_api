@@ -19,6 +19,11 @@ def run():
         },
         {
             "type": "click",
+            "name": "推广",
+            "key": "V1001_QRCODE"
+        },
+        {
+            "type": "click",
             "name": "小程序",
             "key": "V1001_APP"
         },
