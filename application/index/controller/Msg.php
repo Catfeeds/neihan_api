@@ -163,8 +163,9 @@ class Msg extends Controller
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             Log::record($resp, 'info');
             return 'success';
-        } else {
-           $data = array(
+        } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_PROMO') {
+            $user = UserMp::get(['openid' => $origin_data['FromUserName']]);
+            $data = array(
                 'ToUserName' => $origin_data['FromUserName'],
                 'FromUserName' => $origin_data['ToUserName'],
                 'CreateTime' => time(),
@@ -176,7 +177,7 @@ class Msg extends Controller
                         'Description' => '支付一元美女带回家',
                         'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
                         # 'PicUrl' => 'http://www.zyo69.cn/static/image/reply.jpeg',
-                        'Url' => 'http://www.zyo69.cn/pay?member_id=1'
+                        'Url' => 'http://www.zyo69.cn/pay?user_id='.$user->id;
                     )
                 )
             ); 
