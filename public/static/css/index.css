@@ -1,0 +1,84 @@
+body,html{
+	background-color: #f7f7f7;
+}
+.box-shadow-10{  
+  -webkit-box-shadow:0 0 10px rgba(0, 0, 0, .2);  
+  -moz-box-shadow:0 0 10px rgba(0, 0, 0, .2);  
+  box-shadow:0 0 10px rgba(0, 0, 0, .2);  
+}
+/*	选项item  */
+.item{
+	display: flex;
+	margin: 15px;
+	border-radius: 5px;
+	position: relative;
+}
+.item_icon{
+	width: 90px;
+	height: 90px;
+	margin: 20px;
+}
+.item_d1{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.item_t1{
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+.item_t2{
+	font-size: 0.9rem;
+	margin-top: 5px;
+}
+.selected{
+	position: absolute;
+	top: 0px;
+	right: 0;
+	width: 2rem;
+}
+/*代理教程*/
+.title{
+	width: 100%;
+	text-align: center;
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-top: 2rem;
+}
+.titles{
+	margin-top: 15px;
+	margin: 15px;
+	padding: 15px;
+	margin-bottom: 100px;
+	border-radius: 5px;
+}
+.title1{
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-top: 10px;
+}
+.title2{
+	font-size: 0.9rem;
+	color: #8c8c8e;
+	margin-top: 5px;
+	font-weight: bold;
+}
+
+/*支付按钮*/
+.pay{
+	width: 94%;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	background-color: white;
+	display: flex;
+	justify-content: center;
+	padding: 3%;
+}
+.pay_bt{
+	width: 90%;
+	background-color: #ffda00;
+	padding: 10px;
+	text-align: center;
+	font-weight: bold;
+}

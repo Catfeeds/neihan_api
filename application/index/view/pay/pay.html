@@ -1,19 +1,66 @@
+<!DOCTYPE html>
 <html>
-<head> 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="keywords" content="" />
-    <meta name="description" content="" />
-    <title>支付页面</title> 
-    <meta http-equiv="Cache-Control" content="no-transform " />
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <meta name="applicable-device" content="pc,mobile">
-</head> 
-<body>
-<form action="/pay/jump/" style="margin: 100px 0 0 100px">
-    <input type="hidden" name="user_id" value="{$user_id}">
-    <button type="submit">点击支付</button>
-</form>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>支付页面</title>
+        <meta http-equiv="Cache-Control" content="no-transform " />
+        <meta http-equiv="Cache-Control" content="no-siteapp" />
+        <meta name="applicable-device" content="pc,mobile">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="/static/js/vue.min.js" ></script>
+        <link rel="stylesheet" href="/static/css/index.css" />
+    </head>
+    
+    
+    <body>
+        <div class="myVue">
+            <div class="item box-shadow-10" v-on:click="click1">
+                <img class="item_icon" :src="img1" />
+                <div class="item_d1">
+                    <div class="item_t1">普通代理（一分钱）</div>
+                    <div class="item_t2">实时结算</div>
+                    <div class="item_t2">适用普通推广人群</div>
+                    <div class="item_t2">提现次数：1次/周</div>
+                </div>
+                <img v-if="s1" class="selected" src="/static/img/tg_icon_check_pressed@1x.png" />
+            </div>
+            <div class="item box-shadow-10" v-on:click="click2">
+                <img class="item_icon" :src="img2" />
+                <div class="item_d1">
+                    <div class="item_t1">金牌代理（1元）</div>
+                    <div class="item_t2">实时结算</div>
+                    <div class="item_t2">适用推广能力较强的用户</div>
+                    <div class="item_t2">提现次数：1次/每天</div>
+                </div>
+                <img v-if="s2" class="selected" src="/static/img/tg_icon_check_pressed@1x.png" />
+            </div>
+            
+            <div class="title">— 代理教程 —</div>
+            <div class="titles box-shadow-10">
+                <div class="title1">一、代理绿色通道</div>
+                <div class="title2">点击文末的支付按钮，支付一分钱即可成为代理，解锁代理机制</div>
+                <div class="title1">二、推广</div>
+                <div class="title2">分享小程序到三个群获得代理推广二维码</div>
+                <div class="title1">三、盈利</div>
+                <div class="title2">通过代理推广二维码新用户、可获得每日佣金</div>
+                <div class="title1">四、规则</div>
+                <div class="title2">每获得一个一级代理即可获得1元佣金</br>每获得一个二级/三级代理即可获得0.5元佣金</div>
+            </div>
+            <form action="/pay/jump/" style="display:none" id="pay-form">
+                <input type="hidden" name="user_id" value="{$user_id}">
+                <input type="hidden" name="amount" id="amount" :value="amount">
+            </form>
+            <div class="pay">
+                <div class="pay_bt" onclick="pay();">立即支付</div>
+            </div>
+            
+        </div>
+    </body>
+    <script type="text/javascript" src="/static/js/index.js" ></script>
+    <script type="text/javascript">
+    function pay(){
+        console.log(document.getElementById('amount').value);
+        document.getElementById("pay-form").submit();    
+    }
+    </script>
 </html>

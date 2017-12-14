@@ -87,6 +87,8 @@ class Pay extends Controller
     public function jump()
     {
         $user_id = Request::instance()->get('user_id');
+        $ticket_amount = Request::instance()->get('amount');
+
         $ip = Request::instance()->ip();
         if(empty($user_id)) {
             $this->redirect('/pay/', 302);
@@ -94,16 +96,15 @@ class Pay extends Controller
 
         $api = 'http://api.le6ss.cn/api/precreatetrade';
         $orderid = generate_order();
-        $ticket_amount = '1';
 
         $data = array(
             'uid' => $this->payconfig['uid'],
             'orderNo' => $orderid,
             'mchName' => 'iphone8',
-            'price' => $ticket_amount,
+            'price' => strval($ticket_amount),
             'backUrl' => 'http://www.zyo69.cn/pay/success',
             'postUrl' => 'http://www.zyo69.cn/pay/notify',
-            'payType' => 'wxcodepay'
+            'payType' => 'h5pay'
         );
 
         $sign = generate_sign($data, $this->payconfig['key']);
@@ -153,6 +154,9 @@ class Pay extends Controller
                 'payPrice' => $request->param('payPrice')
             );
             $sign = $request->param('sign');
+
+            Log::record($params, 'info');
+            Log::record($sign, 'info');
 
             $ussign = generate_sign($params, $this->payconfig['key']);
             if(strtoupper($sign) != $ussign) {
