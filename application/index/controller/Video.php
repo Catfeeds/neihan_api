@@ -464,61 +464,61 @@ class Video extends Controller
                             'commission'  => ['exp', "commission+{$psettings->commission_lv1}"],
                             'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv1}"],
                         ]);
-                }
-                
-                # user_id是谁的一级代理
-                $user_promo_grid = New UserPromotionGrid;
-                $user_promo_grid->data([
-                    'parent_user_id' => $user_promo->parent_user_id,
-                    'user_id' => $user_promo->user_id,
-                    'level' => 1
-                ]);
-                $user_promo_grid->save();
+
+                    # user_id是谁的一级代理
+                    $user_promo_grid = New UserPromotionGrid;
+                    $user_promo_grid->data([
+                        'parent_user_id' => $user_promo->parent_user_id,
+                        'user_id' => $user_promo->user_id,
+                        'level' => 1
+                    ]);
+                    $user_promo_grid->save();
 
 
-                if($user_promo->parent_user_id == 0) {
-                    return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
-                }
-
-                # 找出parent_user_id是谁的一级代理, 把user_id加成为二级代理
-                $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)
-                    ->where('level', 1)->find();
-                if(!empty($p1_promo)) {
-                    if(!empty($p1_promo->parent_user_id)) {
-                        $user_promo_grid = New UserPromotionGrid;
-                        $user_promo_grid->data([
-                            'parent_user_id' => $p1_promo->parent_user_id,
-                            'user_id' => $user_promo->user_id,
-                            'level' => 2
-                        ]);
-                        $user_promo_grid->save();
-
-                        # 加钱
-                        UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
-                            ->update([
-                                'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
-                                'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
-                            ]); 
+                    if($user_promo->parent_user_id == 0) {
+                        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
                     }
 
-                    $p2_promo = UserPromotionGrid::where('user_id', $p1_promo->parent_user_id)->where('level', 1)->find();
-                    if(!empty($p2_promo)) {
-                        $user_promo_grid = New UserPromotionGrid;
-                        $user_promo_grid->data([
-                            'parent_user_id' => $p2_promo->parent_user_id,
-                            'user_id' => $user_promo->user_id,
-                            'level' => 3
-                        ]);
-                        $user_promo_grid->save();
-
-                        # 加钱
-                        UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
-                            ->update([
-                                'commission'  => ['exp', "commission+{$psettings->commission_lv3}"],
-                                'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv3}"],
+                    # 找出parent_user_id是谁的一级代理, 把user_id加成为二级代理
+                    $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)
+                        ->where('level', 1)->find();
+                    if(!empty($p1_promo)) {
+                        if(!empty($p1_promo->parent_user_id)) {
+                            $user_promo_grid = New UserPromotionGrid;
+                            $user_promo_grid->data([
+                                'parent_user_id' => $p1_promo->parent_user_id,
+                                'user_id' => $user_promo->user_id,
+                                'level' => 2
                             ]);
+                            $user_promo_grid->save();
+
+                            # 加钱
+                            UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
+                                ->update([
+                                    'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
+                                    'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
+                                ]); 
+                        }
+
+                        $p2_promo = UserPromotionGrid::where('user_id', $p1_promo->parent_user_id)->where('level', 1)->find();
+                        if(!empty($p2_promo)) {
+                            $user_promo_grid = New UserPromotionGrid;
+                            $user_promo_grid->data([
+                                'parent_user_id' => $p2_promo->parent_user_id,
+                                'user_id' => $user_promo->user_id,
+                                'level' => 3
+                            ]);
+                            $user_promo_grid->save();
+
+                            # 加钱
+                            UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
+                                ->update([
+                                    'commission'  => ['exp', "commission+{$psettings->commission_lv3}"],
+                                    'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv3}"],
+                                ]);
+                        }
+                        
                     }
-                    
                 }
             }
 
