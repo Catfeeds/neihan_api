@@ -153,6 +153,9 @@ class Pay extends Controller
         try {
             $request = Request::instance();
 
+            $query_string = file_get_contents('php://input');
+            Log::record($query_string, 'info');
+
             $params = array(
                 'resultCode' => $request->param('resultCode'),
                 'message' => $request->param('message'),
