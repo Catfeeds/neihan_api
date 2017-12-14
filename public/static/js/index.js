@@ -5,8 +5,8 @@ var myVue = new Vue({
   	s2: false,
   	img1: "/static/img/tg_icon_ptdl_pressed@2x.png",
   	img2: "/static/img/tg_icon_jpdl_default@2x.png",
-    amount: 0.01
-	
+    amount: 0.01,
+	  mask: false
   },
   methods:{
   	click1:function(){
