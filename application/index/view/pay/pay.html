@@ -50,8 +50,12 @@
                 <input type="hidden" name="user_id" value="{$user_id}">
                 <input type="hidden" name="amount" id="amount" :value="amount">
             </form>
-            <div class="pay">
-                <div class="pay_bt" onclick="pay();">立即支付</div>
+            <div class="pay" v-on:click="pay_bt">
+                <div class="pay_bt">立即支付</div>
+            </div>
+            <div v-if="mask" class="mask" v-on:click="hide_me">
+                <img src="img/arrow.png" />
+                <div class="mask_label1"><img src="img/brrowser.png" />选择在浏览器中打开</div>
             </div>
             
         </div>

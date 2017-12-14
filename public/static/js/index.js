@@ -23,6 +23,12 @@ var myVue = new Vue({
   		myVue.s2 = true;
       myVue.amount = 1;
   	},
+    pay_bt:function(){
+      myVue.mask = true;
+    },
+    hide_me:function(){
+      myVue.mask = false;
+    }
   }
   
   
