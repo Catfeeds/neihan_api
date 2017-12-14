@@ -153,28 +153,31 @@ class Pay extends Controller
     {
         try {
             $request = Request::instance();
-
-            $query_string = file_get_contents('php://input');
-            Log::record($query_string, 'info');
             Log::record($_POST, 'info');
 
-            $params = array(
-                'resultCode' => $request->param('resultCode'),
-                'message' => $request->param('message'),
-                'orderNo' => $request->param('orderNo'),
-                'sysOrderNo' => $request->param('sysOrderNo'),
-                'payNo' => $request->param('payNo'),
-                'payPrice' => $request->param('payPrice')
-            );
-            $sign = $request->param('sign');
+            # $params = json_decode($_POST, 'info');
+            /*
+            Array
+            (
+                [message] => 支付成功
+                [orderNo] => 20171214143813575
+                [payNo] => 35107000520171214144801335
+                [payPrice] => 1.00
+                [resultCode] => success
+                [sign] => BF6DB3ECB47FBE100A5884E767ACBAA3
+                [sysOrderNo] => 17946f34ba2772f4
+            )
+            */
 
-            Log::record($params, 'info');
-            Log::record($sign, 'info');
+            $params = json_decode('{"message":"\u652F\u4ED8\u6210\u529F","orderNo":"20171214143813575","payNo":"35107000520171214144801335","payPrice":"1.00","resultCode":"success","sign":"BF6DB3ECB47FBE100A5884E767ACBAA3","sysOrderNo":"17946f34ba2772f4"}', true);
 
+            $sign = $params['sign'];
+            unset($params['sign']);
             $ussign = generate_sign($params, $this->payconfig['key']);
             if(strtoupper($sign) != $ussign) {
-                return 'success';
+                return 'success1';
             }
+            echo 1111;die;
 
             $usorder = UserMpTicket::where('orderid', $params['orderNo'])->find();
             if(empty($usorder) || $usorder['status'] === 1) {
