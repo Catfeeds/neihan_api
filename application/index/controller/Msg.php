@@ -188,7 +188,7 @@ class Msg extends Controller
                             'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
                             'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
                             'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
-                            'Url' => 'http://www.zyo69.cn/pay?user_id='.$usermp->id
+                            'Url' => Request::instance()->domain().'/pay?user_id='.$usermp->id
                         )
                     )
                 ); 
