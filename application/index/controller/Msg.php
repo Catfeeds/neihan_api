@@ -116,6 +116,7 @@ class Msg extends Controller
             $token = $this->_access_token('neihan_mp');
             $api = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token['access_token'].'&openid='.$origin_data['FromUserName'].'&lang=zh_CN';
             $resp = curl_get($api);
+            Log::record($resp, 'info');
             $resp = json_decode($resp, true);
 
 
