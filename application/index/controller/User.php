@@ -125,8 +125,6 @@ class User extends Controller
             $country = Request::instance()->post('country');
             $province = Request::instance()->post('province');
             $city = Request::instance()->post('city');
-            $user_mp_id = Request::instance()->post('user_mp_id');
-
             if(empty($user_id)) {
                 $data['c'] = -1024;
                 $data['m'] = 'Arg Missing';
@@ -147,9 +145,6 @@ class User extends Controller
             $user->province = $province ? $province : '';
             $user->city = $city ? $city : '';
 
-            if(!$user->user_mp_id) {
-                $user->user_mp_id = $user_mp_id;
-            }
             $user->save();
 
         } catch (Exception $e) {
@@ -423,8 +418,16 @@ class User extends Controller
     public function promotion_init()
     {
         try {
-            $user_id = Request::instance()->param('user_id');
-            $from_user_id = Request::instance()->param('from_user_id');
+            $request = Request::instance();
+
+            $user_id = $request->param('user_id');
+            $from_user  = explode('|', $request->param('from_user'));
+
+            if(count($from_user) == 1) {
+                $from_user[] = 0;
+            }
+            $from_user_id = intval($from_user[0]);
+            $user_mp_id = intval($from_user[1]);
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -439,6 +442,10 @@ class User extends Controller
                 $data['c'] = -1024;
                 $data['m'] = 'User NotExists';
                 return Response::create($data, 'json')->code(200);
+            }
+            if(!empty($user_mp_id)) {
+                $user->user_mp_id = $user_mp_id;
+                $user->save();
             }
 
             if(!empty($from_user_id)) {

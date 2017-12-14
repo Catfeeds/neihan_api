@@ -11,6 +11,8 @@ use app\index\model\UserMpTicket;
 use app\index\model\UserMp;
 use app\index\model\User;
 
+use GuzzleHttp;
+
 
 class Pay extends Controller
 {
@@ -38,7 +40,7 @@ class Pay extends Controller
         return $this->fetch('pay');;
     }
 
-    public function jump()
+    public function jump_zft()
     {
         $user_id = Request::instance()->get('user_id');
         $ip = Request::instance()->ip();
@@ -82,39 +84,139 @@ class Pay extends Controller
         $this->redirect($redirect_url, 302);
     }
 
-    public function jump_dfw()
+    public function jump()
     {
         $user_id = Request::instance()->get('user_id');
+        $ip = Request::instance()->ip();
         if(empty($user_id)) {
             $this->redirect('/pay/', 302);
         }
 
         $api = 'http://api.le6ss.cn/api/precreatetrade';
+        $orderid = generate_order();
+        $ticket_amount = '0.01';
 
-        $key = '888888';
         $data = array(
-            'uid' => 'test',
-            'orderNo' => '20171213001250101',
-            'mchName' => '测试支付商品',
-            'price' => 1,
+            'uid' => $this->payconfig['uid'],
+            'orderNo' => $orderid,
+            'mchName' => 'iphone8',
+            'price' => $ticket_amount,
             'backUrl' => 'http://www.zyo69.cn/pay/success',
             'postUrl' => 'http://www.zyo69.cn/pay/notify',
-            'payType' => 'wgpay'
+            'payType' => 'wxcodepay'
         );
 
-        $sign = generate_sign($data, $key);
+        $sign = generate_sign($data, $this->payconfig['key']);
 
         $params = $data;
         $params['sign'] = $sign;
 
-        $headers = array('Content-Type: multipart/form-data;charset=UTF-8');
-        $resp = curl_post($api, $params, $headers);
-        print_r(json_decode($resp, true));die;
+        $client = new GuzzleHttp\Client();
+        $response = $client->request('POST', $api, [
+            'form_params' => $params
+        ]);
+        $body = $response->getBody();
+        $remainingBytes = $body->getContents();
+        $ret = json_decode($remainingBytes, true);
+        if(strtolower($ret['resultCode']) === 'success') {
+            $ticket = New UserMpTicket;
+            $ticket->data([
+                'appid' => $this->wxconfig['appids']['neihan_mp'],
+                'user_id' => $user_id,
+                'orderid' => $orderid,
+                'rel_orderid' => $ret['sysOrderNo'],
+                'ip' => $ip,
+                'amount' => floatval($ticket_amount),
+                'status' => 0
+            ]);
+            $ticket->save();
 
-        $this->redirect('http://www.baidu.com', 302);
+            $this->redirect($ret['payUrl'], 302);
+        }
+
+        // $this->redirect('http://www.baidu.com', 302);
     }
 
     public function notify()
+    {
+        try {
+            $request = Request::instance();
+
+            $params = array(
+                'resultCode' => $request->param('resultCode'),
+                'message' => $request->param('message'),
+                'orderNo' => $request->param('orderNo'),
+                'sysOrderNo' => $request->param('sysOrderNo'),
+                'payNo' => $request->param('payNo'),
+                'payPrice' => $request->param('payPrice')
+            );
+            $sign = $request->param('sign');
+
+            $ussign = generate_sign($params, $this->payconfig['key']);
+            if(strtoupper($sign) != $ussign) {
+                return 'success';
+            }
+
+            $usorder = UserMpTicket::where('orderid', $params['orderNo'])->find();
+            if(empty($usorder) || $usorder['status'] === 1) {
+                return 'success';
+            }
+
+            if(intval($usorder['amount']*100) != intval(floatval($params['payPrice'])*100)) {
+                return 'success';
+            }
+
+            $user = UserMp::where('id', $usorder['user_id'])->find();
+            if(empty($user)) {
+                return 'success';
+            }
+
+            if(strtolower($params['resultCode']) !== 'success') {
+                $usorder->status = 2;
+                $usorder->errmsg = $params['message'];
+                $usorder->save();
+
+                return 'success';
+            }
+
+            $usorder->status = 1;
+            $usorder->save();
+
+            if($user->promotion == 1) {
+                $user->promotion = 2;
+                $user->promotion_time = time();
+                $user->save();
+
+
+                $from_user_id = '0';
+                $from_user_app = User::where('user_mp_id', $user->parent_user_id)->find();
+                if(!empty($from_user_app)) {
+                    $from_user_id = $from_user_app->id;
+                }
+                $from_user_id = $from_user_id.'|'.$user->id;
+
+                $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
+                $token = $this->_access_token('neihan_mp');
+                $data = [
+                    'touser' => $user->openid,
+                    'msgtype' => 'miniprogrampage',
+                    'miniprogrampage' => [
+                        'title' => '点击进入, 分享三个群即可成为代理！',
+                        'appid' => $this->wxconfig['appids'][$this->app_code],
+                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
+                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                    ]
+                ];
+                $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+            }
+        } catch (Exception $e) {
+            return 'FAIL';
+        }
+        return 'SUCCESS';
+    }
+
+
+    public function notify_zft()
     {
         try {
             $request = Request::instance();

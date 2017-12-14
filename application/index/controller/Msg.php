@@ -63,7 +63,6 @@ class Msg extends Controller
                         ]
                     ];
                     $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
-                    # Log::record(json_decode($resp, true), 'info');
                 }
             }
         }
@@ -198,11 +197,12 @@ class Msg extends Controller
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
                 $token = $this->_access_token('neihan_mp');
 
-                $from_user_id = 0;
+                $from_user_id = '0';
                 $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
                 if(!empty($from_user_app)) {
                     $from_user_id = $from_user_app->id;
                 }
+                $from_user_id = $from_user_id.'|'.$usermp->id;
 
                 $data = [
                     'touser' => $origin_data['FromUserName'],
@@ -210,7 +210,7 @@ class Msg extends Controller
                     'miniprogrampage' => [
                         'title' => '点击进入, 分享三个群即可成为代理！',
                         'appid' => $wxconfig['appids'][$this->app_code],
-                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id.'&user_mp_id='.$usermp->id,
+                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
                         'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
                     ]
                 ];
@@ -222,11 +222,12 @@ class Msg extends Controller
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
                 $token = $this->_access_token('neihan_mp');
 
-                $from_user_id = 0;
+                $from_user_id = '0';
                 $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
                 if(!empty($from_user_app)) {
                     $from_user_id = $from_user_app->id;
                 }
+                $from_user_id = $from_user_id.'|'.$usermp->id;
         
                 $data = [
                     'touser' => $origin_data['FromUserName'],
@@ -234,7 +235,7 @@ class Msg extends Controller
                     'miniprogrampage' => [
                         'title' => '点击进入, 查看你的代理人数！',
                         'appid' => $wxconfig['appids'][$this->app_code],
-                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id.'&user_mp_id='.$usermp->id,
+                        'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
                         'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
                     ]
                 ];
