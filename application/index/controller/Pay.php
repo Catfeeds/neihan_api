@@ -43,7 +43,6 @@ class Pay extends Controller
         if(preg_match('/micromessenger/i', $agent)) {
             $isweixin = 1;
         }
-        $isweixin = 0;
         
         $this->assign('user_id', $user_id);
         $this->assign('isweixin', $isweixin);
@@ -94,7 +93,7 @@ class Pay extends Controller
         $this->redirect($redirect_url, 302);
     }
 
-    public function jump()
+    public function jump_mp()
     {
         $user_id = Request::instance()->get('user_id');
         $ticket_amount = Request::instance()->get('amount');
@@ -123,7 +122,7 @@ class Pay extends Controller
     }
 
 
-    public function jump_dfw()
+    public function jump()
     {
         $user_id = Request::instance()->get('user_id');
         $ticket_amount = Request::instance()->get('amount');
@@ -180,7 +179,7 @@ class Pay extends Controller
         // $this->redirect('http://www.baidu.com', 302);
     }
 
-    public function notify_dfw()
+    public function notify()
     {
         try {
             $request = Request::instance();
