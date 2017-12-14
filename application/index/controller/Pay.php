@@ -210,9 +210,11 @@ class Pay extends Controller
 
 
                 $from_user_id = '0';
-                $from_user_app = User::where('user_mp_id', $user->parent_user_id)->find();
-                if(!empty($from_user_app)) {
-                    $from_user_id = $from_user_app->id;
+                if($user->parent_user_id) {
+                   $from_user_app = User::where('user_mp_id', $user->parent_user_id)->find();
+                    if(!empty($from_user_app)) {
+                        $from_user_id = $from_user_app->id;
+                    } 
                 }
                 $from_user_id = $from_user_id.'|'.$user->id;
 

@@ -198,9 +198,11 @@ class Msg extends Controller
                 $token = $this->_access_token('neihan_mp');
 
                 $from_user_id = '0';
-                $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
-                if(!empty($from_user_app)) {
-                    $from_user_id = $from_user_app->id;
+                if($usermp->parent_user_id) {
+                    $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
+                    if(!empty($from_user_app)) {
+                        $from_user_id = $from_user_app->id;
+                    }
                 }
                 $from_user_id = $from_user_id.'|'.$usermp->id;
 
@@ -223,10 +225,13 @@ class Msg extends Controller
                 $token = $this->_access_token('neihan_mp');
 
                 $from_user_id = '0';
-                $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
-                if(!empty($from_user_app)) {
-                    $from_user_id = $from_user_app->id;
+                if($usermp->parent_user_id) {
+                    $from_user_app = User::where('user_mp_id', $usermp->parent_user_id)->find();
+                    if(!empty($from_user_app)) {
+                        $from_user_id = $from_user_app->id;
+                    }
                 }
+                
                 $from_user_id = $from_user_id.'|'.$usermp->id;
         
                 $data = [
