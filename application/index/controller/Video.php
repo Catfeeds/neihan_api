@@ -427,7 +427,9 @@ class Video extends Controller
                 $user->save();
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 1]);
+
             } elseif($groups >= 3 && $user->promotion == 2 && $user->user_mp_id) {
+
                 $user->promotion = 3;
 
                 # 生成一个公众号二维码
@@ -455,6 +457,7 @@ class Video extends Controller
 
                 # 加代理
                 $user_promo = UserPromotion::where('user_id', $user_id)->find();
+
                 $user_promo->status = 2;
                 $user_promo->save();
                 # 加钱

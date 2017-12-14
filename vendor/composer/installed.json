@@ -1468,5 +1468,52 @@
             "weixin",
             "weixin-sdk"
         ]
+    },
+    {
+        "name": "yansongda/pay",
+        "version": "v1.2.4",
+        "version_normalized": "1.2.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/yansongda/pay.git",
+            "reference": "256a5f2c610d300a204d1b5c84ae54c9681354a2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/yansongda/pay/256a5f2c610d300a204d1b5c84ae54c9681354a2.zip",
+            "reference": "256a5f2c610d300a204d1b5c84ae54c9681354a2",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^6.3",
+            "php": ">=5.6"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^6.2"
+        },
+        "time": "2017-12-08T01:55:40+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Yansongda\\Pay\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "yansongda",
+                "email": "me@yansongda.cn"
+            }
+        ],
+        "description": "专注 Alipay 和 WeChat 的支付扩展包",
+        "keywords": [
+            "alipay",
+            "pay",
+            "wechat"
+        ]
     }
 ]
