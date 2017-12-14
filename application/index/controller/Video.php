@@ -19,7 +19,12 @@ use app\index\model\Comment;
 use app\index\model\VideoDisplayLog;
 use app\index\model\UserStore;
 use app\index\model\Setting;
+
 use app\index\model\UserPromotion;
+use app\index\model\UserPromotionBalance;
+use app\index\model\UserPromotionGrid;
+use app\index\model\UserPromotionTicket;
+use app\index\model\SettingPromotion;
 
 
 class Video extends Controller
@@ -421,6 +426,99 @@ class Video extends Controller
                 $user->save();
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 1]);
+            } elseif($groups >= 3 && $user->promotion == 2 && $user->user_mp_id) {
+                $user->promotion = 3;
+
+                # 生成一个公众号二维码
+                $mp_qrcode = $this->_generate_qrcode($user->id);
+                $user->mp_qrcode = $mp_qrcode[0];
+                $user->mp_qrcode_ticket = $mp_qrcode[1];
+                $user->save();
+
+                UserMp::where('id', $user->user_mp_id)
+                    ->update([
+                        'promotion' => 3,
+                        'promotion_qrcode' => $mp_qrcode[0],
+                        'qrcode_ticket' => $mp_qrcode[1]
+                ]);
+
+                UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
+
+                # 如果你是一个代理, 那就不能做别人的代理了
+                $exists = UserPromotionGrid::where('user_id', $usorder->user_id)->count();
+                if($exists) {
+                    return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+                }
+
+                $psettings = SettingPromotion::get(1);
+
+                # 加代理
+                $user_promo = UserPromotion::where('user_id', $usorder->user_id)->find();
+                $user_promo->status = 2;
+                $user_promo->save();
+                # 加钱
+                if($user_promo->parent_user_id) {
+                    UserPromotionBalance::where('user_id', $user_promo->parent_user_id)
+                        ->update([
+                            'commission'  => ['exp', "commission+{$psettings->commission_lv1}"],
+                            'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv1}"],
+                        ]);
+                }
+                
+                # user_id是谁的一级代理
+                $user_promo_grid = New UserPromotionGrid;
+                $user_promo_grid->data([
+                    'parent_user_id' => $user_promo->parent_user_id,
+                    'user_id' => $user_promo->user_id,
+                    'level' => 1
+                ]);
+                $user_promo_grid->save();
+
+
+                if($user_promo->parent_user_id == 0) {
+                    return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+                }
+
+                # 找出parent_user_id是谁的一级代理, 把user_id加成为二级代理
+                $p1_promo = UserPromotionGrid::where('user_id', $user_promo->parent_user_id)
+                    ->where('level', 1)->find();
+                if(!empty($p1_promo)) {
+                    if(!empty($p1_promo->parent_user_id)) {
+                        $user_promo_grid = New UserPromotionGrid;
+                        $user_promo_grid->data([
+                            'parent_user_id' => $p1_promo->parent_user_id,
+                            'user_id' => $user_promo->user_id,
+                            'level' => 2
+                        ]);
+                        $user_promo_grid->save();
+
+                        # 加钱
+                        UserPromotionBalance::where('user_id', $p1_promo->parent_user_id)
+                            ->update([
+                                'commission'  => ['exp', "commission+{$psettings->commission_lv2}"],
+                                'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv2}"],
+                            ]); 
+                    }
+
+                    $p2_promo = UserPromotionGrid::where('user_id', $p1_promo->parent_user_id)->where('level', 1)->find();
+                    if(!empty($p2_promo)) {
+                        $user_promo_grid = New UserPromotionGrid;
+                        $user_promo_grid->data([
+                            'parent_user_id' => $p2_promo->parent_user_id,
+                            'user_id' => $user_promo->user_id,
+                            'level' => 3
+                        ]);
+                        $user_promo_grid->save();
+
+                        # 加钱
+                        UserPromotionBalance::where('user_id', $p2_promo->parent_user_id)
+                            ->update([
+                                'commission'  => ['exp', "commission+{$psettings->commission_lv3}"],
+                                'commission_avail' => ['exp', "commission_avail+{$psettings->commission_lv3}"],
+                            ]);
+                    }
+                    
+                }
             }
 
             $data['d'] = [
@@ -601,13 +699,17 @@ class Video extends Controller
         return str_replace('timestamp', strval(time()).'.'.strval(rand(10, 60)), $url);
     }
 
-    private function _access_token()
+    private function _access_token($app_code='')
     {
         try {
+
+            if(empty($app_code)) {
+                $app_code = $this->app_code;
+            }
             $is_expired = true;
 
             $access_token = [];
-            $access_token_file = './../application/extra/access_token'.$this->app_code.'.txt';
+            $access_token_file = './../application/extra/access_token'.$app_code.'.txt';
             if(file_exists($access_token_file)) {
                 $access_token = json_decode(file_get_contents($access_token_file), true);
             }
@@ -619,7 +721,7 @@ class Video extends Controller
 
             if($is_expired) {
                 $wxconfig = Config::get('wxconfig');
-                $resp = curl_get($wxconfig['token_api'][$this->app_code]);
+                $resp = curl_get($wxconfig['token_apis'][$app_code]);
                 if(!empty($resp)) {
                     $access_token = json_decode($resp, true);
                     if(array_key_exists('expires_in', $access_token)) {
@@ -632,5 +734,58 @@ class Video extends Controller
             $access_token = [];
         }
         return $access_token;
+    }
+
+    private function _get_ticket($wx_token, $user_id)
+    {
+        $api = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token='.$wx_token['access_token'];
+        $req_data = [
+            'action_name'=> 'QR_LIMIT_SCENE',
+            'action_info'=> [
+                'scene'=> ['scene_id'=> $user_id]
+            ]
+        ];
+        $resp = curl_post($api, json_encode($req_data));
+        $resp = json_decode($resp, true);
+        return $resp;
+    }
+
+
+    private function _generate_qrcode($user_id) 
+    {
+        $token  = $this->_access_token('neihan_mp');
+        $ticket = $this->_get_ticket($token, $user_id);
+
+        $api = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='.urlencode($ticket['ticket']);
+        $resp = curl_get($api);
+
+        $code_filename = 'mp'.strval($user_id).strval(time());
+        $codefile = './static/code/'.$code_filename.'.png';
+        file_put_contents($codefile, $resp);
+
+
+        $file = 'static/image/p1.png';
+        $file_1 = substr($codefile, 2);
+        $outfile = "static/code/p-".$code_filename.".jpeg";
+
+        // 加载水印以及要加水印的图像
+        $stamp = imagecreatefromjpeg($file_1);
+        $im = imagecreatefrompng($file);
+
+        // 设置水印图像的外边距，并且获取水印图像的尺寸
+        $marge_right = 0;
+        $marge_bottom = 0;
+        $sx = imagesx($stamp);
+        $sy = imagesy($stamp);
+
+        // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
+
+        imagecopy($im, $stamp, 200, 670, 0, 0, $sx, $sy);
+
+        // 输出图像并释放内存
+        imagejpeg($im, $outfile, 100, NULL);
+        imagedestroy($im);
+
+        return ['/'.$outfile, $ticket['ticket']];
     }
 }
