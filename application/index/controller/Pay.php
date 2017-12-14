@@ -35,8 +35,15 @@ class Pay extends Controller
     public function index()
     {
         $user_id = Request::instance()->get('user_id');
+        $agent = Request::instance()->header('user-agent');
+
+        $isweixin = 0;
+        if(preg_match('/micromessenger/i', $agent)) {
+            $isweixin = 1;
+        }
         
         $this->assign('user_id', $user_id);
+        $this->assign('isweixin', $isweixin);
         return $this->fetch('pay');;
     }
 
