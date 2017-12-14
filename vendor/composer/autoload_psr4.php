@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'think\\composer\\' => array($vendorDir . '/topthink/think-installer/src'),
     'think\\' => array($baseDir . '/thinkphp/library/think'),
+    'Yansongda\\Pay\\' => array($vendorDir . '/yansongda/pay/src'),
     'WXPay\\' => array($vendorDir . '/wxpay/wxpay/src'),
     'Thenbsp\\Wechat\\' => array($vendorDir . '/thenbsp/wechat/src'),
     'Symfony\\Polyfill\\Php70\\' => array($vendorDir . '/symfony/polyfill-php70'),

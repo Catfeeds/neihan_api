@@ -7,10 +7,11 @@ use think\Request;
 use think\Config;
 use think\Log;
 
-
 use app\index\model\UserMpTicket;
 use app\index\model\UserMp;
 use app\index\model\User;
+
+use Yansongda\Pay\Pay as MPay;
 
 use GuzzleHttp;
 
@@ -101,6 +102,35 @@ class Pay extends Controller
         if(empty($user_id)) {
             $this->redirect('/pay/', 302);
         }
+        $usermp = UserMp::get(['id' => $user_id]);
+        if(empty($usermp)) {
+            $this->redirect('/pay/', 302);
+        }
+
+        $config_biz = [
+            'out_trade_no' => generate_order(),
+            'total_fee' => '0.01',
+            'body' => 'test body',
+            'spbill_create_ip' => $ip,
+            'openid' => $usermp->openid,
+        ];
+
+        $mpay = new MPay($this->payconfig['mp1']);
+
+        return $mpay->driver('wechat')->gateway('mp')->pay($config_biz);
+
+    }
+
+
+    public function jump_dfw()
+    {
+        $user_id = Request::instance()->get('user_id');
+        $ticket_amount = Request::instance()->get('amount');
+
+        $ip = Request::instance()->ip();
+        if(empty($user_id)) {
+            $this->redirect('/pay/', 302);
+        }
 
         $api = 'http://api.le6ss.cn/api/precreatetrade';
         $orderid = generate_order();
@@ -149,13 +179,14 @@ class Pay extends Controller
         // $this->redirect('http://www.baidu.com', 302);
     }
 
-    public function notify()
+    public function notify_dfw()
     {
         try {
             $request = Request::instance();
-            Log::record($_POST, 'info');
+            $ndata = $_POST ? $_POST : file_get_contents('php://input');
+            Log::record($ndata, 'info');
 
-            $params = json_decode($_POST, 'info');
+            $params = json_decode($ndata, 'info');
             /*
             Array
             (

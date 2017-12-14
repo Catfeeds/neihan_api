@@ -21,7 +21,8 @@
         "wxpay/wxpay": "0.0.5",
         "thenbsp/wechat": "^2.0",
         "overtrue/wechat": "^3.3",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "yansongda/pay": "^1.2"
     },
     "extra": {
         "think-path": "thinkphp"
