@@ -127,6 +127,7 @@ class Pay extends Controller
         $body = $response->getBody();
         $remainingBytes = $body->getContents();
         $ret = json_decode($remainingBytes, true);
+        Log::record($ret, 'info');
         if(strtolower($ret['resultCode']) === 'success') {
             $ticket = New UserMpTicket;
             $ticket->data([
@@ -155,6 +156,7 @@ class Pay extends Controller
 
             $query_string = file_get_contents('php://input');
             Log::record($query_string, 'info');
+            Log::record($_POST, 'info');
 
             $params = array(
                 'resultCode' => $request->param('resultCode'),
