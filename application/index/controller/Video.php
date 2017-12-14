@@ -427,7 +427,9 @@ class Video extends Controller
                 $user->save();
 
                 UserPromotion::where('user_id', $user_id)->update(['status' => 1]);
-            } elseif($groups >= 3 && $user->promotion == 2) {
+
+            } elseif($groups >= 3 && $user->promotion == 2 && $user->user_mp_id) {
+
                 $user->promotion = 3;
 
                 # 生成一个公众号二维码
@@ -446,7 +448,7 @@ class Video extends Controller
                 UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
 
                 # 如果你是一个代理, 那就不能做别人的代理了
-                $exists = UserPromotionGrid::where('user_id', $usorder->user_id)->count();
+                $exists = UserPromotionGrid::where('user_id', $user_id)->count();
                 if($exists) {
                     return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
                 }
@@ -454,7 +456,8 @@ class Video extends Controller
                 $psettings = SettingPromotion::get(1);
 
                 # 加代理
-                $user_promo = UserPromotion::where('user_id', $usorder->user_id)->find();
+                $user_promo = UserPromotion::where('user_id', $user_id)->find();
+
                 $user_promo->status = 2;
                 $user_promo->save();
                 # 加钱

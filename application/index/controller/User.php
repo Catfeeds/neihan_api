@@ -418,16 +418,14 @@ class User extends Controller
     public function promotion_init()
     {
         try {
-            $request = Request::instance();
-
-            $user_id = $request->param('user_id');
-            $from_user  = explode('|', $request->param('from_user'));
-
+            $user_id = Request::instance()->param('user_id');
+            $from_user = explode('|', Request::instance()->param('from_user_id'));
             if(count($from_user) == 1) {
                 $from_user[] = 0;
             }
-            $from_user_id = intval($from_user[0]);
-            $user_mp_id = intval($from_user[1]);
+
+            $from_user_id = $from_user[0];
+            $user_mp_id = $from_user[1];
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -444,6 +442,11 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
             if(!empty($user_mp_id)) {
+                $user->user_mp_id = $user_mp_id;
+                $user->save();
+            }
+
+            if(!empty($user_mp_id) && !$user->user_mp_id) {
                 $user->user_mp_id = $user_mp_id;
                 $user->save();
             }
@@ -467,6 +470,32 @@ class User extends Controller
                     $user->promotion_time = time();
                 }
                 $user->save();
+
+                $user_promo = UserPromotion::where('parent_user_id', $from_user_id)
+                    ->where('user_id', $user_id)->count();
+                if(empty($user_promo)) {
+                    $user_promo = New UserPromotion;
+                    $user_promo->data([
+                        'parent_user_id' => $from_user_id,
+                        'user_id' => $user_id,
+                        'status' => 0,
+                        'type' => 0
+                    ]);
+                    $user_promo->save();
+                }
+
+                $user_balance = UserPromotionBalance::where('user_id', $user_id)->count();
+                if(empty($user_balance)) {
+                    $user_balance = New UserPromotionBalance;
+                    $user_balance->data([
+                        'user_id' => $user_id,
+                        'commission' => 0,
+                        'commission_avail' => 0
+                    ]);
+                    $user_balance->save();
+                }
+            } elseif($user->promotion == 1 && $user_mp_id) {
+                User_Model::where('id', $user_id)->update(['promotion'=>2, 'promotion_time'=> time()]);
 
                 $user_promo = UserPromotion::where('parent_user_id', $from_user_id)
                     ->where('user_id', $user_id)->count();
