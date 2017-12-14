@@ -94,7 +94,7 @@ class Pay extends Controller
 
         $api = 'http://api.le6ss.cn/api/precreatetrade';
         $orderid = generate_order();
-        $ticket_amount = '0.01';
+        $ticket_amount = '1';
 
         $data = array(
             'uid' => $this->payconfig['uid'],
@@ -132,6 +132,8 @@ class Pay extends Controller
             $ticket->save();
 
             $this->redirect($ret['payUrl'], 302);
+        } else {
+            return $ret['message'];
         }
 
         // $this->redirect('http://www.baidu.com', 302);
