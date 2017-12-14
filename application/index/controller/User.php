@@ -483,7 +483,7 @@ class User extends Controller
                     $user_balance->save();
                 }
             } elseif($user->promotion == 1 && $user_mp_id) {
-                User_Model::where('user_id', $user_id)->update(['promotion'=>2, 'promotion_time'=> time()]);
+                User_Model::where('id', $user_id)->update(['promotion'=>2, 'promotion_time'=> time()]);
 
                 $user_promo = UserPromotion::where('parent_user_id', $from_user_id)
                     ->where('user_id', $user_id)->count();
