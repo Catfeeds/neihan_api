@@ -5,6 +5,7 @@ use think\Controller;
 use think\Response;
 use think\Request;
 use think\Config;
+use think\Log;
 
 
 use app\index\model\UserMpTicket;
