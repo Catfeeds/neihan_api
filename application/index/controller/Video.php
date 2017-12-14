@@ -11,6 +11,7 @@ use think\Config;
 use think\Cache;
 
 use app\index\model\User;
+use app\index\model\UserMp;
 use app\index\model\UserShare;
 use app\index\model\UserLog;
 use app\index\model\Video as Video_Model;
