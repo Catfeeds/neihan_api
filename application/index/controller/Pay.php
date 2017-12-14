@@ -65,8 +65,8 @@ class Pay extends Controller
             'mchName' => 'iphone8',
             'orderNo' => $orderid,
             'price' => $ticket_amount,
-            'backUrl' => 'http://www.zyo69.cn/pay/success',
-            'postUrl' => 'http://www.zyo69.cn/pay/notify',
+            'backUrl' => Request::instance()->domain().'/success',
+            'postUrl' => Request::instance()->domain().'/pay/notify',
             'payType' => 'h5pay'
         ];
 
@@ -140,8 +140,8 @@ class Pay extends Controller
             'orderNo' => $orderid,
             'mchName' => 'iphone8',
             'price' => strval($ticket_amount),
-            'backUrl' => 'http://www.zyo69.cn/pay/success',
-            'postUrl' => 'http://www.zyo69.cn/pay/notify',
+            'backUrl' => Request::instance()->domain().'/pay/success',
+            'postUrl' => Request::instance()->domain().'/pay/notify',
             'payType' => 'h5pay'
         );
 
