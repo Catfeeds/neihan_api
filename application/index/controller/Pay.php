@@ -155,7 +155,7 @@ class Pay extends Controller
             $request = Request::instance();
             Log::record($_POST, 'info');
 
-            # $params = json_decode($_POST, 'info');
+            $params = json_decode($_POST, 'info');
             /*
             Array
             (
@@ -169,15 +169,14 @@ class Pay extends Controller
             )
             */
 
-            $params = json_decode('{"message":"\u652F\u4ED8\u6210\u529F","orderNo":"20171214143813575","payNo":"35107000520171214144801335","payPrice":"1.00","resultCode":"success","sign":"BF6DB3ECB47FBE100A5884E767ACBAA3","sysOrderNo":"17946f34ba2772f4"}', true);
+            # $params = json_decode('{"message":"\u652F\u4ED8\u6210\u529F","orderNo":"20171214143813575","payNo":"35107000520171214144801335","payPrice":"1.00","resultCode":"success","sign":"BF6DB3ECB47FBE100A5884E767ACBAA3","sysOrderNo":"17946f34ba2772f4"}', true);
 
             $sign = $params['sign'];
             unset($params['sign']);
             $ussign = generate_sign($params, $this->payconfig['key']);
             if(strtoupper($sign) != $ussign) {
-                return 'success1';
+                return 'success';
             }
-            echo 1111;die;
 
             $usorder = UserMpTicket::where('orderid', $params['orderNo'])->find();
             if(empty($usorder) || $usorder['status'] === 1) {
@@ -232,9 +231,9 @@ class Pay extends Controller
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             }
         } catch (Exception $e) {
-            return 'FAIL';
+            return 'fail';
         }
-        return 'SUCCESS';
+        return 'success';
     }
 
 
