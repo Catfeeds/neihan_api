@@ -416,7 +416,13 @@ class User extends Controller
     {
         try {
             $user_id = Request::instance()->param('user_id');
-            $from_user_id = Request::instance()->param('from_user_id');
+            $from_user = explode('|', Request::instance()->param('from_user_id'));
+            if(count($from_user) == 1) {
+                $from_user[] = 0;
+            }
+
+            $from_user_id = $from_user[0];
+            $user_mp_id = $from_user[1];
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -431,6 +437,11 @@ class User extends Controller
                 $data['c'] = -1024;
                 $data['m'] = 'User NotExists';
                 return Response::create($data, 'json')->code(200);
+            }
+
+            if(!empty($user_mp_id) && !$user->user_mp_id) {
+                $user->user_mp_id = $user_mp_id;
+                $user->save();
             }
 
             if(!empty($from_user_id)) {
@@ -471,8 +482,34 @@ class User extends Controller
                     ]);
                     $user_balance->save();
                 }
+            } elseif($user->promotion == 1 && !empty($user_mp_id)) {
+                $user->promotion = 2;
+                $user->promotion_time = time();
+                $user->save();
 
+                $user_promo = UserPromotion::where('parent_user_id', $from_user_id)
+                    ->where('user_id', $user_id)->count();
+                if(empty($user_promo)) {
+                    $user_promo = New UserPromotion;
+                    $user_promo->data([
+                        'parent_user_id' => $from_user_id,
+                        'user_id' => $user_id,
+                        'status' => 0,
+                        'type' => 0
+                    ]);
+                    $user_promo->save();
+                }
 
+                $user_balance = UserPromotionBalance::where('user_id', $user_id)->count();
+                if(empty($user_balance)) {
+                    $user_balance = New UserPromotionBalance;
+                    $user_balance->data([
+                        'user_id' => $user_id,
+                        'commission' => 0,
+                        'commission_avail' => 0
+                    ]);
+                    $user_balance->save();
+                }
             }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
