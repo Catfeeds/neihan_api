@@ -826,7 +826,7 @@ class Video extends Controller
         file_put_contents($codefile, $resp);
 
 
-        $file = 'static/image/p1.png';
+        $file = 'static/image/p3.png';
         $file_1 = substr($codefile, 2);
         $outfile = "static/code/p-".$code_filename.".jpeg";
 
@@ -842,7 +842,7 @@ class Video extends Controller
 
         // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
-        imagecopy($im, $stamp, 200, 670, 0, 0, $sx, $sy);
+        imagecopy($im, $stamp, 160, 650, 0, 0, $sx, $sy);
 
         // 输出图像并释放内存
         imagejpeg($im, $outfile, 100, NULL);
