@@ -188,9 +188,8 @@ class User extends Controller
                 'ptype' => $ptype,
                 'qrcode' => '',
             ];
-            if(!empty($user->promotion_qrcode)) {
-                $data['d']['qrcode'] = $request->domain().$user->promotion_qrcode_new;
-            }
+            
+            $data['d']['qrcode'] = $user->mp_qrcode ? $request->domain().strval($user->mp_qrcode) : $request->domain().strval($user->promotion_qrcode_new);
 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
