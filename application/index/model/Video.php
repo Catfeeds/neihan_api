@@ -56,14 +56,11 @@ class Video extends Model
                 'share_count' => $record['share_count']+$record['c_share_count'],
                 'comment_count' => $record['comment_count']+$record['c_comment_count'],
                 'is_digg' => 0,
-                'jump' => 1,
+                'jump' => 0,
                 'level' => $record['level'],
                 'display_click_ratio' => $record['display_click_ratio'],
                 'comments' => [],
             );
-            if($record['category_id'] == 1111) {
-                $info['jump'] = 1;
-            }
             if($record['source'] == 'neihan') {
                 $info['url'] = 'http://aweme.snssdk.com/aweme/v1/playwm/?video_id='.$record['video_id'].'&line=0';
             }

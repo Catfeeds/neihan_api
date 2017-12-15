@@ -140,6 +140,10 @@ class Video extends Controller
                     $ad['extraData'] = '';
                 }
                 $val['ad'] = $ad;
+
+                if($this->app_code == 'neihan_1') {
+                    $val['jump'] = 1;
+                }
             }
 
             # 更新视频展示数
