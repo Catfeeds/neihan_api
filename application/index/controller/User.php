@@ -960,13 +960,17 @@ class User extends Controller
     }
 
 
-    private function _access_token()
+    private function _access_token($app_code='')
     {
         try {
             $is_expired = true;
 
             $access_token = [];
-            $access_token_file = './../application/extra/access_token_'.$this->app_code.'.txt';
+            if(empty($app_code)) {
+                $app_code = $this->app_code;
+            }
+            $access_token_file = './../application/extra/access_token_'.$app_code.'.txt';
+            
             if(file_exists($access_token_file)) {
                 $access_token = json_decode(file_get_contents($access_token_file), true);
             }
@@ -978,7 +982,7 @@ class User extends Controller
 
             if($is_expired) {
                 $wxconfig = Config::get('wxconfig');
-                $resp = curl_get($wxconfig['token_apis'][$this->app_code]);
+                $resp = curl_get($wxconfig['token_apis'][$app_code]);
                 if(!empty($resp)) {
                     $access_token = json_decode($resp, true);
                     if(array_key_exists('expires_in', $access_token)) {
