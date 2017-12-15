@@ -195,27 +195,6 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            // $settings = Setting::get(1);
-            $app_code = 'neihan_1';
-            $comconfig = Config::get('comconfig');
-
-            $version = $request->get('version');
-            if(empty($version)) {
-                $version = '10000';
-            }
-            foreach ($comconfig['domain_settings'] as $key => $value) {
-                if(strrpos($request->domain(), $key) !== false) {
-                    $app_code = $value;
-                    break;
-                }
-            }
-            $result = Setting::where('app_code', $app_code)
-                ->where('version', $version)
-                ->limit(1)
-                ->order('id', 'desc')
-                ->select();
-            $settings = $result[0];
-
             $video_model = new Video_Model;
             $video_awsome = $video_model->get_videos($user_id, $category, [], 4, "display_click_ratio");
 
