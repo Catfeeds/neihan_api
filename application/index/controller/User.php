@@ -69,13 +69,8 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
-            if($this->app_code == 'neihan_1') {
-                $wxconfig = Config::get('wxconfig');
-            } elseif($this->app_code == 'neihan_2') {
-                $wxconfig = Config::get('wxconfig2');
-            }
-            
-            $request_url = $wxconfig['login_api'].'&js_code='.$js_code;
+            $wxconfig = Config::get('wxconfig');
+            $request_url = $wxconfig['login_apis'][$this->app_code].'&js_code='.$js_code;
             $resp = curl_get($request_url);
             if(empty($resp)) {
                 $data['c'] = -1024;
