@@ -435,7 +435,7 @@ class User extends Controller
                 $data['m'] = 'User NotExists';
                 return Response::create($data, 'json')->code(200);
             }
-            if(!empty($user_mp_id)) {
+            if(!empty($user_mp_id) && !$user->user_mp_id) {
                 $user->user_mp_id = $user_mp_id;
                 $user->save();
             }
