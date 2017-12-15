@@ -16,6 +16,20 @@ use app\index\model\UserJump;
 
 class Common extends Controller
 {
+    public function _initialize()
+    {
+        $request = Request::instance();
+        $comconfig = Config::get('comconfig');
+
+        $this->app_code = 'neihan_1';
+        foreach ($comconfig['domain_settings'] as $key => $value) {
+            if(strrpos($request->domain(), $key) !== false) {
+                $this->app_code = $value;
+                break;
+            }
+        }
+    }
+
     /**
      * 显示资源列表
      *
@@ -186,6 +200,39 @@ class Common extends Controller
         imagedestroy($im);
 
         return ['/'.$outfile, $ticket['ticket']];
+    }
+
+    private function _access_token()
+    {
+        try {
+            $is_expired = true;
+
+            $access_token = [];
+            $access_token_file = './../application/extra/access_token_'.$this->app_code.'.txt';
+            if(file_exists($access_token_file)) {
+                $access_token = json_decode(file_get_contents($access_token_file), true);
+            }
+            if(!empty($access_token)) {
+                if($access_token['expires_time'] - time() - 1000 > 0) {
+                    $is_expired = false;
+                }
+            }
+
+            if($is_expired) {
+                $wxconfig = Config::get('wxconfig');
+                $resp = curl_get($wxconfig['token_apis'][$this->app_code]);
+                if(!empty($resp)) {
+                    $access_token = json_decode($resp, true);
+                    if(array_key_exists('expires_in', $access_token)) {
+                        $access_token['expires_time'] = intval($access_token['expires_in']) + time();
+                        file_put_contents($access_token_file, json_encode($access_token));
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $access_token = [];
+        }
+        return $access_token;
     }
 
 }
