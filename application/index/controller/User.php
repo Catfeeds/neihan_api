@@ -457,7 +457,7 @@ class User extends Controller
 
             if($user->promotion == 0) {
                 $usermp = UserMp::where('id', $user->user_mp_id)->find();
-                if($usermp && $usermp->promotion == 1) {
+                if($usermp && $usermp->promotion == 2) {
                     $user->promotion = 2;
                     $user->promotion_time = $usermp->promotion_time;
                 } else {
