@@ -64,6 +64,9 @@ class Video extends Model
             if($record['category_id'] == 1111) {
                 $info['jump'] = 1;
             }
+            if($record['source'] == 'neihan') {
+                $info['url'] = 'http://aweme.snssdk.com/aweme/v1/playwm/?video_id='.$record['video_id'].'&line=0';
+            }
             $ret[] = $info;
         }
         return $ret;
