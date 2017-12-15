@@ -844,7 +844,7 @@ class User extends Controller
             }
 
             $user = User_Model::get($user_id);
-            if(empty($user) || $user->source != 'neihan_1') {
+            if(empty($user)) {
                 $data['c'] = -1024;
                 $data['m'] = '用户不存在';
                 return Response::create($data, 'json')->code(200);
