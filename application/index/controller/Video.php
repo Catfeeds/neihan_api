@@ -124,10 +124,22 @@ class Video extends Controller
                 $data['d'] = $video_model->get_videos_waitting($user_id, $p, $n);
             }
 
-
             $vids = [];
-            foreach ($data['d'] as $val) {
+            foreach ($data['d'] as $k => &$val) {
                 $vids[] = $val['video_id'];
+                $ad = [
+                    'image' => '',
+                    'appId' => '',
+                    'path' => '',
+                    'extraData' => ''
+                ];
+                if($k == 0) {
+                    $ad['image'] = $request->domain().'/static/image/ad-ldh.jpg';
+                    $ad['appId'] = 'wx564a50039dd91934';
+                    $ad['path'] = 'pages/index/index';
+                    $ad['extraData'] = '';
+                }
+                $val['ad'] = $ad;
             }
 
             # 更新视频展示数
