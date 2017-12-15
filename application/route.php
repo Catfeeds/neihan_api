@@ -51,4 +51,5 @@ Route::rule('api/user/form/$','index/User/formid');
 Route::rule('api/jump/$', 'index/Common/jump');
 
 
+Route::rule('api/qrcode/$', 'index/Common/qrcode');
 # Route::rule('api/refresh_qrcode/$', 'index/User/refresh_qrcode');
