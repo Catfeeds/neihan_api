@@ -151,6 +151,70 @@ class Video extends Controller
         return Response::create($data, 'json')->code(200);
     }
 
+    /**
+     * 显示资源列表
+     *
+     * @return \think\Response
+     */
+    public function hot()
+    {
+        try {
+            $request = Request::instance();
+            $p = $request->has('p', 'get') ? $request->get('p/d') : 1;
+            $n = $request->has('n', 'get') ? $request->get('n/d') : 5;
+            $n = 5;
+            $user_id = $request->get('user_id');
+            $order = $request->has('order', 'get') ? $request->get('order') : 'comment';
+            $category = $request->has('category', 'get') ? $request->get('category'): '';
+
+            if(!empty($category)){
+                $category = explode(',', $category);
+            }
+
+            if(empty($category) && $this->app_code == 'neihan_2') {
+                $category = [1112, 1113];
+            }
+
+            $data = array('c' => 0, 'm' => '', 'd' => array());
+
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = 'Arg Missing';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            // $settings = Setting::get(1);
+            $app_code = 'neihan_1';
+            $comconfig = Config::get('comconfig');
+
+            $version = $request->get('version');
+            if(empty($version)) {
+                $version = '10000';
+            }
+            foreach ($comconfig['domain_settings'] as $key => $value) {
+                if(strrpos($request->domain(), $key) !== false) {
+                    $app_code = $value;
+                    break;
+                }
+            }
+            $result = Setting::where('app_code', $app_code)
+                ->where('version', $version)
+                ->limit(1)
+                ->order('id', 'desc')
+                ->select();
+            $settings = $result[0];
+
+            $video_model = new Video_Model;
+            $video_awsome = $video_model->get_videos($user_id, $category, [], 4, "display_click_ratio");
+
+            $data['d'] = $video_awsome;
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        
+        return Response::create($data, 'json')->code(200);
+    }
+
     public function store_list()
     {
         try {
@@ -430,7 +494,8 @@ class Video extends Controller
 
             } elseif($groups >= 3 && $user->promotion == 2 && $user->user_mp_id) {
 
-                $user->promotion = 3;
+                # 默认是金牌代理
+                $user->promotion = 4;
 
                 # 生成一个公众号二维码
                 $mp_qrcode = $this->_generate_qrcode($user->id);
@@ -440,7 +505,7 @@ class Video extends Controller
 
                 UserMp::where('id', $user->user_mp_id)
                     ->update([
-                        'promotion' => 3,
+                        'promotion' => 4,
                         'promotion_qrcode' => $mp_qrcode[0],
                         'qrcode_ticket' => $mp_qrcode[1]
                 ]);

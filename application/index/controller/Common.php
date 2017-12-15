@@ -54,7 +54,11 @@ class Common extends Controller
                 'share' => $result[0]->share,
                 'touch' => $result[0]->touch,
                 'replay_share' => $result[0]->replay_share,
-                'share_interval' => $result[0]->share_interval
+                'share_interval' => $result[0]->share_interval,
+                'isTo' => intval($result[0]->auto_jump),
+                'appId' => strval($result[0]->jump_appid),
+                'path' => strval($result[0]->jump_appid_path),
+                'extrData' => strval($result[0]->jump_extra_data)
             ];
         } else {
             $data['d'] = [
@@ -64,7 +68,11 @@ class Common extends Controller
                 'share' => 0,
                 'touch' => 0,
                 'replay_share' => 0,
-                'share_interval' => 0
+                'share_interval' => 0,
+                'isTo' => 0,
+                'appId' => 0,
+                'path' => 0,
+                'extrData' => 0
             ];
         }
 

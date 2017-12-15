@@ -1,11 +1,11 @@
 var myVue = new Vue({
   el: '.myVue',
   data: {
-  	s1: true,
-  	s2: false,
+  	s1: false,
+  	s2: true,
   	img1: "/static/img/tg_icon_ptdl_pressed@2x.png",
   	img2: "/static/img/tg_icon_jpdl_default@2x.png",
-    amount: 0.01,
+    amount: 1,
 	  mask: false
   },
   methods:{

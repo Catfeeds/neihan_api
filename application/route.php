@@ -33,6 +33,8 @@ Route::rule('api/video/count/$','index/Video/count');
 Route::rule('api/video/share/$','index/Video/share');
 Route::rule('api/video/comment/$','index/Video/comment');
 Route::rule('api/video/store/$','index/Video/store');
+Route::rule('api/video/hot/$','index/Video/hot');
+
 Route::rule('api/comment/count/$','index/Comment/count');
 Route::rule('api/user/init/$','index/User/init');
 Route::rule('api/user/update/$','index/User/update');

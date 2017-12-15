@@ -33,7 +33,6 @@ class Video extends Model
             $sql_where .= " AND c_display_count >= {$gtcount}";
         }
 
-
         $sql_where .= " AND group_id NOT IN (SELECT video_id FROM videos_display_logs WHERE user_id = :user_id)";
         $sql_order = " ORDER BY ".$order." DESC, play_count DESC ";
         $sql_limit = " LIMIT ".(($p-1)*$n).", {$n}";
