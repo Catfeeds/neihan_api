@@ -198,7 +198,7 @@ class Video extends Controller
             }
 
             $video_model = new Video_Model;
-            $video_awsome = $video_model->get_videos($user_id, $category, [], 4, "display_click_ratio");
+            $video_awsome = $video_model->get_videos($user_id, $category, [], 4, "display_click_ratio", 0, 0);
 
             $data['d'] = $video_awsome;
         } catch (Exception $e) {
