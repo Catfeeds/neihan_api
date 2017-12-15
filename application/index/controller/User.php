@@ -440,14 +440,9 @@ class User extends Controller
                 $user->save();
             }
 
-            if(!empty($user_mp_id) && !$user->user_mp_id) {
-                $user->user_mp_id = $user_mp_id;
-                $user->save();
-            }
-
             if(!empty($from_user_id)) {
-                $parent_user = User_Model::get($from_user_id);
-                if($parent_user->promotion != 3) {
+                $parent_user = UserPromotion::get(['user_id' => $from_user_id]);
+                if($parent_user->status != 2) {
                     $data['c'] = -1024;
                     $data['m'] = 'From User Is Not Valid';
                     return Response::create($data, 'json')->code(200);
