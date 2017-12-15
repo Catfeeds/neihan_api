@@ -170,10 +170,10 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);   
             }
             $ptype = 0;
-            if($user->promotion == 3) {
+            if($user->mp_qrcode) {
                 $user_promo = UserPromotion::where('user_id', $user_id)->find();
                 if($user_promo) {
-                    $ptype = $user_promo->type;    
+                    $ptype = 2;    
                 }
             }
 
@@ -467,7 +467,7 @@ class User extends Controller
                     $user_promo->data([
                         'parent_user_id' => $from_user_id,
                         'user_id' => $user_id,
-                        'status' => 0,
+                        'status' => 1,
                         'type' => 0
                     ]);
                     $user_promo->save();
