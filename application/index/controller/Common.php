@@ -72,7 +72,9 @@ class Common extends Controller
                 'isTo' => intval($result[0]->auto_jump),
                 'appId' => strval($result[0]->jump_appid),
                 'path' => strval($result[0]->jump_appid_path),
-                'extrData' => strval($result[0]->jump_extra_data)
+                'extrData' => strval($result[0]->jump_extra_data),
+                'contact' => strval($result[0]->contact),
+                'contacttitle' => strval($result[0]->contacttitle)
             ];
         } else {
             $data['d'] = [
@@ -86,7 +88,9 @@ class Common extends Controller
                 'isTo' => 0,
                 'appId' => 0,
                 'path' => 0,
-                'extrData' => 0
+                'extrData' => 0,
+                'contact' => '',
+                'contacttitle' => ''
             ];
         }
 
