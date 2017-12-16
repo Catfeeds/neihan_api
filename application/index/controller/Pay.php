@@ -110,7 +110,7 @@ class Pay extends Controller
 
         $config_biz = [
             'out_trade_no' => generate_order(),
-            'total_fee' => 0.01,
+            'total_fee' => '1',
             'body' => 'test body',
             'spbill_create_ip' => $ip,
             'openid' => $usermp->openid,
