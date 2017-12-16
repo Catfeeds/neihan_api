@@ -333,7 +333,7 @@ class Msg extends Controller
         if(empty($usermp)) {
             $usermp = new UserMp;
             $usermp->data([
-                'parent_user_id' => $parent_user ? $parent_user->id : 0,
+                'parent_user_id' => 0,
                 'user_name' => $resp['nickname'],
                 'user_avatar' => $resp['headimgurl'],
                 'gender' => $resp['sex'],
