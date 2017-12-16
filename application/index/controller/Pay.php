@@ -116,11 +116,11 @@ class Pay extends Controller
 
         $mpay = new MPay($this->payconfig['mp2']);
 
-        $uniorder = $mpay->driver('wechat')->gateway('mp')->pay($config_biz)
+        $uniorder = $mpay->driver('wechat')->gateway('mp')->pay($config_biz);
 
         $this->assign('user_id', $user_id);
         $this->assign('uniorder', $uniorder);
-        return $this->fetch('pay_mp');;
+        return $this->fetch('pay_mp');
 
     }
 
