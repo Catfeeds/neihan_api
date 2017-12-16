@@ -12,7 +12,9 @@ use app\index\model\UserMp;
 use app\index\model\User;
 
 use Yansongda\Pay\Pay as MPay;
-use Illuminate\Http\Request as MRequest;
+
+use Thenbsp\Wechat\Payment\Notify;
+use Symfony\Component\HttpFoundation\Request as WRequest;
 
 use GuzzleHttp;
 
@@ -95,14 +97,34 @@ class PayMp extends Controller
     }
 
 
-    public function notify(MRequest $request)
+    public function notify()
     {
-        $pay = new Pay($this->payconfig['mp2']);
-        $verify = $pay->driver('wechat')->gateway('mp')->verify($request->getContent());
+        $wrequest = WRequest::createFromGlobals();
+        $notify = new Notify($wrequest);
+
+        if(!$notify->containsKey('out_trade_no')) {
+            $notify->fail('Invalid Request');
+        }
+
+        $verify = $notify->toArray();
+
+        $wechat_order = New WechatOrder;
+        $wechat_order->data($verify);
+        $wechat_order->save();
+
         $data = ['return_code' => 'SUCCESS', 'return_msg' => 'OK'];
 
         Log::record($verify, 'info');
         if ($verify) {
+            $wxconfig = $this->payconfig['mp2'];
+            $sign = $verify['sign'];
+            unset($verify['sign']);
+
+            if($sign != generate_sign($verify, $wxconfig['wechat']['key'])) {
+                $data = ['return_code' => 'FAIL', 'return_msg' => '签名失败'];
+                return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            }
+
             $usorder = UserMpTicket::where('orderid', $verify['out_trade_no'])->find();
             if (empty($usorder) || $usorder->status == 1) {
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
