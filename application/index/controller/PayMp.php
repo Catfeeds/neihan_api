@@ -165,6 +165,7 @@ class PayMp extends Controller
 
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
                 $token = $this->_access_token('neihan_mp');
+                Log::record($token, 'info');
                 $data = [
                     'touser' => $usermp->openid,
                     'msgtype' => 'miniprogrampage',
