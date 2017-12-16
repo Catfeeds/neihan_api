@@ -43,11 +43,10 @@ class Pay extends Controller
         if(preg_match('/micromessenger/i', $agent)) {
             $isweixin = 1;
         }
-        $isweixin = 0;
         
         $this->assign('user_id', $user_id);
         $this->assign('isweixin', $isweixin);
-        return $this->fetch('pay');;
+        return $this->fetch('pay');
     }
 
     public function jump_zft()
@@ -94,10 +93,9 @@ class Pay extends Controller
         $this->redirect($redirect_url, 302);
     }
 
-    public function jump()
+    public function index_mp()
     {
         $user_id = Request::instance()->get('user_id');
-        $ticket_amount = Request::instance()->get('amount');
 
         $ip = Request::instance()->ip();
         if(empty($user_id)) {
@@ -118,12 +116,16 @@ class Pay extends Controller
 
         $mpay = new MPay($this->payconfig['mp2']);
 
-        return $mpay->driver('wechat')->gateway('mp')->pay($config_biz);
+        $uniorder = $mpay->driver('wechat')->gateway('mp')->pay($config_biz)
+
+        $this->assign('user_id', $user_id);
+        $this->assign('uniorder', $uniorder);
+        return $this->fetch('pay_mp');;
 
     }
 
 
-    public function jump_mp()
+    public function jump()
     {
         $user_id = Request::instance()->get('user_id');
         $ticket_amount = Request::instance()->get('amount');
