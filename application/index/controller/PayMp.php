@@ -10,6 +10,7 @@ use think\Log;
 use app\index\model\UserMpTicket;
 use app\index\model\UserMp;
 use app\index\model\User;
+use app\index\model\WechatOrder;
 
 use Yansongda\Pay\Pay as MPay;
 
