@@ -15,10 +15,14 @@ use think\Route;
 Route::rule('__miss__', 'index/Error/index');
 
 Route::rule('pay/$', 'index/Pay/index');
-Route::rule('pay/mp/$', 'index/Pay/index_mp');
 Route::rule('pay/jump/$', 'index/Pay/jump');
 Route::rule('pay/success/$', 'index/Pay/page');
 Route::rule('pay/notify/$', 'index/Pay/notify');
+
+Route::rule('pay/mp/$', 'index/PayMp/index');
+Route::rule('pay/mp/jump/$', 'index/PayMp/jump');
+Route::rule('pay/mp/notify/$', 'index/PayMp/notify');
+Route::rule('pay/mp/success/$', 'index/PayMp/page');
 
 Route::rule('api/doc/$','index/Index/doc');
 Route::rule('api/msg/$', 'index/Msg/index');
