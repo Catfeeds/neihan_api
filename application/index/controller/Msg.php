@@ -62,6 +62,10 @@ class Msg extends Controller
                             'thumb_url' => 'http://www.jialejiabianli.cn/static/image/msg_logo.png'
                         ]
                     ];
+
+                    if($this->app_code == 'neihan_3') {
+                        $data['link']['url'] = 'http://mp.weixin.qq.com/s/RsXZuM9esXpxXBRaSlJXmA';
+                    }
                     $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
                 }
             }
@@ -279,6 +283,99 @@ class Msg extends Controller
         }
         return 'success';
     }
+
+
+    public function mp2()
+    {
+        $sign = Request::instance()->get('signature');
+        $msg_sign = Request::instance()->get('msg_signature');
+        $timestamp = Request::instance()->get('timestamp');
+        $nonce = Request::instance()->get('nonce');
+        $echostr = Request::instance()->get('echostr');
+        if (!empty($echostr)) {
+            return $echostr;
+        }
+
+        $xml = file_get_contents('php://input');
+        Log::record($xml, 'info');
+
+        if (!trim($xml)) {
+            return 'success';
+        }
+
+        $encrypt_data = xml_to_data($xml);
+
+        $wxmsg_mp = Config::get('wxmsg_mp');
+        $wxmsg_config = $wxmsg_mp['neihan_mp2'];
+        $wxmsg = new \WxMsg\WXBizMsgCrypt($wxmsg_config['token'], $wxmsg_config['aes_key'], $wxmsg_config['appid']);
+        $format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%s]]></Encrypt></xml>";
+        $from_xml = sprintf($format, $encrypt_data['Encrypt']);
+
+        $decrypt_xml = '';
+        $errcode = $wxmsg->decryptMsg($msg_sign, $timestamp, $nonce, $from_xml, $decrypt_xml);
+        if ($errcode == 0) {
+            $origin_data = xml_to_data($decrypt_xml);
+        } else {
+            $origin_data = [];
+            return 'success';
+        }
+
+        Log::record($origin_data, 'info');
+
+        $token = $this->_access_token('neihan_mp2');
+        $api = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token['access_token'].'&openid='.$origin_data['FromUserName'].'&lang=zh_CN';
+        $resp = curl_get($api);
+        Log::record($resp, 'info');
+        $resp = json_decode($resp, true);
+
+        # 创建用户
+        $usermp = UserMp::get(['openid' => $origin_data['FromUserName']]);
+        if(empty($usermp)) {
+            $usermp = new UserMp;
+            $usermp->data([
+                'parent_user_id' => $parent_user ? $parent_user->id : 0,
+                'user_name' => $resp['nickname'],
+                'user_avatar' => $resp['headimgurl'],
+                'gender' => $resp['sex'],
+                "city" =>  $resp['city'],
+                "province" => $resp['province'],
+                "country" => $resp['country'],
+                "unionid" => isset($resp['unionid']) ? $resp['unionid'] : '',
+                'openid'  => $origin_data['FromUserName'],
+                'source' => 'neihan_mp_1',
+                'subscribe' => 1
+            ]);
+            $usermp->save();    
+        } else {
+            $usermp->user_name = $resp['nickname'];
+            $usermp->user_avatar = $resp['headimgurl'];
+            $usermp->gender = $resp['sex'];
+            $usermp->city = $resp['city'];
+            $usermp->province = $resp['province'];
+            $usermp->country = $resp['country'];
+            $usermp->unionid = isset($resp['unionid']) ? $resp['unionid'] : '';
+            $usermp->subscribe = 1;
+            $usermp->save();
+        }
+
+        $data = array(
+            'ToUserName' => $origin_data['FromUserName'],
+            'FromUserName' => $origin_data['ToUserName'],
+            'CreateTime' => time(),
+            'MsgType' => 'news',
+            'ArticleCount' => 1,
+            'Articles' => array(
+                array(
+                    'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
+                    'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
+                    'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                    'Url' => Request::instance()->domain().'/pay?user_id='.$usermp->id
+                )
+            )
+        ); 
+        return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+    }
+
 
     private function _access_token($app_code='')
     {

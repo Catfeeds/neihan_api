@@ -22,6 +22,7 @@ Route::rule('pay/notify/$', 'index/Pay/notify');
 Route::rule('api/doc/$','index/Index/doc');
 Route::rule('api/msg/$', 'index/Msg/index');
 Route::rule('api/msg/mp/$', 'index/Msg/mp');
+Route::rule('api/msg/mp2/$', 'index/Msg/mp2');
 
 Route::rule('api/settings/$', 'index/Common/index');
 Route::rule('api/settings/promo/$', 'index/Common/promotion');

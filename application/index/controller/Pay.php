@@ -93,7 +93,7 @@ class Pay extends Controller
         $this->redirect($redirect_url, 302);
     }
 
-    public function jump_mp()
+    public function jump()
     {
         $user_id = Request::instance()->get('user_id');
         $ticket_amount = Request::instance()->get('amount');
@@ -115,14 +115,14 @@ class Pay extends Controller
             'openid' => $usermp->openid,
         ];
 
-        $mpay = new MPay($this->payconfig['mp1']);
+        $mpay = new MPay($this->payconfig['mp2']);
 
         return $mpay->driver('wechat')->gateway('mp')->pay($config_biz);
 
     }
 
 
-    public function jump()
+    public function jump_mp()
     {
         $user_id = Request::instance()->get('user_id');
         $ticket_amount = Request::instance()->get('amount');
