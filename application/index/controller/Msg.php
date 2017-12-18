@@ -92,7 +92,12 @@ class Msg extends Controller
         }
 
         $encrypt_data = xml_to_data($xml);
+        $origin_data = $encrypt_data;
+        if(empty($origin_data)) {
+            return 'success';
+        }
 
+        /*
         $wxmsg_mp = Config::get('wxmsg_mp');
         $wxmsg_config = $wxmsg_mp['neihan_mp'];
         $wxmsg = new \WxMsg\WXBizMsgCrypt($wxmsg_config['token'], $wxmsg_config['aes_key'], $wxmsg_config['appid']);
@@ -107,6 +112,7 @@ class Msg extends Controller
             $origin_data = [];
             return 'success';
         }
+        */
 
         Log::record($origin_data, 'info');
 
