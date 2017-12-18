@@ -25,56 +25,59 @@ total_send = 0
 
 
 def send_msg(arg):
-    global total_send
+    try:
+        global total_send
 
-    u = arg['u']
-    video = arg['video']
-    access_token = arg['access_token']
-    formids = _mgr.get_user_formid(u['id'])
-    if not formids:
-        logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
-        return None
-
-    if arg['ulevel'] == 2:
-        if len(formids) < 2:
+        u = arg['u']
+        video = arg['video']
+        access_token = arg['access_token']
+        formids = _mgr.get_user_formid(u['id'])
+        if not formids:
+            logging.info('用户{}-{}无有效的formid'.format(u['id'], u['user_name'].encode('utf8')))
             return None
 
-    formid = formids[0]
-    params = {
-        "touser": u['openid'].encode('utf8'),
-        "template_id": TEMPLATE_ID[u['source']],
-        "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id']),
-        "form_id": formid['form_id'].encode('utf8'),
-        "data": {
-            "keyword1": {
-                "value": video['title'].encode('utf8'),
-                "color": "#173177",
-            },
-            "keyword2": {
-                "value": video['comment'].encode('utf8'),
-                "color": "#173177"
+        if arg['ulevel'] == 2:
+            if len(formids) < 2:
+                return None
+
+        formid = formids[0]
+        params = {
+            "touser": u['openid'].encode('utf8'),
+            "template_id": TEMPLATE_ID[u['source']],
+            "page": "pages/index/index?video_id={}&from_user_id={}".format(video['group_id'].encode('utf8'), video['from_user_id']),
+            "form_id": formid['form_id'].encode('utf8'),
+            "data": {
+                "keyword1": {
+                    "value": video['title'].encode('utf8'),
+                    "color": "#173177",
+                },
+                "keyword2": {
+                    "value": video['comment'].encode('utf8'),
+                    "color": "#173177"
+                }
             }
         }
-    }
-    _mgr.user_formid_used(formid['id'])
+        _mgr.user_formid_used(formid['id'])
 
-    api = WX_MSG_API + access_token['access_token']
-    resp = requests.post(api, json.dumps(params, ensure_ascii=False))
-    print resp
-    if resp and resp.status_code == 200:
-        content = resp.json()
-        if content['errcode'] == 0:
-            mdetail = {
-                'message_id': arg['message_id'],
-                'from_user_id': video['from_user_id'],
-                'group_id': video['group_id'],
-                'user_id': u['id']
-            }
-            _mgr.save_message_send_detail(mdetail)
-            total_send += 1
-            logging.info('用户{}-{}的消息推送成功'.format(u['openid'], u['user_name'].encode('utf8')))
-        else:
-            logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['errmsg']))
+        api = WX_MSG_API + access_token['access_token']
+        resp = requests.post(api, json.dumps(params, ensure_ascii=False))
+        print resp
+        if resp and resp.status_code == 200:
+            content = resp.json()
+            if content['errcode'] == 0:
+                mdetail = {
+                    'message_id': arg['message_id'],
+                    'from_user_id': video['from_user_id'],
+                    'group_id': video['group_id'],
+                    'user_id': u['id']
+                }
+                _mgr.save_message_send_detail(mdetail)
+                total_send += 1
+                logging.info('用户{}-{}的消息推送成功'.format(u['openid'], u['user_name'].encode('utf8')))
+            else:
+                logging.info('用户{}的消息推送失败, 失败原因{}'.format(u['openid'], content['errmsg']))
+    except:
+        pass
 
 
 def main():
