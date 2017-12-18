@@ -4,7 +4,11 @@ import requests
 import wxtoken
 from settings import *
 
+'''
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeLDibaFW1iaGmL0uia5Ebl0jZfMiczcoaIp6AjPYwQpJD2wpTRY1NQOYKcA/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNs8sVJ8-2Gm4vqAvR-B4jKJk'}
 
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDetMNOE0CrnpxUficW3aM4fgLJkGsunBFNW6iaZX9P5PzgUuyDU3OVMrDQ/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNsyzoBLViAdlidUy4hNgX2gM'}
+'''
 def run(filename=''):
     if not os.path.isfile(filename):
         logging.info('图片不存在')

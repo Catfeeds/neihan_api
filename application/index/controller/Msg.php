@@ -197,7 +197,7 @@ class Msg extends Controller
                         array(
                             'Title' => '小程序风口，加入代理，手把手教你躺赚百元【小程序代理商躺盈教程】',
                             'Description' => '解密内涵极品君小程序代理机制轻松赚钱之路',
-                            'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg',
+                            'PicUrl' => 'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeLDibaFW1iaGmL0uia5Ebl0jZfMiczcoaIp6AjPYwQpJD2wpTRY1NQOYKcA/0?wx_fmt=png',
                             'Url' => Request::instance()->domain().'/pay?user_id='.$usermp->id
                         )
                     )
