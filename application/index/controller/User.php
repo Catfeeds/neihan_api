@@ -927,7 +927,7 @@ class User extends Controller
                 $user_withdraw->status = 2;
                 $user_withdraw->errmsg = $result->err_code.'|'.$result->err_code_des;
                 $user_withdraw->ext = json_encode($result);
-                $data = ['c' => -1024, 'm'=> '系统升级中，请明日再来^-^', 'd' => []];
+                $data = ['c' => -1024, 'm'=> '系统升级中...', 'd' => []];
 
                 # 失败了再把钱加回去
                 $balance->commission_avail += $amount;
