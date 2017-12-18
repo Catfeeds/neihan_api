@@ -436,7 +436,11 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);
             }
             if(!empty($user_mp_id) && !$user->user_mp_id) {
+                $usermp = UserMp::get($user_mp_id);
+
                 $user->user_mp_id = $user_mp_id;
+                $user->user_name = $usermp->user_name;
+                $user->gender = $usermp->gender;
                 $user->save();
             }
 
