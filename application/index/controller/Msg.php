@@ -229,7 +229,7 @@ class Msg extends Controller
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
                 Log::record($resp, 'info');
                 return 'success';
-            } elseif($usermp->promotion == 3) {
+            } elseif($usermp->promotion >= 3) {
                 $wxconfig = Config::get('wxconfig');
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
 
