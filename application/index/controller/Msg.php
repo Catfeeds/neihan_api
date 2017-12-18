@@ -290,6 +290,7 @@ class Msg extends Controller
             */
 
             $token = $this->_access_token('neihan_mp');
+            $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token='.$token['access_token'];
             $data = [
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
