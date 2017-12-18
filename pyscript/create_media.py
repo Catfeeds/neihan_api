@@ -29,4 +29,4 @@ def run(filename=''):
 
 
 if __name__ == '__main__':
-    run('kefu.jpeg')
+    run('kf_01.jpeg')
