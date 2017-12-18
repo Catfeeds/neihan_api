@@ -179,7 +179,7 @@ class Msg extends Controller
                     'title' => '解锁更多精彩福利视频，戳这里！！',
                     'appid' => $wxconfig['appids'][$this->app_code],
                     'pagepath' => 'pages/index/index',
-                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
+                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
                 ]
             ];
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -223,7 +223,7 @@ class Msg extends Controller
                         'title' => '点击进入, 分享三个群即可成为代理！',
                         'appid' => $wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
-                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
+                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
                     ]
                 ];
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -250,7 +250,7 @@ class Msg extends Controller
                         'title' => '点击进入, 查看你的代理人数！',
                         'appid' => $wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
-                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
+                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
                     ]
                 ];
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -295,9 +295,10 @@ class Msg extends Controller
                     'title' => '抢红包',
                     'appid' => 'wx7876c2b72fed4be6',
                     'pagepath' => 'pages/index/index',
-                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
+                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
                 ]
             ];
+            Log::record($data, 'info');
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             Log::record($resp, 'info');
             return 'success';
