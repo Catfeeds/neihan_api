@@ -289,6 +289,7 @@ class Msg extends Controller
             return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             */
 
+            $token = $this->_access_token('neihan_mp');
             $data = [
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
