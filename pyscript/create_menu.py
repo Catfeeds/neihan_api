@@ -5,7 +5,10 @@ import wxtoken
 from settings import *
 
 '''
-{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/4YBian2HRWecFmqmqJ0icOljlO3fXKgq9AiaSfnv23nqlSExuY3BVCYHJDkpNeq1Er0PxUqqcQumssQtVasxmg5ow/0?wx_fmt=jpeg', u'media_id': u'2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'}
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeXaObIibh5fCvdYgK8zZEsCuORhWGM9kLOovkhJKTeuvbZuHovvDOcZQ/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNsx3EP21xtcujs_pvw5ASRdg'}
+
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeVkOlhjOx67KBLPCRMPHlaicH4cDT54oso8YFJfUVtic0iahsZou5N3qDg/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'}
+
 '''
 
 def run():
@@ -14,13 +17,13 @@ def run():
     params = {
         "button": [{
             "type": "click",
-            "name": "成为代理",
+            "name": "代理教程",
             "key": "V1001_PROMO"
         },
         {
             "type": "click",
-            "name": "推广",
-            "key": "V1001_QRCODE"
+            "name": "抢红包",
+            "key": "V1001_HONGBAO"
         },
         # {
         #     "type": "click",
@@ -30,7 +33,7 @@ def run():
         {
             "type": "media_id",
             "name": "客服",
-            "media_id": "2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg",
+            "media_id": "zrVy1Um2HLtEorHdlcHNsx3EP21xtcujs_pvw5ASRdg",
         }]
     }
     api = API + wx_access_token['access_token']

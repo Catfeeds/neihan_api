@@ -173,7 +173,7 @@ class Msg extends Controller
                     'title' => '解锁更多精彩福利视频，戳这里！！',
                     'appid' => $wxconfig['appids'][$this->app_code],
                     'pagepath' => 'pages/index/index',
-                    'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
                 ]
             ];
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -218,7 +218,7 @@ class Msg extends Controller
                         'title' => '点击进入, 分享三个群即可成为代理！',
                         'appid' => $wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
-                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
                     ]
                 ];
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -246,14 +246,15 @@ class Msg extends Controller
                         'title' => '点击进入, 查看你的代理人数！',
                         'appid' => $wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
-                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
                     ]
                 ];
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
                 Log::record($resp, 'info');
                 return 'success';
             }
-        } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_QRCODE') {
+        } elseif(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_HONGBAO') {
+            /*
             if(!$usermp->qrcode_media_id) {
                 $token = $this->_access_token('neihan_mp');
                 $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token='.$token['access_token'];
@@ -280,6 +281,21 @@ class Msg extends Controller
             );
             Log::record($data, 'info');
             return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
+            */
+
+            $data = [
+                'touser' => $origin_data['FromUserName'],
+                'msgtype' => 'miniprogrampage',
+                'miniprogrampage' => [
+                    'title' => '抢红包',
+                    'appid' => 'wx7876c2b72fed4be6',
+                    'pagepath' => 'pages/index/index',
+                    'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                ]
+            ];
+            $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
+            Log::record($resp, 'info');
+            return 'success';
         }
         return 'success';
     }
