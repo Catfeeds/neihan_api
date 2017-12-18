@@ -287,7 +287,7 @@ class Msg extends Controller
             return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             */
 
-            $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token='.$token['access_token'];
+            $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token=';
             $data = [
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
