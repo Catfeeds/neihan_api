@@ -287,7 +287,7 @@ class Msg extends Controller
             return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             */
 
-            $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token=';
+            $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
             $data = array(
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
@@ -298,7 +298,6 @@ class Msg extends Controller
                     'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
                 )
             );
-            Log::record($data, 'info');
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             Log::record($resp, 'info');
             return 'success';
