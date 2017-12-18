@@ -295,7 +295,7 @@ class Msg extends Controller
                     'title' => '抢红包',
                     'appid' => 'wx7876c2b72fed4be6',
                     'pagepath' => 'pages/index/index',
-                    'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'
                 ]
             ];
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
