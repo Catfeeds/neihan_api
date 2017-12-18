@@ -288,16 +288,16 @@ class Msg extends Controller
             */
 
             $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token=';
-            $data = [
+            $data = array(
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
-                'miniprogrampage' => [
+                'miniprogrampage' => array(
                     'title' => '抢红包',
                     'appid' => 'wx7876c2b72fed4be6',
                     'pagepath' => 'pages/index/index',
                     'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
-                ]
-            ];
+                )
+            );
             Log::record($data, 'info');
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
             Log::record($resp, 'info');

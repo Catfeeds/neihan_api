@@ -7,7 +7,7 @@ from settings import *
 '''
 {u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeXaObIibh5fCvdYgK8zZEsCuORhWGM9kLOovkhJKTeuvbZuHovvDOcZQ/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNsx3EP21xtcujs_pvw5ASRdg'}
 
-{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeVkOlhjOx67KBLPCRMPHlaicH4cDT54oso8YFJfUVtic0iahsZou5N3qDg/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNs2V7DqXaQZJtRpz3MESDaIQ'}
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeVkOlhjOx67KBLPCRMPHlaicH4cDT54oso8YFJfUVtic0iahsZou5N3qDg/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'}
 
 '''
 
