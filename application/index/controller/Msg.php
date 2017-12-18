@@ -122,8 +122,9 @@ class Msg extends Controller
             $parent_user = UserMp::where('qrcode_ticket', $origin_data['Ticket'])->find();
         }
 
+        $token = $this->_access_token('neihan_mp');
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'subscribe') {
-            $token = $this->_access_token('neihan_mp');
+            
             $api = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token['access_token'].'&openid='.$origin_data['FromUserName'].'&lang=zh_CN';
             $resp = curl_get($api);
             Log::record($resp, 'info');
@@ -171,7 +172,6 @@ class Msg extends Controller
         if(isset($origin_data['Event']) && $origin_data['Event'] == 'CLICK' && $origin_data['EventKey'] == 'V1001_APP') {
             $wxconfig = Config::get('wxconfig');
             $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
-            $token = $this->_access_token('neihan_mp');
             $data = [
                 'touser' => $origin_data['FromUserName'],
                 'msgtype' => 'miniprogrampage',
@@ -206,7 +206,6 @@ class Msg extends Controller
             } elseif($usermp->promotion == 2) {
                 $wxconfig = Config::get('wxconfig');
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
-                $token = $this->_access_token('neihan_mp');
 
                 $from_user_id = '0';
                 if($usermp->parent_user_id) {
@@ -233,7 +232,6 @@ class Msg extends Controller
             } elseif($usermp->promotion == 3) {
                 $wxconfig = Config::get('wxconfig');
                 $api = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=';
-                $token = $this->_access_token('neihan_mp');
 
                 $from_user_id = '0';
                 if($usermp->parent_user_id) {
@@ -289,7 +287,6 @@ class Msg extends Controller
             return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             */
 
-            $token = $this->_access_token('neihan_mp');
             $api = 'https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token='.$token['access_token'];
             $data = [
                 'touser' => $origin_data['FromUserName'],
