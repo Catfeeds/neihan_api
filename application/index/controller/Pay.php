@@ -261,7 +261,7 @@ class Pay extends Controller
                         'title' => '点击进入, 分享三个群即可成为代理！',
                         'appid' => $this->wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
-                        'thumb_media_id' => '2GVOdSI8OeOxU9lgcwa_Qt0REBdqJQPMQ01j2c9Q-qg'
+                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
                     ]
                 ];
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
