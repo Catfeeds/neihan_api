@@ -509,7 +509,7 @@ class Video extends Controller
                         'qrcode_ticket' => $mp_qrcode[1]
                 ]);
 
-                UserPromotion::where('user_id', $user_id)->update(['status' => 2]);
+                UserPromotion::where('user_id', $user_id)->update(['status' => 2, 'type' => 2]);
 
                 # 如果你是一个代理, 那就不能做别人的代理了
                 $exists = UserPromotionGrid::where('user_id', $user_id)->count();
