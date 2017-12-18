@@ -133,12 +133,14 @@ class Video extends Controller
                     'path' => '',
                     'extraData' => ''
                 ];
+                /*
                 if($k == 0) {
                     $ad['image'] = $request->domain().'/static/image/ad-ldh.jpg';
                     $ad['appId'] = 'wx564a50039dd91934';
                     $ad['path'] = 'pages/index/index';
                     $ad['extraData'] = '';
                 }
+                */
                 $val['ad'] = $ad;
 
                 if($this->app_code == 'neihan_1') {

@@ -141,7 +141,7 @@ class Pay extends Controller
         $data = array(
             'uid' => $this->payconfig['uid'],
             'orderNo' => $orderid,
-            'mchName' => 'iphone8',
+            'mchName' => '代理门票',
             'price' => strval($ticket_amount),
             'backUrl' => Request::instance()->domain().'/pay/success',
             'postUrl' => Request::instance()->domain().'/pay/notify',

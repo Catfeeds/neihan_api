@@ -59,7 +59,7 @@ class Msg extends Controller
                             'title' => '点此进入',
                             'description' => '解锁更多精彩福利视频，戳这里！！',
                             'url' => 'https://mp.weixin.qq.com/s/QNU9fyuWzV96fwDy29pslw',
-                            'thumb_url' => 'http://www.jialejiabianli.cn/static/image/msg_logo.png'
+                            'thumb_url' =>  Request::instance()->domain().'/static/image/msg_logo.png'
                         ]
                     ];
 
