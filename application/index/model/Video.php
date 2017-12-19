@@ -61,9 +61,11 @@ class Video extends Model
                 'display_click_ratio' => $record['display_click_ratio'],
                 'comments' => [],
             );
+            /*
             if($record['source'] == 'neihan') {
                 $info['url'] = 'http://aweme.snssdk.com/aweme/v1/playwm/?video_id='.$record['video_id'].'&line=0';
             }
+            */
             $ret[] = $info;
         }
         return $ret;

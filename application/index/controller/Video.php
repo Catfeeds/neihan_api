@@ -65,7 +65,7 @@ class Video extends Controller
                 $category = explode(',', $category);
             }
 
-            if(empty($category) && $this->app_code == 'neihan_2') {
+            if(empty($category) && $this->app_code != 'neihan_1') {
                 $category = [1112, 1113];
             }
 
