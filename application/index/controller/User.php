@@ -1036,10 +1036,6 @@ class User extends Controller
         $token  = $this->_access_token('neihan_mp');
         $usermp = UserMp::get($user_id);
 
-        $usermp_avatar = './static/code/avatar-'.$user_id.'.png';
-        $avatar_resp = curl_get($usermp->user_avatar);
-        file_put_contents($usermp_avatar, $avatar_resp);
-
         // $ticket = $this->_get_ticket($token, $user_id);
         $api = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='.urlencode($usermp->qrcode_ticket);
         $resp = curl_get($api);
@@ -1054,19 +1050,17 @@ class User extends Controller
 
         // 加载水印以及要加水印的图像
         $stamp = imagecreatefromjpeg($file_1);
-        # $stamp2 = imagecreatefromjpeg($file_2);
         $stamp2 = $this->_headimgurl($usermp->user_avatar, 64, 64);
         $im = imagecreatefrompng($file);
 
         // 设置水印图像的外边距，并且获取水印图像的尺寸
-        // $marge_right = 0;
-        // $marge_bottom = 0;
-        // $sx = imagesx($stamp);
-        // $sy = imagesy($stamp);
         // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
-        imagecopy($im, $stamp, 160, 650, 0, 0, imagesx($stamp), imagesy($stamp));
-        imagecopy($im, $stamp2, 160, 1050, 0, 0, imagesx($stamp2), imagesy($stamp2));
+        imagecopy($im, $stamp, 160, 580, 0, 0, imagesx($stamp), imagesy($stamp));
+        imagecopy($im, $stamp2, 200, 1025, 0, 0, imagesx($stamp2), imagesy($stamp2));
+
+        $color = imagecolorallocate($img, 255,192,0); // 文字颜色
+        imagettftext($im, 0, 0, 0, 0, $color, "static/sst.TTF", $usermp->user_name);
 
         // 输出图像并释放内存
         imagejpeg($im, $outfile, 100, NULL);
