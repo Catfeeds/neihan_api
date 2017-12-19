@@ -731,6 +731,23 @@ class Mgr(object):
             self.session.close()
         return ret
 
+    def refresh_formid(self):
+        try:
+            create_time = int(time()) - 86400*7
+            self.session.query(UserFormId) \
+                .filter(UserFormId.create_time <= create_time) \
+                .filter(UserFormId.is_used == 0) \
+                .update(
+                    {'is_used': 1, 'update_time': int(time())},
+                    synchronize_session='fetch'
+                )
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("refresh formid error: %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+
     '''
     def count_showed_videos(self):
         try:
