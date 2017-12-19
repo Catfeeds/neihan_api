@@ -1037,7 +1037,7 @@ class User extends Controller
         $usermp = UserMp::get($user_id);
 
         $usermp_avatar = './static/code/avatar-'.$user_id.'.png';
-        $avatar_resp = $this->_headimgurl($usermp->user_avatar, 64, 64);
+        $avatar_resp = curl_get($usermp->user_avatar);
         file_put_contents($usermp_avatar, $avatar_resp);
 
         // $ticket = $this->_get_ticket($token, $user_id);
@@ -1054,7 +1054,8 @@ class User extends Controller
 
         // 加载水印以及要加水印的图像
         $stamp = imagecreatefromjpeg($file_1);
-        $stamp2 = imagecreatefromjpeg($file_2);
+        # $stamp2 = imagecreatefromjpeg($file_2);
+        $stamp2 = $this->_headimgurl($usermp->user_avatar, 64, 64);
         $im = imagecreatefrompng($file);
 
         // 设置水印图像的外边距，并且获取水印图像的尺寸
