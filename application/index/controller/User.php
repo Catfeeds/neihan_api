@@ -1058,7 +1058,7 @@ class User extends Controller
         imagecopy($im, $stamp, 160, 580, 0, 0, imagesx($stamp), imagesy($stamp));
         imagecopy($im, $stamp2, 200, 1025, 0, 0, imagesx($stamp2), imagesy($stamp2));
 
-        $color = imagecolorallocate($img, 255,192,0); // 文字颜色
+        $color = imagecolorallocate($im, 255,192,0); // 文字颜色
         imagettftext($im, 0, 0, 0, 0, $color, "static/sst.TTF", $usermp->user_name);
 
         // 输出图像并释放内存
