@@ -197,7 +197,7 @@ class Common extends Controller
 
         // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
-        imagecopy($im, $stamp, 160, 650, 0, 0, $sx, $sy);
+        imagecopy($im, $stamp, 160, 600, 0, 0, $sx, $sy);
 
         // 输出图像并释放内存
         imagejpeg($im, $outfile, 100, NULL);

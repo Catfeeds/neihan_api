@@ -143,14 +143,14 @@ class Video extends Controller
                 if($k == 0) {
                     if($settings['ad_show'] == 1) {
                         $ad['image'] = $request->domain().'/static/image/ad-ldh.jpg';
-                        $ad['appId'] = 'wx564a50039dd91934';
+                        $ad['appId'] = 'wx7876c2b72fed4be6';
                         $ad['path'] = 'pages/index/index';
                         $ad['extraData'] = '';
                     } elseif($settings['ad_show'] == 2) {
                         $ad_show = rand(1, 100);
                         if($settings['ad_show_ratio'] >= $ad_show) {
                             $ad['image'] = $request->domain().'/static/image/ad-ldh.jpg';
-                            $ad['appId'] = 'wx564a50039dd91934';
+                            $ad['appId'] = 'wx7876c2b72fed4be6';
                             $ad['path'] = 'pages/index/index';
                             $ad['extraData'] = '';
                         }
