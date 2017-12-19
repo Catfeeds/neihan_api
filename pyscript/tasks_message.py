@@ -6,6 +6,7 @@ import requests
 import os
 import json
 from time import sleep
+from random import randint, choice
 from datetime import datetime
 from settings import *
 from models import *
@@ -126,9 +127,11 @@ def main():
                     args = []
                     for x in xrange(WORKER_THREAD_NUM):
                         try:
+                            rusers = choice(users)
+                            users.remove(rusers)
                             args.append({
                                 'message_id': task['id'],
-                                'u': users.pop(),
+                                'u': rusers,
                                 'video': video,
                                 'ulevel': task['formid_level'],
                                 'access_token': access_token
@@ -136,7 +139,7 @@ def main():
                         except:
                             pass
                     pools.map(send_msg, args)
-                    sleep(5)
+                    sleep(randint(5, 20))
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
                 _mgr.update_message_tasks(task['id'], {'send_member': total_send})
