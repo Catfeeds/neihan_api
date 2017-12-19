@@ -14,18 +14,16 @@
     
     <body>
         <div class="myVue">
-            <!--
-            <div class="item box-shadow-10" v-on:click="click1">
+            <div class="item box-shadow-10">
                 <img class="item_icon" :src="img1" />
                 <div class="item_d1">
-                    <div class="item_t1">普通代理（一分钱）</div>
+                    <div class="item_t1">普通代理（一分钱,名额已满!）</div>
                     <div class="item_t2">实时结算</div>
                     <div class="item_t2">适用普通推广人群</div>
                     <div class="item_t2">提现次数：1次/周</div>
                 </div>
                 <img v-if="s1" class="selected" src="/static/img/tg_icon_check_pressed@1x.png" />
             </div>
-            -->
             <div class="item box-shadow-10" v-on:click="click2">
                 <img class="item_icon" :src="img2" />
                 <div class="item_d1">
@@ -40,7 +38,7 @@
             <div class="title">— 代理教程 —</div>
             <div class="titles box-shadow-10">
                 <div class="title1">一、代理绿色通道</div>
-                <div class="title2">点击文末的支付按钮，支付一元钱即可成为代理，解锁代理机制</div>
+                <div class="title2">点击文末的支付按钮，支付一分钱即可成为代理，解锁代理机制</div>
                 <div class="title1">二、推广</div>
                 <div class="title2">分享小程序到三个群获得代理推广二维码</div>
                 <div class="title1">三、盈利</div>
@@ -59,7 +57,7 @@
             </div>
             {else /}
             <div class="pay" v-on:click="pay_bt">
-                <div class="pay_bt">立即支付</div>
+                <div class="pay_bt">下一步</div>
             </div>
             {/if}
             <div v-if="mask" class="mask" v-on:click="hide_me">
