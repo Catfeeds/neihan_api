@@ -119,7 +119,6 @@ class Video extends Controller
                 } else {
                     $video_jump = [];
                 }
-                
 
                 $video_douyin = [];
 
@@ -138,7 +137,6 @@ class Video extends Controller
                     'path' => '',
                     'extraData' => ''
                 ];
-                
 
                 if($k == 0) {
                     if($settings['ad_show'] == 1) {

@@ -172,7 +172,7 @@ class User extends Controller
             $ptype = 0;
             if($user->mp_qrcode) {
                 $user_promo = UserPromotion::where('user_id', $user_id)->find();
-                if($user_promo) {
+                if($user_promo->status == 2) {
                     $ptype = 2;    
                 }
             }
