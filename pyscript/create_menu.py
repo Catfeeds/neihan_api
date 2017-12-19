@@ -9,6 +9,17 @@ from settings import *
 
 {u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeVkOlhjOx67KBLPCRMPHlaicH4cDT54oso8YFJfUVtic0iahsZou5N3qDg/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'}
 
+{
+  "button": [
+    {
+      "type": "miniprogram",
+      "name": "小程序",
+      "appid": "wx1dda1f639e823874",
+      "url": "http://www.qq.com",
+      "pagepath": "page/index"
+    }
+  ]
+}
 '''
 
 def run():
@@ -20,16 +31,18 @@ def run():
             "name": "代理教程",
             "key": "V1001_PROMO"
         },
-        {
-            "type": "click",
-            "name": "抢红包",
-            "key": "V1001_HONGBAO"
-        },
         # {
         #     "type": "click",
-        #     "name": "小程序",
-        #     "key": "V1001_APP"
+        #     "name": "抢红包",
+        #     "key": "V1001_HONGBAO"
         # },
+        {
+            "type": "miniprogram",
+            "name": "抢红包",
+            "appid": "wx7876c2b72fed4be6",
+            "url": "http://www.qq.com",
+            "pagepath": "pages/index/index"
+        },
         {
             "type": "media_id",
             "name": "客服",
