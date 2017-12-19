@@ -15,14 +15,15 @@ body,html{
 	padding: 15px 0px;
 }
 .item_icon{
-	width: 80px;
-	height: 80px;
-	margin: 10px;
+	width: 70px;
+	height: 70px;
+	margin: 5px;
 }
 .item_d1{
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	position: relative;
 }
 .item_t1{
 	font-size: 1.1rem;
@@ -40,8 +41,8 @@ body,html{
 }
 .jinggao{
 	position: absolute;
-	right: 5px;
-	bottom: 5px;
+	right: -5px;
+	bottom: -5px;
 	display: flex;
 	justify-content: center;
 	align-items: flex-end;
