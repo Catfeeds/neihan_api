@@ -841,29 +841,57 @@ class Video extends Controller
         $codefile = './static/code/'.$code_filename.'.png';
         file_put_contents($codefile, $resp);
 
+        $usermp = UserMp::get($user_id);
 
-        $file = 'static/image/p3.png';
+
+        $file = 'static/image/p4.png';
         $file_1 = substr($codefile, 2);
         $outfile = "static/code/p-".$code_filename.".jpeg";
 
         // 加载水印以及要加水印的图像
         $stamp = imagecreatefromjpeg($file_1);
+        $stamp2 = $this->_headimgurl($usermp->user_avatar, 64, 64);
         $im = imagecreatefrompng($file);
 
         // 设置水印图像的外边距，并且获取水印图像的尺寸
-        $marge_right = 0;
-        $marge_bottom = 0;
-        $sx = imagesx($stamp);
-        $sy = imagesy($stamp);
+        imagecopy($im, $stamp, 160, 580, 0, 0, imagesx($stamp), imagesy($stamp));
+        imagecopy($im, $stamp2, 200, 1025, 0, 0, imagesx($stamp2), imagesy($stamp2));
 
-        // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
-
-        imagecopy($im, $stamp, 160, 650, 0, 0, $sx, $sy);
+        $len = mb_strlen($usermp->user_name)/3*16;
+        $color = imagecolorallocate($im, 0, 0, 0); // 文字颜色
+        imagettftext($im, 16, 0, 330, 1045, $color, "static/sst.TTF", $usermp->user_name);
 
         // 输出图像并释放内存
         imagejpeg($im, $outfile, 100, NULL);
         imagedestroy($im);
+        imagedestroy($stamp);
+        imagedestroy($stamp2);
 
         return ['/'.$outfile, $ticket['ticket']];
+    }
+
+    private function _headimgurl($url, $w, $h){
+        $src = imagecreatefromstring(curl_get($url));
+        $lw = imagesx($src);//二维码图片宽度
+        $lh = imagesy($src);//二维码图片高度
+        $newpic = imagecreatetruecolor($w,$h);
+        $sss = imagecreatetruecolor($w,$h);
+        imagecopyresampled($sss, $src, 0, 0, 0, 0, $w, $w, $lw, $lh);
+        imagealphablending($newpic,false);
+        $transparent = imagecolorallocatealpha($newpic, 0, 0, 0, 127);
+        $r=$w/2;
+        for($x=0;$x<$w;$x++){
+            for($y=0;$y<$h;$y++){
+                $c = imagecolorat($sss,$x,$y);
+                $_x = $x - $w/2;
+                $_y = $y - $h/2;
+                if((($_x*$_x) + ($_y*$_y)) < ($r*$r)){
+                    imagesetpixel($newpic,$x,$y,$c);
+                }else{
+                    imagesetpixel($newpic,$x,$y,$transparent);
+                }
+            }
+        }
+        return $newpic;
     }
 }
