@@ -841,7 +841,8 @@ class Video extends Controller
         $codefile = './static/code/'.$code_filename.'.png';
         file_put_contents($codefile, $resp);
 
-        $usermp = UserMp::get($user_id);
+        $user = User::get($user_id);
+        $usermp = UserMp::get($user->user_mp_id);
 
 
         $file = 'static/image/p4.png';
