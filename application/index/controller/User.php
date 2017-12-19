@@ -1045,7 +1045,6 @@ class User extends Controller
 
         $file = 'static/image/p4.png';
         $file_1 = substr($codefile, 2);
-        $file_2 = substr($usermp_avatar, 2);
         $outfile = "static/code/p-".$code_filename.".jpeg";
 
         // 加载水印以及要加水印的图像
