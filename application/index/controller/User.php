@@ -1037,7 +1037,7 @@ class User extends Controller
         $usermp = UserMp::get($user_id);
 
         $usermp_avatar = './static/code/avatar-'.$user_id.'.png';
-        $avatar_resp = curl_get($usermp->user_avatar);
+        $avatar_resp = $this->_headimgurl($usermp->user_avatar, 64, 64);
         file_put_contents($usermp_avatar, $avatar_resp);
 
         // $ticket = $this->_get_ticket($token, $user_id);
@@ -1074,5 +1074,31 @@ class User extends Controller
         imagedestroy($stamp2);
 
         return ['/'.$outfile, $usermp->qrcode_ticket];
+    }
+
+
+    private function _headimgurl($url, $w, $h){
+        $src = imagecreatefromstring(curl_get($url));
+        $lw = imagesx($src);//二维码图片宽度
+        $lh = imagesy($src);//二维码图片高度
+        $newpic = imagecreatetruecolor($w,$h);
+        $sss = imagecreatetruecolor($w,$h);
+        imagecopyresampled($sss, $src, 0, 0, 0, 0, $w, $w, $lw, $lh);
+        imagealphablending($newpic,false);
+        $transparent = imagecolorallocatealpha($newpic, 0, 0, 0, 127);
+        $r=$w/2;
+        for($x=0;$x<$w;$x++){
+            for($y=0;$y<$h;$y++){
+                $c = imagecolorat($sss,$x,$y);
+                $_x = $x - $w/2;
+                $_y = $y - $h/2;
+                if((($_x*$_x) + ($_y*$_y)) < ($r*$r)){
+                    imagesetpixel($newpic,$x,$y,$c);
+                }else{
+                    imagesetpixel($newpic,$x,$y,$transparent);
+                }
+            }
+        }
+        return $newpic;
     }
 }
