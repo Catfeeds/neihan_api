@@ -1047,7 +1047,7 @@ class User extends Controller
         $codefile = './static/code/'.$code_filename.'.png';
         file_put_contents($codefile, $resp);
 
-        $file = 'static/image/p3.png';
+        $file = 'static/image/p4.png';
         $file_1 = substr($codefile, 2);
         $file_2 = substr($usermp_avatar, 2);
         $outfile = "static/code/p-".$code_filename.".jpeg";
@@ -1066,7 +1066,7 @@ class User extends Controller
         // 利用图像的宽度和水印的外边距计算位置，并且将水印复制到图像上
 
         imagecopy($im, $stamp, 160, 650, 0, 0, imagesx($stamp), imagesy($stamp));
-        imagecopy($im, $stamp2, 160, 850, 0, 0, imagesx($stamp2), imagesy($stamp2));
+        imagecopy($im, $stamp2, 160, 1050, 0, 0, imagesx($stamp2), imagesy($stamp2));
 
         // 输出图像并释放内存
         imagejpeg($im, $outfile, 100, NULL);
