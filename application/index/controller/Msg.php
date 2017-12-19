@@ -220,7 +220,7 @@ class Msg extends Controller
                     'touser' => $origin_data['FromUserName'],
                     'msgtype' => 'miniprogrampage',
                     'miniprogrampage' => [
-                        'title' => '点击进入, 分享三个群即可成为代理！',
+                        'title' => '点击进入第二步，分享三个群即可成为代理！',
                         'appid' => $wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
                         'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
