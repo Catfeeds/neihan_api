@@ -851,13 +851,17 @@ class Video extends Controller
 
         // 加载水印以及要加水印的图像
         $stamp = imagecreatefromjpeg($file_1);
-        $stamp2 = $this->_headimgurl($usermp->user_avatar, 64, 64);
+    
         $im = imagecreatefrompng($file);
 
         // 设置水印图像的外边距，并且获取水印图像的尺寸
         imagecopy($im, $stamp, 160, 580, 0, 0, imagesx($stamp), imagesy($stamp));
-        imagecopy($im, $stamp2, 200, 1025, 0, 0, imagesx($stamp2), imagesy($stamp2));
 
+        if(!empty($usermp->user_avatar)) {
+            $stamp2 = $this->_headimgurl($usermp->user_avatar, 64, 64);
+            imagecopy($im, $stamp2, 200, 1025, 0, 0, imagesx($stamp2), imagesy($stamp2));
+        }
+        
         $len = mb_strlen($usermp->user_name)/3*16;
         $color = imagecolorallocate($im, 0, 0, 0); // 文字颜色
         imagettftext($im, 16, 0, 330, 1045, $color, "static/sst.TTF", $usermp->user_name);
