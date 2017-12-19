@@ -482,8 +482,8 @@ class User extends Controller
                     $user_balance = New UserPromotionBalance;
                     $user_balance->data([
                         'user_id' => $user_id,
-                        'commission' => 0,
-                        'commission_avail' => 0
+                        'commission' => 1,
+                        'commission_avail' => 1
                     ]);
                     $user_balance->save();
                 }
