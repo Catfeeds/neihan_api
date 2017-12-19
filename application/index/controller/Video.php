@@ -114,7 +114,12 @@ class Video extends Controller
                 $last_num = $n - count($video_awsome) - count($video_hot);
                 $video_normal = $video_model->get_videos($user_id, $category, $vids, 3, "c_display_count", 0, 50);
 
-                $video_jump = $video_model->get_jump_videos($user_id, [65], [], 1, "play_count", 0, 0);
+                if($this->app_code == 'neihan_1') {
+                    $video_jump = $video_model->get_jump_videos($user_id, [65], [], 1, "play_count", 0, 0);
+                } else {
+                    $video_jump = [];
+                }
+                
 
                 $video_douyin = [];
 
