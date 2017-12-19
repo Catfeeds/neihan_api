@@ -3,8 +3,8 @@ var myVue = new Vue({
   data: {
   	s1: false,
   	s2: true,
-  	img1: "/static/img/tg_icon_ptdl_pressed@2x.png",
-  	img2: "/static/img/tg_icon_jpdl_default@2x.png",
+  	img1: "/static/img/tg_icon_ptdl_default@2x.png",
+  	img2: "/static/img/tg_icon_jpdl_pressed@2x.png",
     amount: 1,
 	  mask: false
   },
