@@ -8,6 +8,10 @@ from settings import *
 {u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDeLDibaFW1iaGmL0uia5Ebl0jZfMiczcoaIp6AjPYwQpJD2wpTRY1NQOYKcA/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNs8sVJ8-2Gm4vqAvR-B4jKJk'}
 
 {u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskPErWAQ4n8YWvSW5bRBDetMNOE0CrnpxUficW3aM4fgLJkGsunBFNW6iaZX9P5PzgUuyDU3OVMrDQ/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNsyzoBLViAdlidUy4hNgX2gM'}
+
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskyf2wB16Wv2icrMwUOqAlFCQqf5QXY1xfhMWgibRmKhThsMJ1oib0diafVFAQP7xxRMldMDVr2e11bQ/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNs5M1r6CL_ta-gjOwGasBlZ8'} fm_dl.png
+
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskyf2wB16Wv2icrMwUOqAlFvpjmyAulEtia784teB3ZES10ziaGIJTX0BPgpyUbwQ6R7FKEIFMXibPWA/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNswiYQMDY2JIScVZkNW2SZDM'} fm_qhb.png
 '''
 def run(filename=''):
     if not os.path.isfile(filename):

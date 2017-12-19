@@ -250,7 +250,7 @@ class Msg extends Controller
                         'title' => '点击进入, 查看你的代理人数！',
                         'appid' => $wxconfig['appids'][$this->app_code],
                         'pagepath' => 'pages/distribution/distribution?from_user_id='.$from_user_id,
-                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
+                        'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs5M1r6CL_ta-gjOwGasBlZ8'
                     ]
                 ];
                 $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -295,7 +295,7 @@ class Msg extends Controller
                     'title' => '抢红包',
                     'appid' => 'wx7876c2b72fed4be6',
                     'pagepath' => 'pages/index/index',
-                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNs58USNL3sPEJFdyEB3anHpE'
+                    'thumb_media_id' => 'zrVy1Um2HLtEorHdlcHNswiYQMDY2JIScVZkNW2SZDM'
                 )
             );
             $resp = curl_post($api.$token['access_token'], json_encode($data, JSON_UNESCAPED_UNICODE));
