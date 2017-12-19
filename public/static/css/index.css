@@ -9,14 +9,15 @@ body,html{
 /*	选项item  */
 .item{
 	display: flex;
-	margin: 15px;
+	margin: 20px 15px;
 	border-radius: 5px;
 	position: relative;
+	padding: 15px 0px;
 }
 .item_icon{
-	width: 90px;
-	height: 90px;
-	margin: 20px;
+	width: 80px;
+	height: 80px;
+	margin: 10px;
 }
 .item_d1{
 	display: flex;
@@ -24,7 +25,7 @@ body,html{
 	justify-content: center;
 }
 .item_t1{
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 	font-weight: bold;
 }
 .item_t2{
@@ -37,6 +38,23 @@ body,html{
 	right: 0;
 	width: 2rem;
 }
+.jinggao{
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	padding: 5px;
+	color: red;
+	font-size: 0.9rem;
+}
+.jinggao_img{
+	width: 25px;
+	height: 22px;
+	margin-right: 3px;
+}
+
 /*代理教程*/
 .title{
 	width: 100%;
@@ -90,24 +108,34 @@ body,html{
 	width: 100%;
 	height: 100%;
 	background-color: rgba(0,0,0,0.8);
+	display: block;
 }
-.mask img{
+.mask_img{
 	position: absolute;
 	right: 1rem;
 	top: 1rem;
 	width: 4rem;
 }
 .mask_label1{
+	width: 240px;
 	position: absolute;
 	right: 1rem;
 	top: 6rem;
 	color: white;
 	line-height: 1.6rem;
-}
-.mask_label1 img{
-	width: 1.5rem;
-	position: absolute;
 	display: flex;
-	right: 10rem;
-	top: 0rem;
+	align-items: center;
+}
+.mask_label1_img{
+	width: 1.5rem;
+	margin: 0px 5px;
+}
+
+.mask_label2{
+	position: absolute;
+	right: 1rem;
+	top: 9rem;
+	width: 240px;
+	color: white;
+	line-height: 1.6rem;
 }

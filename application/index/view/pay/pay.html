@@ -14,13 +14,17 @@
     
     <body>
         <div class="myVue">
-            <div class="item box-shadow-10">
+            <div class="item box-shadow-10" style="opacity: 0.5;">
                 <img class="item_icon" :src="img1" />
                 <div class="item_d1">
-                    <div class="item_t1">普通代理（一分钱,名额已满!）</div>
+                    <div class="item_t1">普通代理（前300名1分钱）</div>
                     <div class="item_t2">实时结算</div>
                     <div class="item_t2">适用普通推广人群</div>
                     <div class="item_t2">提现次数：1次/周</div>
+                    <div class="jinggao">
+                        <img class="jinggao_img" src="/static/img/minge_icon@2x.png" />
+                        <div>名额已满</div>
+                    </div>
                 </div>
                 <img v-if="s1" class="selected" src="/static/img/tg_icon_check_pressed@1x.png" />
             </div>
@@ -61,8 +65,9 @@
             </div>
             {/if}
             <div v-if="mask" class="mask" v-on:click="hide_me">
-                <img src="/static/img/arrow.png" />
-                <div class="mask_label1"><img src="/static/img/brrowser.png" />选择在浏览器中打开</div>
+                <img class="mask_img" src="/static/img/arrow.png" />
+                <div class="mask_label1">选择在浏览器<img class="mask_label1_img" src="/static/img/brrowser.png" />中打开</div>
+                <div class="mask_label2">支付成功后，请关闭此页面，返回公众号进入小程序</div>
             </div>
             
         </div>
@@ -71,7 +76,14 @@
     <script type="text/javascript">
     function pay(){
         console.log(document.getElementById('amount').value);
-        document.getElementById("pay-form").submit();    
+        document.getElementById("pay-form").submit();
     }
+
+    {if ($isweixin == 1)}
+    function closeWindow() {
+        WeixinJSBridge.call('closeWindow');
+    }
+    window.setTimeout('closeWindow()', 5000);
+    {/if}
     </script>
 </html>
