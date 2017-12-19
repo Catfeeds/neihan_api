@@ -870,7 +870,6 @@ class Video extends Controller
         imagejpeg($im, $outfile, 100, NULL);
         imagedestroy($im);
         imagedestroy($stamp);
-        imagedestroy($stamp2);
 
         return ['/'.$outfile, $ticket['ticket']];
     }
