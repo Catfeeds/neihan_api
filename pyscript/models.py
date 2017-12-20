@@ -457,9 +457,9 @@ class Mgr(object):
                 {}
                 ORDER BY users_promotion_balance.commission_avail DESC 
             """.format(str_where)
-            ret = self.session.execute(sql)
-            dkeys = ret.keys()
-            for row in ret.fetchall():
+            rows = self.session.execute(sql)
+            dkeys = rows.keys()
+            for row in rows.fetchall():
                 ret.append(dict(zip(dkeys, row)))
         except Exception as e:
             logging.warning("get users mp error : %s" % e, exc_info=True)
