@@ -39,6 +39,9 @@ class Pay extends Controller
         $user_id = Request::instance()->get('user_id');
         $agent = Request::instance()->header('user-agent');
 
+        if($user_id == 18) {
+            $this->redirect('/pay/mp?user_id='.$user_id, 302);
+        }
         $isweixin = 0;
         if(preg_match('/micromessenger/i', $agent)) {
             $isweixin = 1;
