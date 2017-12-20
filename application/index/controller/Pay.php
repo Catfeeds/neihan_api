@@ -46,9 +46,11 @@ class Pay extends Controller
         if(preg_match('/micromessenger/i', $agent)) {
             $isweixin = 1;
         }
+        $stop = 0;
         
         $this->assign('user_id', $user_id);
         $this->assign('isweixin', $isweixin);
+        $this->assign('stop', $stop);
         return $this->fetch('pay');
     }
 

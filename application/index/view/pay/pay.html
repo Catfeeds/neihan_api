@@ -28,6 +28,8 @@
                 </div>
                 <img v-if="s1" class="selected" src="/static/img/tg_icon_check_pressed@1x.png" />
             </div>
+
+            {if ($stop == 0)}
             <div class="item box-shadow-10" v-on:click="click2">
                 <img class="item_icon" :src="img2" />
                 <div class="item_d1">
@@ -38,6 +40,21 @@
                 </div>
                 <img v-if="s2" class="selected" src="/static/img/tg_icon_check_pressed@1x.png" />
             </div>
+            {else /}
+            <div class="item box-shadow-10" v-on:click="click2" style="opacity: 0.5;">
+                <img class="item_icon" src="/static/img/tg_icon_ptdl_default@2x.png" />
+                <div class="item_d1">
+                    <div class="item_t1">金牌代理（1元）</div>
+                    <div class="item_t2">实时结算</div>
+                    <div class="item_t2" style="color: blue">预存一元，随时提现</div>
+                    <div class="item_t2">提现次数：1次/每天</div>
+                    <div class="jinggao" style="right: -110px;">
+                        <img class="jinggao_img" src="/static/img/minge_icon@2x.png" />
+                        <div>名额已满</div>
+                    </div>
+                </div>
+            </div>
+            {/if}
             
             <div class="title">— 代理教程 —</div>
             <div class="titles box-shadow-10">
@@ -55,6 +72,7 @@
                 <input type="hidden" name="amount" id="amount" :value="amount">
             </form>
 
+            {if ($stop == 0)}
             {if ($isweixin == 0)}
             <div class="pay" onclick="pay();">
                 <div class="pay_bt">立即支付</div>
@@ -64,6 +82,9 @@
                 <div class="pay_bt">下一步</div>
             </div>
             {/if}
+            {/if}
+
+
             <div v-if="mask" class="mask" v-on:click="hide_me">
                 <img class="mask_img" src="/static/img/arrow.png" />
                 <div class="mask_label1">选择在浏览器<img class="mask_label1_img" src="/static/img/brrowser.png" />中打开</div>
