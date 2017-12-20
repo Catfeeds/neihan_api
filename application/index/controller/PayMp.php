@@ -123,6 +123,8 @@ class PayMp extends Controller
 
             if($sign != generate_sign($verify, $wxconfig['wechat']['key'])) {
                 $data = ['return_code' => 'FAIL', 'return_msg' => '签名失败'];
+                $usorder->errmsg = '签名失败';
+                $usorder->save();
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
@@ -134,7 +136,7 @@ class PayMp extends Controller
             if ($verify['result_code'] !== 'SUCCESS') {
                 $usorder->status = 2;
                 $usorder->errmsg = $verify['err_code'].'|'.$verify['err_code_res'];
-
+                $usorder->save();
                 return Response::create($data, 'xml')->code(200)->options(['root_node'=> 'xml']);
             }
 
