@@ -444,7 +444,7 @@ class Mgr(object):
             ret = []
             str_where = ""
             if params.get('user_id', ''):
-                str_where += "AND users.id = {}".format(params['user_id'])
+                str_where += "AND users_mp.id = {}".format(params['user_id'])
             sql = """
                 SELECT users_mp.*, users_promotion_balance.commission_avail 
                 FROM users_mp, users, users_promotion_balance 
