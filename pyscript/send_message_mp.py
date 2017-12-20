@@ -27,7 +27,7 @@ total_send = 0
 
 def send_msg(u):
     params = {
-       "touser": u['openid'],
+       "touser": u['openid'].encode('utf8'),
        "template_id": "NcYQ-PA22YGBKCZSCy88rwU4cx1VRyE7x5MBJ8N_JRY",
        "data":{
            "first": {
@@ -82,20 +82,16 @@ def send_msg(u):
 
 def main():
     global total_send
-    uparams = { 'user_id': 16 }
+    uparams = { 'user_id': 17 }
+    users = _mgr.get_users_mp(uparams)
 
-    while True:
-        users = _mgr.get_users_mp(uparams)
-        if users:
-            pools = Pool(WORKER_THREAD_NUM)
-            pools.map(send_msg, users)
+    if users:
+        pools = Pool(WORKER_THREAD_NUM)
+        pools.map(send_msg, users)
 
-            logging.info('成功发送消息给{}个用户'.format(total_send))
-        else:
-            logging.info('没有用户，暂停消息推送')
+        logging.info('成功发送消息给{}个用户'.format(total_send))
     else:
-        logging.info('还未到消息推送时间点或已发送过消息')
-    sleep(60)
+        logging.info('没有用户，暂停消息推送')
 
 
 if __name__ == '__main__':
