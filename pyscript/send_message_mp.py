@@ -59,7 +59,7 @@ def send_msg(u):
     }
 
     access_token = wxtoken.get_token('neihan_mp')
-    api = WX_MSG_API + access_token['access_token']
+    api = WX_MP_MSG_API + access_token['access_token']
     resp = requests.post(api, json.dumps(params, ensure_ascii=False), timeout=120)
     print resp
     if resp and resp.status_code == 200:
