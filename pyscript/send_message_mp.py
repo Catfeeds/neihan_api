@@ -26,27 +26,32 @@ total_send = 0
 
 
 def send_msg(u):
+    global total_send
     params = {
        "touser": u['openid'].encode('utf8'),
        "template_id": "NcYQ-PA22YGBKCZSCy88rwU4cx1VRyE7x5MBJ8N_JRY",
        "data":{
            "first": {
+               "value": '内涵段子提醒您有可提现余额',
+               "color":"#173177"
+           },
+           "keyword1":{
                "value": u['user_name'].encode('utf8'),
                "color":"#173177"
            },
-           "keynote1":{
-               "value": str(float(u['commission_avail'])),
+           "keyword2":{
+               "value": float(u['commission_avail']),
                "color":"#173177"
            },
-           "keynote2": {
+           "keyword3": {
                "value": u['user_name'].encode('utf8'),
                "color":"#173177"
            },
-           "keynote3": {
+           "keyword4": {
                "value":  "实时",
                "color":"#173177"
            },
-           "remark":{
+           "keyword5":{
                "value": "等待用户提现。",
                "color": "#173177"
            }
