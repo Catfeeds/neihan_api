@@ -57,6 +57,67 @@ class User(BaseModel):
 
         return ret
 
+class UserMp(BaseModel):
+
+    __tablename__ = "users_mp"
+
+    id = Column(Integer, primary_key=True)
+    openid = Column(VARCHAR(64))
+    user_name = Column(VARCHAR(128))
+    user_avatar = Column(VARCHAR(512))
+    skip_msg = Column(Integer)
+    is_active = Column(Integer)
+    source = Column(VARCHAR(32))
+    parent_user_id = Column(Integer)
+    promotion = Column(Integer)
+    subscribe = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["openid"] = self.openid
+        ret["user_name"] = self.user_name
+        ret["user_avatar"] = self.user_avatar
+        ret["skip_msg"] = self.skip_msg
+        ret["is_active"] = self.is_active
+        ret["source"] = self.source
+        ret["parent_user_id"] = self.parent_user_id
+        ret["promotion"] = self.promotion
+        ret["subscribe"] = self.subscribe
+
+        return ret
+
+
+class UserMpMessageLog(BaseModel):
+
+    __tablename__ = "user_mp_message_log"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    openid = Column(VARCHAR(64))
+    content = Column(VARCHAR(1024))
+    date = Column(DATE)
+    type = Column(VARCHAR(32))
+    status = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["user_id"] = self.user_id
+        ret["openid"] = self.openid
+        ret["content"] = self.content
+        ret["date"] = self.date
+        ret["type"] = self.type
+        ret["status"] = self.status
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
 
 class UserFormId(BaseModel):
 
@@ -378,6 +439,34 @@ class Mgr(object):
             self.session.close()
         return ret
 
+    def get_users_mp(self, params={}):
+        try:
+            ret = []
+            str_where = ""
+            if params.get('user_id', ''):
+                str_where += "AND users.id = {}".format(params['user_id'])
+            sql = """
+                SELECT users_mp.*, users_promotion_balance.commission_avail 
+                FROM users_mp, users, users_promotion_balance 
+                WHERE users_mp.id = users.user_mp_id 
+                AND users.id = users_promotion_balance.user_id 
+                AND users_mp.subscribe = 1 
+                AND users_mp.promotion >= 3 
+                AND users_promotion_balance.commission_avail > 0 
+                AND users.id NOT IN (select distinct user_id from `users_withdraw` where status = 1)
+                {}
+                ORDER BY users_promotion_balance.commission_avail DESC 
+            """.format(str_where)
+            ret = self.session.execute(sql)
+            dkeys = ret.keys()
+            for row in ret.fetchall():
+                ret.append(dict(zip(dkeys, row)))
+        except Exception as e:
+            logging.warning("get users mp error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
     def get_user_formids(self):
         try:
             ret = []
@@ -529,6 +618,20 @@ class Mgr(object):
         except Exception as e:
             self.session.rollback()
             logging.warning("save msg send error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+
+    def save_user_mp_message_log(self, info):
+        try:
+            if not info:
+                return None
+            info['create_time'] = int(time())
+            info['update_time'] = int(time())
+            self.session.add(UserMpMessageLog(**info))
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("save user mp message log error : %s" % e, exc_info=True)
         finally:
             self.session.close()
 

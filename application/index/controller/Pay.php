@@ -164,19 +164,19 @@ class Pay extends Controller
         $remainingBytes = $body->getContents();
         $ret = json_decode($remainingBytes, true);
         Log::record($ret, 'info');
-        if(strtolower($ret['resultCode']) === 'success') {
-            $ticket = New UserMpTicket;
-            $ticket->data([
-                'appid' => $this->wxconfig['appids']['neihan_mp'],
-                'user_id' => $user_id,
-                'orderid' => $orderid,
-                'rel_orderid' => $ret['sysOrderNo'],
-                'ip' => $ip,
-                'amount' => floatval($ticket_amount),
-                'status' => 0
-            ]);
-            $ticket->save();
 
+        $ticket = New UserMpTicket;
+        $ticket->data([
+            'appid' => $this->wxconfig['appids']['neihan_mp'],
+            'user_id' => $user_id,
+            'orderid' => $orderid,
+            'rel_orderid' => isset($ret['sysOrderNo']) ? $ret['sysOrderNo'] : '',
+            'ip' => $ip,
+            'amount' => floatval($ticket_amount),
+            'status' => 0
+        ]);
+        $ticket->save();
+        if(strtolower($ret['resultCode']) === 'success') {
             $this->redirect($ret['payUrl'], 302);
         } else {
             return $ret['message'];
