@@ -66,7 +66,7 @@ class PayMp extends Controller
             return 'request invalid';
         }
 
-        $mpay = new MPay($this->payconfig['mp2']);
+        $mpay = new MPay($this->payconfig['mp1']);
         $config_biz = [
             'out_trade_no' => generate_order(),
             'total_fee' => strval(intval($amount*100)),
