@@ -87,8 +87,8 @@ def send_msg(u):
 
 def main():
     global total_send
-    # uparams = { 'user_id': 17 }
-    uparams = {}
+    uparams = { 'user_id': 17 }
+    # uparams = {}
     users = _mgr.get_users_mp(uparams)
 
     if users:

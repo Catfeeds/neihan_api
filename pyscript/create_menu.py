@@ -46,7 +46,7 @@ def run():
         {
             "type": "media_id",
             "name": "客服",
-            "media_id": "zrVy1Um2HLtEorHdlcHNsx3EP21xtcujs_pvw5ASRdg",
+            "media_id": "zrVy1Um2HLtEorHdlcHNs2Yjw5fdLpatBl1lrNj1NZk",
         }]
     }
     api = API + wx_access_token['access_token']

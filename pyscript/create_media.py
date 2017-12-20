@@ -12,6 +12,8 @@ from settings import *
 {u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskyf2wB16Wv2icrMwUOqAlFCQqf5QXY1xfhMWgibRmKhThsMJ1oib0diafVFAQP7xxRMldMDVr2e11bQ/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNs5M1r6CL_ta-gjOwGasBlZ8'} fm_dl.png
 
 {u'url': u'http://mmbiz.qpic.cn/mmbiz_png/bqoASNeyzKskyf2wB16Wv2icrMwUOqAlFvpjmyAulEtia784teB3ZES10ziaGIJTX0BPgpyUbwQ6R7FKEIFMXibPWA/0?wx_fmt=png', u'media_id': u'zrVy1Um2HLtEorHdlcHNswiYQMDY2JIScVZkNW2SZDM'} fm_qhb.png
+
+{u'url': u'http://mmbiz.qpic.cn/mmbiz_jpg/bqoASNeyzKudmwzFtWulw7drzjfLLCNNxS1BpJvc2Ym21bDT8mM2YA5Jljxib03qL4r2sibYLMj55V9LzhMtiajJg/0?wx_fmt=jpeg', u'media_id': u'zrVy1Um2HLtEorHdlcHNs2Yjw5fdLpatBl1lrNj1NZk'} kf_02.jpeg
 '''
 def run(filename=''):
     if not os.path.isfile(filename):
