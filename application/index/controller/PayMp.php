@@ -117,7 +117,7 @@ class PayMp extends Controller
 
         Log::record($verify, 'info');
         if ($verify) {
-            $wxconfig = $this->payconfig['mp2'];
+            $wxconfig = $this->payconfig['mp1'];
             $sign = $verify['sign'];
             unset($verify['sign']);
 
