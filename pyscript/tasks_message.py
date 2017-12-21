@@ -85,7 +85,7 @@ def main():
     global total_send
     while True:
         total_send = 0
-        tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now()})
+        tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now(), 'app': 'neihan_2'})
         if len(tasks) == 0:
             logging.info('没有消息推送任务')
             sleep(30)
