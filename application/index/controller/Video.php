@@ -77,6 +77,8 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);
             }
 
+            User::where('id', $user_id)->update(['is_displayed' => 0]);
+
             // $settings = Setting::get(1);
             $app_code = 'neihan_1';
             $comconfig = Config::get('comconfig');
@@ -417,8 +419,10 @@ class Video extends Controller
                 $video->c_bury_count += 1;
             } elseif($type == 'play') {
                 $video->c_play_count += 1;
+                User::where('id', $user_id)->update(['is_played' => 0]);
             } elseif($type == 'play_end') {
                 $video->c_play_end_count += 1;
+                User::where('id', $user_id)->update(['is_played_end' => 0]);
             } elseif($type == 'replay') {
                 $video->c_replay_count += 1;
             }
@@ -461,6 +465,8 @@ class Video extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);   
             }
+
+            User::where('id', $user_id)->update(['is_share' => 0]);
 
             $video = Video_Model::get(['item_id' => $video_id]);
             if(empty($video)) {
@@ -691,6 +697,8 @@ class Video extends Controller
                 $data['m'] = 'User Not Exists';
                 return Response::create($data, 'json')->code(200);   
             }
+            $user->is_commented = 1;
+            $user->save();
 
             $video = Video_Model::get(['item_id' => $video_id]);
             if(empty($video)) {
