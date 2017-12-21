@@ -20,6 +20,7 @@ use app\index\model\Comment;
 use app\index\model\VideoDisplayLog;
 use app\index\model\UserStore;
 use app\index\model\Setting;
+use app\index\model\Ads;
 
 use app\index\model\UserPromotion;
 use app\index\model\UserPromotionBalance;
@@ -142,17 +143,26 @@ class Video extends Controller
 
                 if($k == 0) {
                     if($settings['ad_show'] == 1) {
-                        $ad['image'] = $request->domain().'/static/image/hb-02.jpg';
-                        $ad['appId'] = 'wx7876c2b72fed4be6';
-                        $ad['path'] = 'pages/index/index';
-                        $ad['extraData'] = '';
+                        $ads = Ads::where('status', 1)->order('id', 'desc')->find();
+
+                        if($ads && $ads->image) {
+                            $ad['image'] = $ads->image;
+                            $ad['appId'] = $ads->appid;
+                            $ad['path'] = $ads->path;
+                            $ad['extraData'] = $ads->extract_data;
+                        }
+                        
                     } elseif($settings['ad_show'] == 2) {
                         $ad_show = rand(1, 100);
                         if($settings['ad_show_ratio'] >= $ad_show) {
-                            $ad['image'] = $request->domain().'/static/image/hb-02.jpg';
-                            $ad['appId'] = 'wx7876c2b72fed4be6';
-                            $ad['path'] = 'pages/index/index';
-                            $ad['extraData'] = '';
+                            $ads = Ads::where('status', 1)->order('id', 'desc')->find();
+
+                            if($ads && $ads->image) {
+                                $ad['image'] = $ads->image;
+                                $ad['appId'] = $ads->appid;
+                                $ad['path'] = $ads->path;
+                                $ad['extraData'] = $ads->extract_data;
+                            }
                         }
                     }
                 }
