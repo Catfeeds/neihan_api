@@ -29,7 +29,7 @@ def send_msg(arg):
     try:
         global total_send
 
-        exists = _mgr.exists_message_send_detail(arg['message_id'], arg['u']['id'])
+        exists = _mgr.exists_message_send_detail(arg['message_id'], arg['u']['openid'])
         if exists:
             return None
 
@@ -74,7 +74,8 @@ def send_msg(arg):
                     'message_id': arg['message_id'],
                     'from_user_id': video['from_user_id'],
                     'group_id': video['group_id'],
-                    'user_id': u['id']
+                    'user_id': u['id'],
+                    'openid': u['openid']
                 }
                 _mgr.save_message_send_detail(mdetail)
                 total_send += 1
@@ -89,15 +90,18 @@ def main():
     global total_send
     while True:
         total_send = 0
-        tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now(), 'app': 'neihan_2'})
+        try:
+            tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now(), 'app': MAIN_APP})
+        except:
+            tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now(), 'app': 'neihan_2'})
+        
         if len(tasks) == 0:
             logging.info('没有消息推送任务')
             sleep(30)
             continue
 
         for task in tasks:
-            _mgr.update_message_tasks(task['id'], {'is_send': 1})
-            # video = _mgr.get_videos({'group_id': task['group_id']})
+            _mgr.update_message_tasks(task['id'], {'is_send': 2})
             comments = _mgr.get_comment({'group_id': task['group_id']})
 
             tcomment = ''
@@ -109,8 +113,7 @@ def main():
 
             uparams = {
                 'is_active': 1,
-                # 'source': task['app'],
-                'source': 'neihan_2',
+                'source': task['app'],
                 'skip_msg': 0,
                 'promotion': 0,
                 # 'user_id': 10
@@ -121,10 +124,8 @@ def main():
                     'from_user_id': task['from_user_id'],
                     'group_id': task['group_id'],
                     'title': task['title'],
-                    # 'comment': task['comment'] if task['comment'].encode('utf8') else tcomment
                     'comment': task['comment']
                 }
-                # access_token = wxtoken.get_token(task['app'])
 
                 pools = Pool(WORKER_THREAD_NUM)
                 while len(users):
@@ -148,7 +149,7 @@ def main():
                     sleep(randint(1, 4))
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
-                _mgr.update_message_tasks(task['id'], {'send_member': total_send})
+                _mgr.update_message_tasks(task['id'], {'is_send': 1, 'send_member': total_send, 'update_time': int(time())})
             else:
                 logging.info('没有用户，暂停消息推送')
         sleep(30)
