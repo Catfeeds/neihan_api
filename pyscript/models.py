@@ -719,6 +719,17 @@ class Mgr(object):
         finally:
             self.session.close()
 
+    def exists_message_send_detail(self, message_id, user_id):
+        try:
+            return self.session.query(MessageSendDetail) \
+                .filter(MessageSendDetail.message_id == message_id) \
+                .filter(MessageSendDetail.user_id == user_id) \
+                .count()
+        except Exception as e:
+            pass
+        finally:
+            self.session.close()
+
     def get_parent_users(self, params={}):
         try:
             ret = []

@@ -29,6 +29,10 @@ def send_msg(arg):
     try:
         global total_send
 
+        exists = _mgr.exists_message_send_detail(arg['message_id'], arg['u']['id'])
+        if exists:
+            return None
+
         u = arg['u']
         video = arg['video']
         access_token = arg['access_token']
@@ -120,10 +124,12 @@ def main():
                     # 'comment': task['comment'] if task['comment'].encode('utf8') else tcomment
                     'comment': task['comment']
                 }
-                access_token = wxtoken.get_token(task['app'])
+                # access_token = wxtoken.get_token(task['app'])
 
                 pools = Pool(WORKER_THREAD_NUM)
                 while len(users):
+                    access_token = wxtoken.get_token(task['app'])
+
                     args = []
                     for x in xrange(WORKER_THREAD_NUM):
                         try:
@@ -139,7 +145,7 @@ def main():
                         except:
                             pass
                     pools.map(send_msg, args)
-                    sleep(randint(5, 20))
+                    sleep(randint(1, 4))
 
                 logging.info('成功发送消息给{}个用户'.format(total_send))
                 _mgr.update_message_tasks(task['id'], {'send_member': total_send})
