@@ -347,6 +347,7 @@ class MessageTask(BaseModel):
     date = Column(DATE)
     send_time = Column(DateTime)
     is_sended = Column(Integer)
+    source = Column(VARCHAR(64))
     create_time = Column(Integer)
     update_time = Column(Integer)
 
@@ -358,6 +359,7 @@ class MessageTask(BaseModel):
         ret["date"] = self.date
         ret["send_time"] = self.send_time
         ret["is_sended"] = self.is_sended
+        ret["source"] = self.source
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
 
@@ -799,6 +801,8 @@ class Mgr(object):
         try:
             ret = []
             q = self.session.query(MessageTask)
+            if params.get('source', '') != '':
+                q = q.filter(MessageTask.source == params['source'])
             if params.get('is_sended', '') != '':
                 q = q.filter(MessageTask.is_sended == int(params['is_sended']))
             if params.get('send_time', '') != '':

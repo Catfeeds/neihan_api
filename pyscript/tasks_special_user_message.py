@@ -89,7 +89,8 @@ def main():
 
         uparams = {
             'is_sended': 0,
-            'send_time': datetime.now()
+            'send_time': datetime.now(),
+            'source': MAIN_APP
         }
         users = _mgr.get_special_message_tasks(uparams)
         if users:
