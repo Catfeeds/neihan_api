@@ -334,7 +334,7 @@ class User extends Controller
                                 'user_id' => $user_id,
                                 'date' => date('Y-m-d',time()),
                                 'is_sended' => 0,
-                                'send_time' => date('Y-m-d H:i:s', strtotime("+{$settings->interval} minutes"))
+                                'send_time' => date('Y-m-d H:i:s', strtotime("+{$settings->interval} minutes")),
                                 'source' => $this->app_code
                             ]);
                             $msgtask->save();
