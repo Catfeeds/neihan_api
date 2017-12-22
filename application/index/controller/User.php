@@ -16,6 +16,7 @@ use app\index\model\UserShare;
 use app\index\model\UserShareClick;
 use app\index\model\UserFission;
 use app\index\model\UserFormId;
+use app\index\model\UserMlevel;
 use app\index\model\MsgSendRecord;
 use app\index\model\Message;
 use app\index\model\MessageTask;
@@ -280,8 +281,8 @@ class User extends Controller
     public function formid()
     {
         try {
-            $user_id = Request::instance()->post('user_id');
-            $form_id = Request::instance()->post('form_id');
+            $user_id = Request::instance()->param('user_id');
+            $form_id = Request::instance()->param('form_id');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -337,6 +338,26 @@ class User extends Controller
                 
             }
 
+            # 统计重度，中度，微度用户数
+            $formid_count = UserFormId::where('user_id', $user_id)->where('is_used', 0)->count();
+            if($formid_count >= 5) {
+                $user_melvel = UserMlevel::get(['user_id' => $user_id, 'date' => date('Y-m-d')]);
+                if(empty($user_melvel)) {
+                    $user_melvel = new UserMlevel;
+                    $user_melvel->data([
+                        'user_id' => $user_id,
+                        'date' => date('Y-m-d'),
+                        'level' => 1,
+                    ]);
+                }
+
+                if($formid_count >= 11 && $formid_count <= 19) {
+                    $user_melvel->level = 2;
+                } elseif($formid_count >= 20) {
+                    $user_melvel->level = 3;
+                }
+                $user_melvel->save();
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
