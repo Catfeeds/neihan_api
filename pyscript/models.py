@@ -89,6 +89,32 @@ class UserMp(BaseModel):
         return ret
 
 
+class UserMlevel(BaseModel):
+
+    __tablename__ = "users_mlevel"
+
+    id = Column(Integer, primary_key=True)
+    date = Column(DATE)
+    user_id = Column(Integer)
+    level = Column(Integer)
+    source = Column(VARCHAR(32))
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["date"] = self.date
+        ret["user_id"] = self.user_id
+        ret["level"] = self.level
+        ret["source"] = self.source
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
 class UserMpMessageLog(BaseModel):
 
     __tablename__ = "user_mp_message_log"
@@ -467,6 +493,36 @@ class Mgr(object):
                 ret.append(dict(zip(dkeys, row)))
         except Exception as e:
             logging.warning("get users mp error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def get_users_level(self, params={}):
+        try:
+            ret = []
+
+            str_where = ""
+            if params.get('user_id', ''):
+                str_where += "AND users_mlevel.user_id = {}".format(params['user_id'])
+            if params.get('source', ''):
+                str_where += "AND users_mlevel.source = '{}'".format(params['source'])
+            if params.get('date', ''):
+                str_where += "AND users_mlevel.date = '{}'".format(params['date'])
+            if params.get('level', ''):
+                str_where += "AND users_mlevel.level = {}".format(params['level'])
+
+            sql = """
+                SELECT users.* 
+                FROM users, users_mlevel
+                WHERE users.id = users_mlevel.user_id 
+                {}
+            """.format(str_where)
+            rows = self.session.execute(sql)
+            dkeys = rows.keys()
+            for row in rows.fetchall():
+                ret.append(dict(zip(dkeys, row)))
+        except Exception as e:
+            logging.warning("get users by level error : %s" % e, exc_info=True)
         finally:
             self.session.close()
         return ret

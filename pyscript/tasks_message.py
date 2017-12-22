@@ -7,7 +7,7 @@ import os
 import json
 from time import sleep
 from random import randint, choice
-from datetime import datetime
+from datetime import datetime, timedelta
 from settings import *
 from models import *
 import wxtoken
@@ -116,9 +116,15 @@ def main():
                 'source': task['app'],
                 'skip_msg': 0,
                 'promotion': 0,
-                # 'user_id': 10
+                # 'user_id': 10,
             }
-            users = _mgr.get_users(uparams)
+            if task['formid_level'] == 0:
+                users = _mgr.get_users(uparams)
+            elif task['formid_level'] >= 1:
+                uparams['level'] = task['formid_level']
+                uparams['date'] = (datetime.utcnow() + timedelta(hours=8)).strftime('%Y-%m-%d')
+                users = _mgr.get_users_level(uparams)
+
             if users:
                 video = {
                     'from_user_id': task['from_user_id'],
