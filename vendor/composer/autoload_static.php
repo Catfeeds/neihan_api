@@ -50,6 +50,7 @@ class ComposerStaticInit0c849c2b357f1cb21ecb3cabab9e31a8
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
+            'Predis\\' => 7,
         ),
         'O' => 
         array (
@@ -139,6 +140,10 @@ class ComposerStaticInit0c849c2b357f1cb21ecb3cabab9e31a8
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'Predis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/predis/predis/src',
         ),
         'Overtrue\\Socialite\\' => 
         array (

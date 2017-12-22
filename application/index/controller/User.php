@@ -35,6 +35,8 @@ use Symfony\Component\HttpFoundation\Request as WRequest;
 
 use EasyWeChat\Foundation\Application;
 
+use Predis;
+
 class User extends Controller
 {
     public function _initialize()
@@ -85,22 +87,28 @@ class User extends Controller
                 return Response::create($data, 'json')->code(200);   
             }
 
-            
+            $client = new Predis\Client();
+            $not_exists = $client->executeRaw(['SETNX', md5($ret['openid']), 1]);
             $user = User_Model::get(['openid' => $ret['openid']]);
-            if(empty($user)) {
-                $user = new User_Model;
-                $user->data([
-                    'openid'  => $ret['openid'],
-                    'unionid' => '',
-                    'source' => $this->app_code,
-                    'session_key' => $ret['session_key']
-                ]);
-                $user->save();    
+
+            if($not_exists) {
+                if(empty($user)) {
+                    $user = new User_Model;
+                    $user->data([
+                        'openid'  => $ret['openid'],
+                        'unionid' => '',
+                        'source' => $this->app_code,
+                        'session_key' => $ret['session_key']
+                    ]);
+                    $user->save();    
+                } else {
+                    $user->session_key = $ret['session_key'];
+                    $user->save();
+                }
             } else {
                 $user->session_key = $ret['session_key'];
                 $user->save();
             }
-            
             $data['d'] = ['user_id' => $user->id, 'openid' => $user->openid, 'session_key' => $ret['session_key']];
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
