@@ -354,7 +354,7 @@ class User extends Controller
                     $user_melvel->data([
                         'user_id' => $user_id,
                         'date' => date('Y-m-d'),
-                        'level' => 1,
+                        'level' => 1
                     ]);
                 }
 
@@ -363,6 +363,7 @@ class User extends Controller
                 } elseif($formid_count >= 20) {
                     $user_melvel->level = 3;
                 }
+                $user_melvel->source = $this->app_code;
                 $user_melvel->save();
             }
         } catch (Exception $e) {
