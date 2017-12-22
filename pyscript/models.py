@@ -319,6 +319,7 @@ class MessageSendDetail(BaseModel):
     from_user_id = Column(Integer)
     group_id = Column(VARCHAR(64))
     user_id = Column(Integer)
+    openid = Column(VARCHAR(64))
     create_time = Column(Integer)
     update_time = Column(Integer)
 
@@ -330,6 +331,7 @@ class MessageSendDetail(BaseModel):
         ret["from_user_id"] = self.from_user_id
         ret["group_id"] = self.group_id
         ret["user_id"] = self.user_id
+        ret["openid"] = self.openid
         ret["create_time"] = self.create_time
         ret["update_time"] = self.update_time
 
