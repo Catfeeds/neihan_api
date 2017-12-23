@@ -478,7 +478,7 @@ class Video extends Controller
                 return Response::create($data, 'json')->code(200);   
             }
 
-            User::where('id', $user_id)->update(['is_share' => 1]);
+            User::where('id', $user_id)->update(['is_shared' => 1]);
 
             $video = Video_Model::get(['item_id' => $video_id]);
             if(empty($video)) {
