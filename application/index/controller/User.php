@@ -242,15 +242,11 @@ class User extends Controller
                     $share_click->save();
 
                     try {
-                        $msg_send = Message::get([
-                            'from_user_id' => $from_user_id,
-                            'group_id' => $video_id,
-                            'is_send' => 1,
-                            'app' => $this->app_code
-                        ]);
-                        if($msg_send) {
-                            $msg_send->setInc('active_member');
-                        }
+                        $msg_send = Message::where('from_user_id', $from_user_id)
+                            ->where('group_id', $video_id)
+                            ->where('is_send', '>=', 1)
+                            ->where('app_code', $this->app_code)
+                            ->setInc('active_member');
                     } catch (Exception $e) {
                         
                     }                    
@@ -348,19 +344,18 @@ class User extends Controller
             # 统计重度，中度，微度用户数
             $formid_count = UserFormId::where('user_id', $user_id)->where('is_used', 0)->count();
             if($formid_count >= 5) {
-                $user_melvel = UserMlevel::get(['user_id' => $user_id, 'date' => date('Y-m-d')]);
+                $user_melvel = UserMlevel::get(['user_id' => $user_id]);
                 if(empty($user_melvel)) {
                     $user_melvel = new UserMlevel;
                     $user_melvel->data([
                         'user_id' => $user_id,
-                        'date' => date('Y-m-d'),
                         'level' => 1
                     ]);
                 }
 
-                if($formid_count >= 11 && $formid_count <= 19) {
+                if($formid_count >= 11 && $formid_count <= 19 && $user_melvel->level < 2) {
                     $user_melvel->level = 2;
-                } elseif($formid_count >= 20) {
+                } elseif($formid_count >= 20 && $user_melvel->level < 3) {
                     $user_melvel->level = 3;
                 }
                 $user_melvel->source = $this->app_code;

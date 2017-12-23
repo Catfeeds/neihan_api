@@ -91,9 +91,9 @@ def main():
     while True:
         total_send = 0
         try:
-            tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now(), 'app': MAIN_APP})
+            tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.utcnow()+timedelta(hours=8), 'app': MAIN_APP})
         except:
-            tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.now(), 'app': 'neihan_2'})
+            tasks = _mgr.get_message_tasks({'is_send': 0, 'send_time': datetime.utcnow()+timedelta(hours=8), 'app': 'neihan_2'})
         
         if len(tasks) == 0:
             logging.info('没有消息推送任务')

@@ -506,8 +506,6 @@ class Mgr(object):
                 str_where += "AND users_mlevel.user_id = {}".format(params['user_id'])
             if params.get('source', ''):
                 str_where += "AND users_mlevel.source = '{}'".format(params['source'])
-            if params.get('date', ''):
-                str_where += "AND users_mlevel.date = '{}'".format(params['date'])
             if params.get('level', ''):
                 str_where += "AND users_mlevel.level = {}".format(params['level'])
 
@@ -730,7 +728,7 @@ class Mgr(object):
             if params.get('app', '') != '':
                 q = q.filter(Message.app == params['app'])
             if params.get('send_time', '') != '':
-                q = q.filter(Message.send_time <= params['send_time'])
+                q = q.filter(Message.send_time <= params['send_time'].strftime('%Y-%m-%d %H:%M%S'))
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())
