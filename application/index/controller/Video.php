@@ -125,7 +125,9 @@ class Video extends Controller
 
                 $video_douyin = [];
 
-                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal, $video_jump, $video_douyin);
+                $video_funny = $video_model->get_videos($user_id, [65], [], 1, "play_count", 0, 0);
+
+                $data['d'] = array_merge($video_awsome, $video_hot, $video_normal, $video_jump, $video_douyin, $video_funny);
             } else {
                 $video_model = new Video_Model;
                 $data['d'] = $video_model->get_videos_waitting($user_id, $p, $n);
