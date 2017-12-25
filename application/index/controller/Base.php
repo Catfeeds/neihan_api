@@ -8,27 +8,10 @@ use think\Response;
 use think\Loader;
 use think\Db;
 use think\Config;
+use think\Log;
 
 use app\index\model\User;
 use app\index\model\UserMp;
-use app\index\model\UserShare;
-use app\index\model\UserLog;
-use app\index\model\Video as Video_Model;
-use app\index\model\VideoPromotion;
-use app\index\model\Comment;
-use app\index\model\VideoDisplayLog;
-use app\index\model\UserStore;
-use app\index\model\Setting;
-use app\index\model\Ads;
-
-use app\index\model\UserPromotion;
-use app\index\model\UserPromotionBalance;
-use app\index\model\UserPromotionGrid;
-use app\index\model\UserPromotionTicket;
-use app\index\model\Setting;
-use app\index\model\SettingPromotion;
-use app\index\model\UserJump;
-
 
 class Base extends Controller
 {
