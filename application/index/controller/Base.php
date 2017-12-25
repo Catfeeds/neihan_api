@@ -12,6 +12,8 @@ use think\Log;
 
 use app\index\model\User;
 use app\index\model\UserMp;
+use app\index\model\WxToken;
+
 
 class Base extends Controller
 {
@@ -65,6 +67,22 @@ class Base extends Controller
                     }
                 }
             }
+
+            $wxtoken = WxToken::get(['app_code' => $app_code]);
+            if(empty($wxtoken)) {
+                $wxtoken = new WxToken;
+                $insert_data = $access_token;
+                $insert_data['app_code'] = $app_code;
+                $wxtoken->data($app_code);
+                $wxtoken->save();
+            } else {
+                if($wxtoken->expires_time < $access_token['expires_time']) {
+                    $wxtoken->expires_time = $access_token['expires_time'];
+                    $wxtoken->save();
+                }
+            }
+
+
         } catch (Exception $e) {
             $access_token = [];
         }
