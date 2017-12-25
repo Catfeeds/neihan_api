@@ -35,7 +35,7 @@ class Base extends Controller
         return str_replace('timestamp', strval(time()).'.'.strval(rand(10, 60)), $url);
     }
 
-    private function _access_token($app_code='')
+    protected function _access_token($app_code='')
     {
         try {
 
@@ -72,7 +72,7 @@ class Base extends Controller
         return $access_token;
     }
 
-    private function _get_ticket($wx_token, $user_id)
+    protected function _get_ticket($wx_token, $user_id)
     {
         $api = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token='.$wx_token['access_token'];
         $req_data = [
@@ -87,7 +87,7 @@ class Base extends Controller
     }
 
 
-    private function _generate_qrcode($user_id) 
+    protected function _generate_qrcode($user_id) 
     {
         $token  = $this->_access_token('neihan_mp');
         $ticket = $this->_get_ticket($token, $user_id);
@@ -132,7 +132,7 @@ class Base extends Controller
         return ['/'.$outfile, $ticket['ticket']];
     }
 
-    private function _headimgurl($url, $w, $h){
+    protected function _headimgurl($url, $w, $h){
         $src = imagecreatefromstring(curl_get($url));
         $lw = imagesx($src);//二维码图片宽度
         $lh = imagesy($src);//二维码图片高度
