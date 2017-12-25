@@ -245,7 +245,7 @@ class User extends Controller
                         $msg_send = Message::where('from_user_id', $from_user_id)
                             ->where('group_id', $video_id)
                             ->where('is_send', '>=', 1)
-                            ->where('app_code', $this->app_code)
+                            ->where('app', $this->app_code)
                             ->setInc('active_member');
                     } catch (Exception $e) {
                         
