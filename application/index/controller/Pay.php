@@ -7,6 +7,8 @@ use think\Request;
 use think\Config;
 use think\Log;
 
+use app\index\controller\Base;
+
 use app\index\model\UserMpTicket;
 use app\index\model\UserMp;
 use app\index\model\User;
@@ -16,7 +18,7 @@ use Yansongda\Pay\Pay as MPay;
 use GuzzleHttp;
 
 
-class Pay extends Controller
+class Pay extends Base
 {
     public function _initialize()
     {
@@ -346,44 +348,6 @@ class Pay extends Controller
     public function page()
     {
         return $this->fetch('result');;
-    }
-
-
-    private function _access_token($app_code='')
-    {
-        try {
-            $is_expired = true;
-
-            $access_token = [];
-            if(empty($app_code)) {
-                $app_code = $this->app_code;
-            }
-            $access_token_file = './../application/extra/access_token_'.$app_code.'.txt';
-            
-            if(file_exists($access_token_file)) {
-                $access_token = json_decode(file_get_contents($access_token_file), true);
-            }
-            if(!empty($access_token)) {
-                if($access_token['expires_time'] - time() - 1000 > 0) {
-                    $is_expired = false;
-                }
-            }
-
-            if($is_expired) {
-                $wxconfig = Config::get('wxconfig');
-                $resp = curl_get($wxconfig['token_apis'][$app_code]);
-                if(!empty($resp)) {
-                    $access_token = json_decode($resp, true);
-                    if(array_key_exists('expires_in', $access_token)) {
-                        $access_token['expires_time'] = intval($access_token['expires_in']) + time();
-                        file_put_contents($access_token_file, json_encode($access_token));
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            $access_token = [];
-        }
-        return $access_token;
     }
 
 }
