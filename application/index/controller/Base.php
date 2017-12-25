@@ -9,6 +9,22 @@ use think\Loader;
 use think\Db;
 use think\Config;
 
+use app\index\model\User;
+use app\index\model\UserMp;
+use app\index\model\UserShare;
+use app\index\model\UserLog;
+use app\index\model\Video as Video_Model;
+use app\index\model\VideoPromotion;
+use app\index\model\Comment;
+use app\index\model\VideoDisplayLog;
+use app\index\model\UserStore;
+use app\index\model\Setting;
+use app\index\model\Ads;
+
+use app\index\model\UserPromotion;
+use app\index\model\UserPromotionBalance;
+use app\index\model\UserPromotionGrid;
+use app\index\model\UserPromotionTicket;
 use app\index\model\Setting;
 use app\index\model\SettingPromotion;
 use app\index\model\UserJump;
@@ -35,7 +51,7 @@ class Base extends Controller
         return str_replace('timestamp', strval(time()).'.'.strval(rand(10, 60)), $url);
     }
 
-    protected function _access_token($app_code='')
+    public function _access_token($app_code='')
     {
         try {
 
@@ -72,7 +88,7 @@ class Base extends Controller
         return $access_token;
     }
 
-    protected function _get_ticket($wx_token, $user_id)
+    public function _get_ticket($wx_token, $user_id)
     {
         $api = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token='.$wx_token['access_token'];
         $req_data = [
@@ -87,7 +103,7 @@ class Base extends Controller
     }
 
 
-    protected function _generate_qrcode($user_id) 
+    public function _generate_qrcode($user_id) 
     {
         $token  = $this->_access_token('neihan_mp');
         $ticket = $this->_get_ticket($token, $user_id);
@@ -132,7 +148,7 @@ class Base extends Controller
         return ['/'.$outfile, $ticket['ticket']];
     }
 
-    protected function _headimgurl($url, $w, $h){
+    public function _headimgurl($url, $w, $h){
         $src = imagecreatefromstring(curl_get($url));
         $lw = imagesx($src);//二维码图片宽度
         $lh = imagesy($src);//二维码图片高度
