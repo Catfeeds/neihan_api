@@ -9,27 +9,15 @@ use think\Loader;
 use think\Db;
 use think\Config;
 
+use app\index\controller\Base;
+
 use app\index\model\Setting;
 use app\index\model\SettingPromotion;
 use app\index\model\UserJump;
 
 
-class Common extends Controller
+class Common extends Base
 {
-    public function _initialize()
-    {
-        $request = Request::instance();
-        $comconfig = Config::get('comconfig');
-
-        $this->app_code = 'neihan_1';
-        foreach ($comconfig['domain_settings'] as $key => $value) {
-            if(strrpos($request->domain(), $key) !== false) {
-                $this->app_code = $value;
-                break;
-            }
-        }
-    }
-
     /**
      * 显示资源列表
      *
