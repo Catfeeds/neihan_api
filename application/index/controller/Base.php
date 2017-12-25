@@ -73,7 +73,7 @@ class Base extends Controller
                 $wxtoken = new WxToken;
                 $insert_data = $access_token;
                 $insert_data['app_code'] = $app_code;
-                $wxtoken->data($app_code);
+                $wxtoken->data($insert_data);
                 $wxtoken->save();
             } else {
                 if($wxtoken->expires_time < $access_token['expires_time']) {
