@@ -56,7 +56,7 @@ def get_token(source=''):
             insert_data = copy.copy(data)
             insert_data['app_code'] = source 
             _mgr.save_wxtoken(insert_data)
-        elif wxtoken.expires_time < data.get('expires_time', 0):
+        elif wxtoken['expires_time'] < data.get('expires_time', 0):
             _mgr.update_wxtoken(source, data)
     else:
         logging.info('时间戳还在有效期内')
