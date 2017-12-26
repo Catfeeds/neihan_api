@@ -2,9 +2,18 @@
 import requests
 import os
 import json
+import copy
 from time import sleep, time
 from settings import *
+from models import *
 
+
+_db_url = 'mysql+mysqldb://%s:%s@%s/%s?charset=utf8mb4' % \
+    (DATABASE['user'],
+     DATABASE['passwd'],
+     DATABASE['host'],
+     DATABASE['db_name'])
+_mgr = Mgr(create_engine(_db_url, pool_recycle=10))
 
 _current_pwd = os.path.dirname(os.path.realpath(__file__))
 
@@ -40,6 +49,15 @@ def get_token(source=''):
 
                 with open(filename, 'wb') as f:
                     f.write(json.dumps(data))
+
+    if data:
+        wxtoken = _mgr.get_wxtoken(source)
+        if not wxtoken:
+            insert_data = copy.copy(data)
+            insert_data['app_code'] = source 
+            _mgr.save_wxtoken(insert_data)
+        elif wxtoken.expires_time < data['expires_time']:
+            _mgr.update_wxtoken(source, data)
     else:
         logging.info('时间戳还在有效期内')
     return data

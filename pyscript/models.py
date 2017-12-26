@@ -439,6 +439,32 @@ class UserShareClick(BaseModel):
         return ret
 
 
+class WxToken(BaseModel):
+    __tablename__ = "wx_token"
+
+    id = Column(Integer, primary_key=True)
+    app_code = Column(VARCHAR(32))
+    access_token = Column(VARCHAR(128))
+    expires_time = Column(Integer)
+    expires_in = Column(Integer)
+    create_time = Column(Integer)
+    update_time = Column(Integer)
+
+    def conv_result(self):
+        ret = {}
+
+        ret["id"] = self.id
+        ret["app_code"] = self.app_code
+        ret["access_token"] = self.access_token
+        ret["expires_time"] = self.expires_time
+        ret["expires_in"] = self.expires_in
+        ret["create_time"] = self.create_time
+        ret["update_time"] = self.update_time
+
+        return ret
+
+
+
 class Mgr(object):
 
     def __init__(self, engine):
@@ -921,6 +947,48 @@ class Mgr(object):
         except Exception as e:
             self.session.rollback()
             logging.warning("refresh formid error: %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+
+    def save_wxtoken(self, info):
+        try:
+            if not info:
+                return None
+            info['create_time'] = int(time())
+            info['update_time'] = int(time())
+            self.session.add(WxToken(**info))
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("save wx token error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+
+    def get_wxtoken(self, app_code):
+        try:
+            ret = {}
+            q = self.session.query(WxToken) \
+                .filter(WxToken.app_code == app_code)
+            rows = q.all()
+            for row in rows:
+                ret = row.conv_result()
+                break
+        except Exception as e:
+            logging.warning("get wxtoken error : %s" % e, exc_info=True)
+        finally:
+            self.session.close()
+        return ret
+
+    def update_wxtoken(self, app_code, udata):
+        try:
+            udata['update_time'] = int(time())
+            self.session.query(WxToken) \
+                .filter(WxToken.app_code == app_code) \
+                .update(udata, synchronize_session='fetch')
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logging.warning("update wxtoken error: %s" % e, exc_info=True)
         finally:
             self.session.close()
 
