@@ -754,7 +754,7 @@ class Mgr(object):
             if params.get('app', '') != '':
                 q = q.filter(Message.app == params['app'])
             if params.get('send_time', '') != '':
-                q = q.filter(Message.send_time <= params['send_time'].strftime('%Y-%m-%d %H:%M%S'))
+                q = q.filter(Message.send_time <= params['send_time'].strftime('%Y-%m-%d %H:%M:%S'))
             rows = q.all()
             for row in rows:
                 ret.append(row.conv_result())
