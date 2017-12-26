@@ -344,7 +344,7 @@ class User extends Base
             }
 
             # 统计重度，中度，微度用户数
-            $formid_count = UserFormId::where('user_id', $user_id)->where('is_used', 0)->count();
+            $formid_count = UserFormId::where('user_id', $user_id)->where('is_used', 0)->where('create_time', '>=', intval(time())-86400)->count();
             if($formid_count >= 5) {
                 $user_melvel = UserMlevel::get(['user_id' => $user_id]);
                 if(empty($user_melvel)) {
