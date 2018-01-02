@@ -1,4 +1,5 @@
 # coding=utf8
+import traceback
 from multiprocessing import Pool
 from time import sleep, time
 from datetime import datetime, timedelta
@@ -27,8 +28,8 @@ def yesterday_ts():
     return [yesterday.strftime('%Y-%m-%d'), yesterday_beg_ts, yesterday_end_ts]
 
 
-def summary_play():
-    print 'summary play'
+def summary_play(_mgr):
+    logging.info('summary play')
     ts = yesterday_ts()
     try:
         sql = '''
@@ -44,7 +45,7 @@ def summary_play():
         pass
     
 
-def summary_play_end():
+def summary_play_end(_mgr):
     print 'summary play end'
     ts = yesterday_ts()
     try:
@@ -61,7 +62,7 @@ def summary_play_end():
         pass
 
 
-def summary_member():
+def summary_member(_mgr):
     print 'summary member'
     ts = yesterday_ts()
     try:
@@ -76,7 +77,7 @@ def summary_member():
     except Exception as e:
         pass
 
-def summary_display():
+def summary_display(_mgr):
     print 'summary display'
     ts = yesterday_ts()
     try:
@@ -93,7 +94,7 @@ def summary_display():
         pass
 
 
-def summary_share():
+def summary_share(_mgr):
     print 'summary share'
     ts = yesterday_ts()
     try:
@@ -110,7 +111,7 @@ def summary_share():
         pass
 
 
-def summary_comment():
+def summary_comment(_mgr):
     print 'summary comment'
     ts = yesterday_ts()
     try:
@@ -127,7 +128,7 @@ def summary_comment():
         pass
 
 
-def summary_digg():
+def summary_digg(_mgr):
     print 'summary digg'
     ts = yesterday_ts()
     try:
@@ -144,7 +145,7 @@ def summary_digg():
         pass
 
 
-def summary_formid():
+def summary_formid(_mgr):
     print 'summary formid'
     ts = yesterday_ts()
     try:
@@ -161,15 +162,15 @@ def summary_formid():
         pass
 
 
-def summary(t):
-    eval("summary_"+t+"()")
+def summary(t, _mgr):
+    eval("summary_"+t+"(_mgr)")
 
 
 def run():
     pnum = 2
     p = Pool(pnum)
     for i in _type:
-        p.apply_async(summary, args=(i,))
+        p.apply_async(summary, args=(i, _mgr))
     print 'Waiting for all subprocesses done...'
     p.close()
     p.join()
