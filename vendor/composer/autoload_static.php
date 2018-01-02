@@ -176,6 +176,13 @@ class ComposerStaticInit0c849c2b357f1cb21ecb3cabab9e31a8
     );
 
     public static $prefixesPsr0 = array (
+        'R' => 
+        array (
+            'Raven_' => 
+            array (
+                0 => __DIR__ . '/..' . '/sentry/sentry/lib',
+            ),
+        ),
         'P' => 
         array (
             'Pimple' => 

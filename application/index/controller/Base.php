@@ -12,6 +12,8 @@ use think\Log;
 
 use app\index\model\User;
 use app\index\model\UserMp;
+use app\index\model\UserFission;
+use app\index\model\UserPointLog;
 use app\index\model\WxToken;
 
 
@@ -20,15 +22,20 @@ class Base extends Controller
     public function _initialize()
     {
         $request = Request::instance();
-        $comconfig = Config::get('comconfig');
+        $this->comconfig = Config::get('comconfig');
 
         $this->app_code = 'neihan_1';
-        foreach ($comconfig['domain_settings'] as $key => $value) {
+        foreach ($this->comconfig['domain_settings'] as $key => $value) {
             if(strrpos($request->domain(), $key) !== false) {
                 $this->app_code = $value;
                 break;
             }
         }
+        $sentry = new \Raven_Client($this->comconfig['sentry_url']);
+        $this->error_handler = new \Raven_ErrorHandler($sentry);
+        $this->error_handler->registerExceptionHandler();
+        $this->error_handler->registerErrorHandler();
+        $this->error_handler->registerShutdownFunction();
     }
 
     public function timestamp_url($url)
@@ -173,6 +180,49 @@ class Base extends Controller
             }
         }
         return $newpic;
+    }
+
+    protected function _add_user_point($user_id, $ptype) 
+    {
+        if($this->comconfig['point_lock']) {
+            return '';
+        }
+        $user = User::get($user_id);
+        if(empty($user) || $user->promotion < 3) {
+            return '';
+        }
+        $point = $this->comconfig['pcode'][$ptype];
+        $logtype = [$ptype];
+        if($point['max_share']) {
+            $logtype[] = $point['max_share'];
+        }
+        $today_point = UserPointLog::where('user_id', $user_id)
+            ->where('date', date('Y-m-d'))
+            ->where('type', 'in', $logtype)
+            ->sum('point');
+        if($point['max'] <= $today_point) {
+            return '';
+        }
+
+        Db::startTrans();
+        try{
+            Db::execute('INSERT INTO users_point_log (`user_id`, `date`, `point`, `type`, `create_time`, `update_time`) VALUES (?, ?, ?, ?, ?, ?)',[$user_id, date('Y-m-d'), $point['point'][0], $ptype, time(), time()]);
+            Db::execute('UPDATE users_promotion_balance SET point=point+?, point_avail=point_avail+? WHERE user_id=?', [intval($point['point'][0]), $point['point'][0], $user_id]);
+            Db::commit();    
+        } catch (\Exception $e) {
+            Db::rollback();
+            print_r($e);
+            throw new \Exception("something error", -1024, $e);
+        }
+    }
+
+    protected function _add_parent_user_point($user_id, $ptype)
+    {
+        $user_fission = UserFission::get(['user_id' => $user_id]);
+        if(empty($user_fission)) {
+            return '';
+        }
+        $this->_add_user_point($user_fission->from_user_id, $ptype);
     }
 
 }

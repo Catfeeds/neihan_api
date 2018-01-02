@@ -30,6 +30,9 @@ use app\index\model\UserPromotionTicket;
 use app\index\model\SettingPromotion;
 use app\index\model\WechatOrder;
 use app\index\model\UserWithdraw;
+use app\index\model\UserPointLog;
+use app\index\model\UserSignLog;
+
 
 use Thenbsp\Wechat\Payment\Unifiedorder;
 use Thenbsp\Wechat\Payment\Notify;
@@ -44,10 +47,10 @@ class User extends Base
     public function _initialize()
     {
         $request = Request::instance();
-        $comconfig = Config::get('comconfig');
+        $this->comconfig = Config::get('comconfig');
 
         $this->app_code = 'neihan_1';
-        foreach ($comconfig['domain_settings'] as $key => $value) {
+        foreach ($this->comconfig['domain_settings'] as $key => $value) {
             if(strrpos($request->domain(), $key) !== false) {
                 $this->app_code = $value;
                 break;
@@ -124,8 +127,8 @@ class User extends Base
         try {
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
-            $user_id = Request::instance()->post('user_id');
-            $user_name = Request::instance()->post('user_name');
+            $user_id = Request::instance()->param('user_id');
+            $user_name = Request::instance()->param('user_name');
             $user_avatar = Request::instance()->post('user_avatar');
             $gender = Request::instance()->post('gender');
             $country = Request::instance()->post('country');
@@ -144,6 +147,8 @@ class User extends Base
                 return Response::create($data, 'json')->code(200);   
             }
 
+            $before_user_name = $user->user_name;
+
             $user->user_name = $user_name ? $user_name : '';
             $user->user_avatar = $user_avatar ? $user_avatar : '';
             $user->gender = $gender ? $gender : 0;
@@ -152,6 +157,11 @@ class User extends Base
             $user->city = $city ? $city : '';
 
             $user->save();
+
+            if(empty($before_user_name) && !empty($user->user_name)) {
+                $ptype = '101';
+                $this->_add_user_point($user_id, $ptype);
+            }
 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
@@ -198,9 +208,28 @@ class User extends Base
                 'city' => $user->city,
                 'ptype' => $ptype,
                 'qrcode' => '',
+                'point_total' => 0,
+                'point_info' => []
             ];
-            
             $data['d']['qrcode'] = $user->mp_qrcode ? $request->domain().strval($user->mp_qrcode) : $request->domain().strval($user->promotion_qrcode_new);
+
+            $point_log = Db::table('users_point_log')
+                ->field('sum(point) as total_point, type, user_id')
+                ->where('user_id', $user_id)
+                ->where('date', date('Y-m-d'))
+                ->group('user_id, type')
+                ->select();
+            foreach ($point_log as $k => $v) {
+                $data['d']['point_info'][] = [
+                    'type' => $v['type'],
+                    'total' => intval($v['total_point'])
+                ];
+            }
+
+            $user_balance = UserPromotionBalance::get(['user_id' => $user_id]);
+            if($user_balance) {
+                $data['d']['point_total'] = $user_balance->point_avail;
+            }
 
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
@@ -225,38 +254,14 @@ class User extends Base
                 return Response::create($data, 'json')->code(200);
             }
 
+            $from_user = User_Model::get($from_user_id);
+            $user = User_Model::get($user_id);
+            
+            $today = date('Y-m-d');
+            $today_ts = strtotime($today);
             if($from_user_id != $user_id) {
-                $share_click = UserShareClick::get([
-                    'from_user_id' => $from_user_id,
-                    'user_id' => $user_id,
-                    'video_id' => $video_id,
-                    'wechat_gid' => strval($wechat_gid)
-                ]);
-
-                if(!$share_click) {
-                    $share_click = new UserShareClick;
-                    $share_click->data([
-                        'from_user_id'  => $from_user_id,
-                        'user_id' => $user_id,
-                        'video_id' => $video_id,
-                        'wechat_gid' => strval($wechat_gid)
-                    ]);
-                    $share_click->save();
-
-                    try {
-                        $msg_send = Message::where('from_user_id', $from_user_id)
-                            ->where('group_id', $video_id)
-                            ->where('is_send', '>=', 1)
-                            ->where('app', $this->app_code)
-                            ->setInc('active_member');
-                    } catch (Exception $e) {
-                        
-                    }                    
-                }
-
                 # 记录用户裂变数据
-                $share_fission = UserFission::get(['user_id' => $user_id]);
-
+                $share_fission = UserFission::where('user_id', $user_id)->count();
                 if(!$share_fission) {
                     $uinfo = User_Model::get($from_user_id);
                     $parent_user_id = $uinfo['parent_user_id'] ? $uinfo['parent_user_id'] : $from_user_id;
@@ -273,10 +278,61 @@ class User extends Base
                     $user = User_Model::get($user_id);
                     $user->parent_user_id = $parent_user_id;
                     $user->save();
+
+                    # 代理获取新用户, 加值
+                    if($from_user->promotion >= 3) {
+                        $this->_add_user_point($from_user_id, '106');
+                    } else {
+                        # 下级用户获取新用户
+                        if($from_user->create_time >= $today.' 00:00:00') {
+                            # 新
+                            $this->_add_parent_user_point($from_user_id, '206');
+                        } else {
+                            # 旧
+                            $this->_add_parent_user_point($from_user_id, '306');
+                        }
+                    }
+                }
+
+                # 代理激活老用户
+                if($from_user->promotion >= 3 && $user->create_time < $today.' 00:00:00') {
+                    $share_click_exists = UserShareClick::where('from_user_id', $from_user_id)
+                        ->where('user_id', $user_id)
+                        ->where('date', $today)
+                        ->count();
+                    if(!$share_click_exists) {
+                        $this->_add_user_point($from_user_id, '107');
+                    }
+                }
+
+                $share_click = UserShareClick::where('from_user_id', $from_user_id)
+                    ->where('user_id', $user_id)
+                    ->where('video_id', $video_id)
+                    ->where('date', $today)
+                    ->where('wechat_gid', strval($wechat_gid))
+                    ->count();
+                if(!$share_click) {
+                    $share_click = new UserShareClick;
+                    $share_click->data([
+                        'from_user_id'  => $from_user_id,
+                        'user_id' => $user_id,
+                        'video_id' => $video_id,
+                        'date' => $today,
+                        'wechat_gid' => strval($wechat_gid)
+                    ]);
+                    $share_click->save();
+
+                    try {
+                        $msg_send = Message::where('from_user_id', $from_user_id)
+                            ->where('group_id', $video_id)
+                            ->where('is_send', '>=', 1)
+                            ->where('app', $this->app_code)
+                            ->setInc('active_member');
+                    } catch (Exception $e) {
+                        
+                    }
                 }
             }
-
-            
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
@@ -1012,6 +1068,45 @@ class User extends Base
             $qrcode = $this->_generate_qrcode($user_id);
 
             $data['d']['code'] = Request::instance()->domain().$qrcode[0];
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function signin()
+    {
+        try {
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            $user_id = Request::instance()->param('user_id');
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = '参数错误';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $user = User_Model::get($user_id);
+
+            if(empty($user) || $user->promotion < 3) {
+                $data['c'] = -1024;
+                $data['m'] = '用户不存在';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $sign_log = UserSignLog::get(['user_id' => $user_id, 'date' => date('Y-m-d')]);
+            if(empty($sign_log)) {
+
+                Db::startTrans();
+                try{
+                    $ptype = '102';
+                    Db::execute('INSERT INTO users_sign_log (`user_id`, `date`, `create_time`, `update_time`) VALUES (?, ?, ?, ?)', [$user_id, date('Y-m-d'), time(), time()]);
+                    $this->_add_user_point($user_id, $ptype);
+                    Db::commit();    
+                } catch (\Exception $e) {
+                    Db::rollback();
+                }
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }

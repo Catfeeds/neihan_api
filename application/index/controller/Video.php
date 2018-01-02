@@ -25,6 +25,7 @@ use app\index\model\UserStore;
 use app\index\model\Setting;
 use app\index\model\Ads;
 
+
 use app\index\model\UserPromotion;
 use app\index\model\UserPromotionBalance;
 use app\index\model\UserPromotionGrid;
@@ -176,8 +177,7 @@ class Video extends Base
                 Db::execute($display_sql);
 
                 Video_Model::where('group_id', 'in', $vids)->setInc('c_display_count');
-            }
-            
+            }            
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
@@ -385,9 +385,9 @@ class Video extends Base
     public function count()
     {
         try {
-            $user_id = Request::instance()->post('user_id');
-            $video_id = Request::instance()->post('video_id');
-            $type = Request::instance()->post('type');
+            $user_id = Request::instance()->param('user_id');
+            $video_id = Request::instance()->param('video_id');
+            $type = Request::instance()->param('type');
 
             $data = ['c' => 0, 'm'=> '', 'd' => []];
 
@@ -437,6 +437,17 @@ class Video extends Base
                 'type' => $com_config['log_type'][$type]
             ]);
             $user_log->save();
+            if($type == 'play_end') {
+                if($user->promotion < 3) {
+                    if($user->create_time >= date('Y-m-d').' 00:00:00') {
+                        $this->_add_parent_user_point($user_id, '203');
+                    } else {
+                        $this->_add_parent_user_point($user_id, '303');
+                    }
+                } else {
+                    $this->_add_user_point($user_id, '103');
+                }
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
         }
@@ -613,6 +624,16 @@ class Video extends Base
                 'id' => $user_share->id,
                 'num' => $groups
             ];
+
+            if(!empty($wechat_gid)) {
+                if($user->promotion >= 3) {
+                    $this->_add_user_point($user_id, '104');
+                }
+            } else {
+                if($user->promotion >= 3) {
+                    $this->_add_user_point($user_id, '105');
+                }
+            }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];   
         }
