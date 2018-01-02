@@ -28,7 +28,7 @@ def yesterday_ts():
     return [yesterday.strftime('%Y-%m-%d'), yesterday_beg_ts, yesterday_end_ts]
 
 
-def summary_play(_mgr):
+def summary_play():
     logging.info('summary play')
     ts = yesterday_ts()
     try:
@@ -45,7 +45,7 @@ def summary_play(_mgr):
         pass
     
 
-def summary_play_end(_mgr):
+def summary_play_end():
     print 'summary play end'
     ts = yesterday_ts()
     try:
@@ -62,7 +62,7 @@ def summary_play_end(_mgr):
         pass
 
 
-def summary_member(_mgr):
+def summary_member():
     print 'summary member'
     ts = yesterday_ts()
     try:
@@ -77,7 +77,7 @@ def summary_member(_mgr):
     except Exception as e:
         pass
 
-def summary_display(_mgr):
+def summary_display():
     print 'summary display'
     ts = yesterday_ts()
     try:
@@ -94,7 +94,7 @@ def summary_display(_mgr):
         pass
 
 
-def summary_share(_mgr):
+def summary_share():
     print 'summary share'
     ts = yesterday_ts()
     try:
@@ -111,7 +111,7 @@ def summary_share(_mgr):
         pass
 
 
-def summary_comment(_mgr):
+def summary_comment():
     print 'summary comment'
     ts = yesterday_ts()
     try:
@@ -128,7 +128,7 @@ def summary_comment(_mgr):
         pass
 
 
-def summary_digg(_mgr):
+def summary_digg():
     print 'summary digg'
     ts = yesterday_ts()
     try:
@@ -145,7 +145,7 @@ def summary_digg(_mgr):
         pass
 
 
-def summary_formid(_mgr):
+def summary_formid():
     print 'summary formid'
     ts = yesterday_ts()
     try:
@@ -162,18 +162,13 @@ def summary_formid(_mgr):
         pass
 
 
-def summary(t, _mgr):
-    eval("summary_"+t+"(_mgr)")
+def summary(t):
+    eval("summary_"+t+"()")
 
 
 def run():
-    pnum = 2
-    p = Pool(pnum)
     for i in _type:
-        p.apply_async(summary, args=(i, _mgr))
-    print 'Waiting for all subprocesses done...'
-    p.close()
-    p.join()
+        summary(i)
     print 'All subprocesses done.'
 
 
