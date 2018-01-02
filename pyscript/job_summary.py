@@ -41,8 +41,9 @@ def summary_play():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
-        pass
+        traceback.print_exc()
     
 
 def summary_play_end():
@@ -58,6 +59,7 @@ def summary_play_end():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
@@ -74,6 +76,7 @@ def summary_member():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
@@ -90,6 +93,7 @@ def summary_display():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
@@ -107,6 +111,7 @@ def summary_share():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
@@ -124,6 +129,7 @@ def summary_comment():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
@@ -141,6 +147,7 @@ def summary_digg():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
@@ -158,6 +165,7 @@ def summary_formid():
         '''.format(ts[0], ts[1], ts[2])
         print sql
         _mgr.session.execute(sql)
+        _mgr.session.commit()
     except Exception as e:
         pass
 
