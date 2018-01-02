@@ -284,10 +284,9 @@ def summary(t, d=1):
 
 
 def run():
-    for d in range(15):
-        for i in _type:
-            summary(i, d)
-        print 'All subprocesses done.'
+    for i in _type:
+        summary(i)
+    print 'All subprocesses done.'
 
 
 if __name__ == '__main__':
