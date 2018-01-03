@@ -1035,6 +1035,117 @@ class User extends Base
         return Response::create($data, 'json')->code(200);
     }
 
+    public function transfer_point()
+    {
+        try {
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            $mult = 1000;
+
+            $request = Request::instance();
+            $user_id = $request->param('user_id');
+            $amount = $request->param('amount');
+
+            if(empty($user_id) || empty($amount)) {
+                $data['c'] = -1024;
+                $data['m'] = '参数错误';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $user = User_Model::get($user_id);
+            if(empty($user)) {
+                $data['c'] = -1024;
+                $data['m'] = '用户不存在';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $balance = UserPromotionBalance::where('user_id', $user_id)->find();
+            if(empty($balance)) {
+                $data['c'] = -1024;
+                $data['m'] = '账号余额不足';
+                return Response::create($data, 'json')->code(200);
+            }
+            $point = intval($amount * $mult);
+            $user_withdraw = New UserWithdraw;
+
+            $exists = $user_withdraw->where('user_id', $user_id)
+                ->where('status', 1)
+                ->where('create_time', '>=', strtotime(date('Ymd')))
+                ->where('create_time', '<=', strtotime(date('Ymd'))+86399)
+                ->count();
+            if($exists) {
+                $data['c'] = -1024;
+                $data['m'] = '一天只能提现一次';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $point_left = $balance->point_avail - $point;
+            if($amount_left < 0) {
+                $data['c'] = -1024;
+                $data['m'] = '账号余额不足';
+                return Response::create($data, 'json')->code(200);
+            }
+            $balance->point_avail = $point_left;
+            $balance->save();
+
+            list($usec, $sec) = explode(" ", microtime());  
+            $msec = strval(round($usec*1000)); 
+            $orderid = date('YmdHis').$msec;
+
+            $user_withdraw->data([
+                'user_id' => $user->id,
+                'orderid' => $orderid,
+                'amount' => floatval($amount),
+                'status' => 0,
+                'ip' => $request->ip()
+            ]);
+            $user_withdraw->save();
+
+            $wxconfig = Config::get('wxconfig');
+            $options = [
+                'app_id' => $wxconfig['appids'][$this->app_code],
+                'payment' => [
+                    'merchant_id' => $wxconfig['mchids'][$this->app_code],
+                    'key' => $wxconfig['mchkeys'][$this->app_code],
+                    'cert_path' => './../application/extra/paycert_'.$this->app_code.'/apiclient_cert.pem',
+                    'key_path' => './../application/extra/paycert_'.$this->app_code.'/apiclient_key.pem'
+                ],
+            ];
+            $app = new Application($options);
+            $merchantPay = $app->merchant_pay;
+
+            $merchantPayData = [
+                'partner_trade_no' => $orderid,
+                'openid' => $user->openid,
+                'check_name' => 'NO_CHECK',
+                're_user_name'=> '',
+                'amount' => intval($user_withdraw->amount*100),
+                'desc' => '代理提现',
+                'spbill_create_ip' => $request->ip(),
+            ];
+            $result = $merchantPay->send($merchantPayData);
+
+            if($result->result_code === 'SUCCESS') {
+                $user_withdraw->rel_orderid = $result->payment_no;
+                $user_withdraw->payment_time = $result->payment_time;
+                $user_withdraw->status = 1;
+            } else {
+                $user_withdraw->status = 2;
+                $user_withdraw->errmsg = $result->err_code.'|'.$result->err_code_des;
+                $user_withdraw->ext = json_encode($result);
+                $data = ['c' => -1024, 'm'=> '系统余额不足', 'd' => []];
+
+                # 失败了再把钱加回去
+                $balance->point_avail += $point;
+                $balance->save();
+            }
+            $user_withdraw->save();
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
     public function refresh_qrcode()
     {
         try {
@@ -1106,6 +1217,32 @@ class User extends Base
                 } catch (\Exception $e) {
                     Db::rollback();
                 }
+            }
+        } catch (Exception $e) {
+            $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];
+        }
+        return Response::create($data, 'json')->code(200);
+    }
+
+    public function points()
+    {
+        try {
+            $data = ['c' => 0, 'm'=> '', 'd' => []];
+
+            $user_id = Request::instance()->param('user_id');
+            if(empty($user_id)) {
+                $data['c'] = -1024;
+                $data['m'] = '参数错误';
+                return Response::create($data, 'json')->code(200);
+            }
+
+            $rows = UserPointLog::where('user_id', $user_id)->where('type', '>=', 100)->where('date', date('Y-m-d'))->order('id', 'desc')->limit(100)->select();
+            foreach ($rows as $key => $value) {
+                $data['d'][] = [
+                    'type' => $value->type,
+                    'total' => intval($value->point),
+                    'create_time' => $value->create_time
+                ];
             }
         } catch (Exception $e) {
             $data = ['c' => -1024, 'm'=> $e->getMessage(), 'd' => []];

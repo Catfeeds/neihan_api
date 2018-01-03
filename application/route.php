@@ -51,10 +51,12 @@ Route::rule('api/user/promo/qrcode/$','index/User/promotion_qrcode');
 Route::rule('api/user/prepay/$','index/User/promotion_prepay');
 Route::rule('api/user/pay/callback/$','index/User/promotion_pay_callback');
 Route::rule('api/user/pay/transfer/$','index/User/transfer');
+Route::rule('api/user/pay/transfer_point/$','index/User/transfer_point');
 Route::rule('api/user/click/sharelink/$','index/User/click_share_link');
 Route::rule('api/user/share/group/$','index/User/share_group');
 Route::rule('api/user/form/$','index/User/formid');
 Route::rule('api/user/signin/$','index/User/signin');
+Route::rule('api/user/points/$','index/User/points');
 Route::rule('api/jump/$', 'index/Common/jump');
 
 
