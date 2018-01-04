@@ -19,7 +19,7 @@ class Video extends Model
 
         $sql_select = "SELECT * FROM videos";
         if(empty($category)) {
-            $sql_where = " WHERE category_id IN (12, 109, 187) AND top_comments = 1 AND is_expired = 0";
+            $sql_where = " WHERE category_id IN (12, 109) AND top_comments = 1 AND is_expired = 0";
         } else {
             $sql_where = " WHERE category_id IN (".implode(",", $category).")";
         }
