@@ -21,8 +21,15 @@ class Base extends Controller
 {
     public function _initialize()
     {
+
         $request = Request::instance();
         $this->comconfig = Config::get('comconfig');
+
+        $user_id = $request->param('user_id');
+        if(!empty($user_id) && in_array($user_id, $this->comconfig['black_list'])) {
+            return 'hello world';
+            die;
+        }
 
         $this->app_code = 'neihan_1';
         foreach ($this->comconfig['domain_settings'] as $key => $value) {
