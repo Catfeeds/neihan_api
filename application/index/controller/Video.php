@@ -57,7 +57,8 @@ class Video extends Base
             }
 
             if(empty($category) && $this->app_code != 'neihan_1') {
-                $category = [1112, 1113, 1114];
+                # $category = [1112, 1113, 1114];
+                $category = [65];
             }
 
             $data = array('c' => 0, 'm' => '', 'd' => array());
@@ -208,7 +209,8 @@ class Video extends Base
             }
 
             if(empty($category) && $this->app_code != 'neihan_1') {
-                $category = [1112, 1113];
+                # $category = [1112, 1113];
+                $category = [65];
             }
 
             $data = array('c' => 0, 'm' => '', 'd' => array());
