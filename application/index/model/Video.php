@@ -119,7 +119,7 @@ class Video extends Model
                 'level' => $record['level'],
                 'display_click_ratio' => $record['display_click_ratio'],
                 'comments' => [],
-                'jump' => 1
+                'jump' => 0
             );
             $ret[] = $info;
         }
